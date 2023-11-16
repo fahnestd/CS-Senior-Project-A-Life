@@ -43,17 +43,17 @@ namespace SeniorProject
 
     public class ConditionalMovement
     {
-        // Define properties and methods for conditional movement
+        // Need to define the properties and methods for conditional movement
     }
 
     public class SensoryAbilities
     {
-        // Properties for seeing, smelling, hearing, etc.
+        // Need to define the properties for seeing, smelling, hearing, etc.
     }
 
     public class HealthPattern
     {
-        // Properties related to the creature's health
+        // Need to define the properties related to the creature's health
     }
 }
 
