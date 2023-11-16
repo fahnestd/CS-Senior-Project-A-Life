@@ -1,0 +1,8 @@
+[gd_scene load_steps=2 format=3 uid="uid://ddw7gmc0g2p42"]
+
+[ext_resource type="Script" path="res://Ocean2D.cs" id="1_257ki"]
+
+[node name="Node" type="Node"]
+
+[node name="Ocean2D" type="Node2D" parent="."]
+script = ExtResource("1_257ki")
