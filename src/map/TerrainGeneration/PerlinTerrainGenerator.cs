@@ -5,21 +5,21 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SeniorProject.src.map
+namespace SeniorProject.src.map.TerrainGeneration
 {
-    public class CellularTerrainGenerator : ITerrainGenerator
+    public class PerlinTerrainGenerator : ITerrainGenerator
     {
 
         FastNoiseLite noise;
 
-        public CellularTerrainGenerator(int seed = 10000)
+        public PerlinTerrainGenerator(int seed = 10000)
         {
             noise = new FastNoiseLite();
 
             noise.Seed = seed;
-            noise.NoiseType = FastNoiseLite.NoiseTypeEnum.Cellular;
+            noise.NoiseType = FastNoiseLite.NoiseTypeEnum.Perlin;
             noise.Frequency = 0.1f;
-            noise.CellularDistanceFunction = FastNoiseLite.CellularDistanceFunctionEnum.EuclideanSquared;
+            noise.CellularDistanceFunction = FastNoiseLite.CellularDistanceFunctionEnum.Euclidean;
             noise.CellularReturnType = FastNoiseLite.CellularReturnTypeEnum.Distance2Add;
             noise.CellularJitter = 1.0f;
             noise.DomainWarpAmplitude = 1.2f;
@@ -27,7 +27,6 @@ namespace SeniorProject.src.map
 
         public Vector2I[,] GenerateMap(int mapWidth, int mapHeight)
         {
-            Random random = new Random();
             Vector2I[,] tilemap = new Vector2I[mapWidth, mapHeight];
             for (int x = 0; x < mapWidth; x++)
             {
@@ -43,7 +42,7 @@ namespace SeniorProject.src.map
         {
             float absNoise = Math.Abs(noise.GetNoise2D(x, y));
             int value = (int)Math.Floor(absNoise * 3);
-            return new Vector2I(value % 2, value / 2); // 1 will need to be replaced with the tileset width
+            return new Vector2I(value % 2, value / 2); // 2 will need to be replaced with the tileset width
         }
     }
 }

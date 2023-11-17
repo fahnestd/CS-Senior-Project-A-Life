@@ -1,5 +1,6 @@
 using Godot;
 using SeniorProject.src.map;
+using SeniorProject.src.map.TerrainGeneration;
 using System;
 
 public partial class tile_map : TileMap
@@ -9,10 +10,13 @@ public partial class tile_map : TileMap
     [Export]
     private int mapHeight = 250;
 
+	[Export]
+	private int seed = 1000;
+
 	// Called when the node enters the scene tree for the first time.
 	public override void _Ready()
 	{
-		ITerrainGenerator generator = new CellularTerrainGenerator();
+		ITerrainGenerator generator = new CellularTerrainGenerator(seed);
 		InitializeMap(generator);
     }
 

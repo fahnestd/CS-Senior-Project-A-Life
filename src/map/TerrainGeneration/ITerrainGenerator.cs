@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SeniorProject.src.map
+namespace SeniorProject.src.map.TerrainGeneration
 {
     public interface ITerrainGenerator
     {
