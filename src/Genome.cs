@@ -20,13 +20,13 @@ namespace SeniorProject.src
 
     public class PhysicalGenome
     {
-        public float EnergyLevel { get; set; }
-        public float EnergyConsumption { get; set; }
-        public float EnergyEfficiency { get; set; }
-        public float Speed { get; set; }
+        public int EnergyLevel { get; set; }
+        public int EnergyConsumption { get; set; }
+        public int EnergyEfficiency { get; set; }
+        public int Speed { get; set; }
         public int Age { get; set; }
         public int MaxNodes { get; set; }
-        public float DepthTolerance { get; set; }
+        public int DepthTolerance { get; set; }
     }
 
     public class BehavioralGenome
