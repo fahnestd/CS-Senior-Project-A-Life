@@ -4,7 +4,7 @@ using GeneticSharp.Domain.Randomizations;
 
 namespace IntegerChromosome.src
 {
-    //Creating an IntegerChromosome from Chromosome base is needed to run crossovers in Genetic Sharp
+    //Creating an IntegerChromosome using Chromosome base is needed to run crossovers in Genetic Sharp
     public class IntegerChromosome : ChromosomeBase
     {
         private int _minValue;
