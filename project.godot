@@ -10,6 +10,7 @@ config_version=5
 
 [application]
 
+<<<<<<< HEAD
 config/name="A-Life"
 run/main_scene="res://main_scene.tscn"
 config/features=PackedStringArray("4.1", "Forward Plus")
@@ -31,3 +32,12 @@ project/assembly_name="A-Life"
 
 textures/canvas_textures/default_texture_filter=0
 environment/defaults/default_clear_color=Color(0.0862745, 0.141176, 0.388235, 1)
+=======
+config/name="Senior Project"
+config/features=PackedStringArray("4.1", "Forward Plus")
+config/icon="res://icon.svg"
+
+[dotnet]
+
+project/assembly_name="Senior Project"
+>>>>>>> 89e048e2e86bb2be014c07330a33dd947a9fba3e
