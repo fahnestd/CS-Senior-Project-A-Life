@@ -10,19 +10,22 @@ namespace SeniorProject.src.map.TerrainGeneration
     public class CellularTerrainGenerator : ITerrainGenerator
     {
 
-        FastNoiseLite noise;
+        public FastNoiseLite noise;
+        private int tileCount = 0;
 
-        public CellularTerrainGenerator(int seed = 10000)
+        public CellularTerrainGenerator(int seed, int tileCount)
         {
             noise = new FastNoiseLite();
 
             noise.Seed = seed;
             noise.NoiseType = FastNoiseLite.NoiseTypeEnum.Cellular;
-            noise.Frequency = 0.1f;
+            noise.Frequency = 0.05f;
             noise.CellularDistanceFunction = FastNoiseLite.CellularDistanceFunctionEnum.EuclideanSquared;
             noise.CellularReturnType = FastNoiseLite.CellularReturnTypeEnum.Distance2Add;
             noise.CellularJitter = 1.0f;
             noise.DomainWarpAmplitude = 1.2f;
+
+            this.tileCount = tileCount;
         }
 
         public Vector2I[,] GenerateMap(int mapWidth, int mapHeight)
@@ -41,7 +44,7 @@ namespace SeniorProject.src.map.TerrainGeneration
         private Vector2I GetNoiseValueForCoordinate(int x, int y)
         {
             float absNoise = Math.Abs(noise.GetNoise2D(x, y));
-            int value = (int)Math.Floor(absNoise * 3);
+            int value = (int)Math.Floor(absNoise * tileCount);
             return new Vector2I(value % 2, value / 2); // 2 will need to be replaced with the tileset width
         }
     }

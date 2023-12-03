@@ -2,8 +2,10 @@
   "ExpandedNodes": [
     "",
     "\\src",
-    "\\src\\map"
+    "\\src\\map",
+    "\\src\\map\\TerrainGeneration",
+    "\\src\\map\\Tile"
   ],
-  "SelectedNode": "\\src\\map",
+  "SelectedNode": "\\src\\map\\tile_map.cs",
   "PreviewInSolutionExplorer": false
 }

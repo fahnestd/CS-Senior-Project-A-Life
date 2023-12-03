@@ -15,10 +15,7 @@ tile_size = Vector2i(32, 32)
 sources/2 = SubResource("TileSetAtlasSource_mur1e")
 
 [node name="TileMap" type="TileMap"]
-scale = Vector2(0.2, 0.2)
 tile_set = SubResource("TileSet_hdr7t")
 cell_quadrant_size = 32
 format = 2
-layer_0/tile_data = PackedInt32Array(851976, 65538, 0)
 script = ExtResource("2_47hr1")
-seed = 1001
