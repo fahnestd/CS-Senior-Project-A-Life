@@ -3,8 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using GeneticSharp.Domain.Chromosomes;
 
-namespace SeniorProject.src
+namespace Chromosome.src
 {
     public class Genome
     {
@@ -13,20 +14,71 @@ namespace SeniorProject.src
 
         public Genome()
         {
-            Physical = new PhysicalGenome();
+            Physical = new PhysicalGenome(7, 0, 10);
             Behavioral = new BehavioralGenome();
         }
     }
 
     public class PhysicalGenome
     {
-        public int EnergyLevel { get; set; }
-        public int EnergyConsumption { get; set; }
-        public int EnergyEfficiency { get; set; }
-        public int Speed { get; set; }
-        public int Age { get; set; }
-        public int MaxNodes { get; set; }
-        public int DepthTolerance { get; set; }
+        private IntegerChromosome chromosome;
+
+        public PhysicalGenome(int length, int minValue, int maxValue)
+        {
+            chromosome = new IntegerChromosome(length, minValue, maxValue);
+        }
+
+        public IntegerChromosome GetChromosome
+        {
+            get { return chromosome; }
+        }
+
+        public void SetPhysical(params Gene[] genes)
+        {
+            EnergyLevel = Convert.ToInt32(genes[0].Value);
+            EnergyConsumption = Convert.ToInt32(genes[1].Value);
+            EnergyEfficiency = Convert.ToInt32(genes[2].Value);
+            Speed = Convert.ToInt32(genes[3].Value);
+            Age = Convert.ToInt32(genes[4].Value);
+            MaxNodes = Convert.ToInt32(genes[5].Value);
+            DepthTolerance = Convert.ToInt32(genes[6].Value);
+        }
+
+        public int EnergyLevel 
+        {
+            get { return (int)chromosome.GetGene(0).Value; }
+            set { chromosome.ReplaceGene(0, new Gene(value)); } 
+        }
+        public int EnergyConsumption
+        {
+            get { return (int)chromosome.GetGene(1).Value; }
+            set { chromosome.ReplaceGene(1, new Gene(value)); }
+        }
+        public int EnergyEfficiency
+        {
+            get { return (int)chromosome.GetGene(2).Value; }
+            set { chromosome.ReplaceGene(2, new Gene(value)); }
+        }
+        public int Speed
+        {
+            get { return (int)chromosome.GetGene(3).Value; }
+            set { chromosome.ReplaceGene(3, new Gene(value)); }
+        }
+        public int Age
+        {
+            get { return (int)chromosome.GetGene(4).Value; }
+            set { chromosome.ReplaceGene(4, new Gene(value)); }
+        }
+        public int MaxNodes
+        {
+            get { return (int)chromosome.GetGene(5).Value; }
+            set { chromosome.ReplaceGene(5, new Gene(value)); }
+        }
+        public int DepthTolerance
+        {
+            get { return (int)chromosome.GetGene(6).Value; }
+            set { chromosome.ReplaceGene(6, new Gene(value)); }
+        }
     }
 
     public class BehavioralGenome
@@ -55,5 +107,5 @@ namespace SeniorProject.src
     {
         // Need to define the properties related to the creature's health
     }
-}
 
+}
