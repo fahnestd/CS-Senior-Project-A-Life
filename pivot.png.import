@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://c1wudnftbm2ci"
-path="res://.godot/imported/connector.png-221c6d54eedbfabe196e6561c852b93e.ctex"
+uid="uid://bvdubbqdsmtrx"
+path="res://.godot/imported/pivot.png-ac61dc0d825342259c3f6eadfe8de2ee.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://connector.png"
-dest_files=["res://.godot/imported/connector.png-221c6d54eedbfabe196e6561c852b93e.ctex"]
+source_file="res://pivot.png"
+dest_files=["res://.godot/imported/pivot.png-ac61dc0d825342259c3f6eadfe8de2ee.ctex"]
 
 [params]
 

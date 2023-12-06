@@ -3,7 +3,7 @@ extends Area2D
 var collision_check = false
 
 var size = Vector2(0, 0)
-var node
+var node_id
 
 var shift_sum = Vector2(0, 0)
 var num_shifts = 0
@@ -53,7 +53,7 @@ func _process(_delta):
 		new_position = position
 		new_position += (shift_sum) / num_shifts
 		position_shift = Vector2(0, 0)
-		parent.move_node(node, new_position)
+		parent.move_node(node_id, new_position)
 
 	if collision_check:
 		var overlapping_areas = get_overlapping_areas()
