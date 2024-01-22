@@ -1,2 +1,7 @@
 # Godot 4+ specific ignores
 .godot/
+
+# VS Stuff
+Senior Project.csproj.user
+.vs/
+Properties/
