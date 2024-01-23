@@ -1,8 +1,6 @@
 [gd_scene load_steps=2 format=3 uid="uid://ddw7gmc0g2p42"]
 
-[ext_resource type="Script" path="res://src/genomes/Ocean2D.cs" id="1_c0doe"]
+[ext_resource type="Script" path="res://src/genomes/Genetics.cs" id="1_xak62"]
 
-[node name="Node" type="Node"]
-
-[node name="Ocean2D" type="Node2D" parent="."]
-script = ExtResource("1_c0doe")
+[node name="Genetics Scene" type="Node2D"]
+script = ExtResource("1_xak62")

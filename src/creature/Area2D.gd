@@ -51,7 +51,7 @@ func _process(_delta):
 		num_shifts += 1
 		shift_sum += position_shift
 		new_position = position
-		new_position += (shift_sum) / num_shifts
+		new_position += shift_sum / num_shifts
 		position_shift = Vector2(0, 0)
 		parent.move_node(node_id, new_position)
 
