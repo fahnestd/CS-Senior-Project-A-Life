@@ -16,7 +16,7 @@ public partial class tile_map : TileMap
 	// Called when the node enters the scene tree for the first time.
 	public override void _Ready()
 	{
-		ITerrainGenerator generator = new CellularTerrainGenerator(seed, 3);
+		ITerrainGenerator generator = new CellularGradientTerrainGenerator(seed, 3);
 		InitializeMap(generator);
 	}
 
@@ -26,7 +26,7 @@ public partial class tile_map : TileMap
 		if (Input.IsActionJustPressed("regen_map"))
 		{
 			Random rand = new Random();
-			CellularTerrainGenerator generator = new CellularTerrainGenerator(rand.Next(), 3);
+            CellularGradientTerrainGenerator generator = new CellularGradientTerrainGenerator(rand.Next(), 3);
 			generator.noise.Frequency = (float)GetNode<Slider>("freq").Value;
 			generator.noise.CellularJitter = (float)GetNode<Slider>("jitter").Value;
 			generator.noise.DomainWarpAmplitude = (float)GetNode<Slider>("amp").Value;

@@ -9,6 +9,7 @@ texture_region_size = Vector2i(32, 32)
 0:0/0 = 0
 1:0/0 = 0
 0:1/0 = 0
+1:1/0 = 0
 
 [sub_resource type="TileSet" id="TileSet_hdr7t"]
 tile_size = Vector2i(32, 32)
@@ -16,6 +17,6 @@ sources/2 = SubResource("TileSetAtlasSource_mur1e")
 
 [node name="TileMap" type="TileMap"]
 tile_set = SubResource("TileSet_hdr7t")
-cell_quadrant_size = 32
+rendering_quadrant_size = 32
 format = 2
 script = ExtResource("2_47hr1")
