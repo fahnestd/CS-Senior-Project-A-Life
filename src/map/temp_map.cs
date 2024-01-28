@@ -16,7 +16,7 @@ public partial class temp_map : TileMap
     // Called when the node enters the scene tree for the first time.
     public override void _Ready()
     {
-        ITerrainGenerator generator = new CellularTerrainGenerator(seed, 4);
+        ITerrainGenerator generator = new CellularGradientTerrainGeneratorInverse(seed, 3);
         InitializeMap(generator);
     }
 
