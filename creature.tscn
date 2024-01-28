@@ -1,23 +1,6 @@
-[gd_scene load_steps=4 format=3 uid="uid://b00knpl443ako"]
+[gd_scene load_steps=2 format=3 uid="uid://b00knpl443ako"]
 
 [ext_resource type="Script" path="res://src/creature/Creature.gd" id="1_4o6i4"]
-[ext_resource type="Texture2D" uid="uid://cwaasuqdailg" path="res://assets/creature/grid.png" id="1_704wg"]
-[ext_resource type="Script" path="res://src/creature/Camera2D.gd" id="2_8e5b4"]
 
-[node name="Node" type="Node"]
-
-[node name="TextureRect" type="TextureRect" parent="."]
-offset_left = -2505.0
-offset_top = -2505.0
-offset_right = 7495.0
-offset_bottom = 7495.0
-scale = Vector2(0.5, 0.5)
-texture = ExtResource("1_704wg")
-stretch_mode = 1
-
-[node name="Creature" type="Node2D" parent="."]
+[node name="Creature" type="Node2D"]
 script = ExtResource("1_4o6i4")
-
-[node name="Camera2D" type="Camera2D" parent="Creature"]
-zoom = Vector2(4, 4)
-script = ExtResource("2_8e5b4")

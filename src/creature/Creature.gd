@@ -1,48 +1,7 @@
 extends Node2D
 
-var physical_genome = {
-	node_plan = {
-		"0" = {
-			"parent_id": "None",
-			"angle": 0,
-			"size": 10,
-			"joint": "None"
-		},
-		"1" = {
-			"parent_id": "0",
-			"angle": 0,
-			"size": 10,
-			"joint": "fixed"
-		},
-		"2" = {
-			"parent_id": "0",
-			"angle": 120,
-			"size": 10,
-			"joint": "pivot"
-		},
-		"3" = {
-			"parent_id": "0",
-			"angle": -120,
-			"size": 10,
-			"joint": "pivot"
-		}
-	}
-}
-
-var behavioral_genome = {
-	"0" = {
-		"pattern" = [[["2", 40.0], ["3", -40.0], 1.0], [["2", -40.0], ["3", 40.0], 1.0]]
-	},
-	"1" = {
-		"pattern" = [[["2", 40.0], 1.0], [["2", -40.0], 1.0]]
-	},
-	"2" = {
-		"pattern" = [[["3", -40.0], 1.0], [["3", 40.0], 1.0]]
-	},
-	"3" = {
-		"pattern" = [[1.0]]
-	}
-}
+var physical_genome
+var behavioral_genome
 
 # Changeable parameters
 var connection_distance = 20
@@ -55,7 +14,6 @@ var node_height = node_texture.get_height()
 var fixed_texture = preload("res://assets/creature/fixed.png")
 var pivot_texture = preload("res://assets/creature/pivot.png")
 
-var node_plan = physical_genome["node_plan"].duplicate(true)
 var nodes = {}
 
 var propulsion_vector = Vector2(0, 0)
@@ -64,13 +22,15 @@ var inertia_vector = Vector2(0, 0)
 var inertia_angle = 0
 
 func add_node(id, pos):
-	var node = node_plan[id]
-	var size = node["size"]
-	var angle = node["angle"]
+	var node_plan = physical_genome[id]
+	var size = node_plan["size"]
+	var angle = node_plan["angle"]
+	var joint = node_plan["joint"]
 	var new_node = {
 		"position": pos,
 		"size": size,
-		"angle": angle
+		"angle": angle,
+		"joint": joint
 	}
 
 	nodes[id] = new_node
@@ -103,7 +63,7 @@ func add_node(id, pos):
 	return id
 
 func add_connected_node(id):
-	var node = node_plan[id]
+	var node = physical_genome[id]
 	var parent_id = node["parent_id"]
 	var parent_node = nodes[parent_id]
 	var new_sprite = Sprite2D.new()
@@ -200,27 +160,33 @@ func fix_connection_length(child_id):
 
 func pivot_node(id, angle_shift):
 	var node = nodes[id]
-	var parent_connection = node["parent_connection"]
-	var parent_id = parent_connection["parent_id"]
-	var parent_node = nodes[parent_id]
-	var parent_pos = parent_node["position"]
-	var distance = parent_connection["length"]
+	if node["joint"] == "pivot" and node.has("parent_connection"):
+		var parent_connection = node["parent_connection"]
+		var parent_id = parent_connection["parent_id"]
+		var parent_node = nodes[parent_id]
+		var parent_pos = parent_node["position"]
+		var distance = parent_connection["length"]
 
-	var dir_vector = Vector2(1, 0).rotated(deg_to_rad(node["angle"] + angle_shift))
-	var endpoint = parent_pos + distance * dir_vector
-	move_node(id, endpoint)
+		var dir_vector = Vector2(1, 0).rotated(deg_to_rad(node["angle"] + angle_shift))
+		var endpoint = parent_pos + distance * dir_vector
+		move_node(id, endpoint)
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
-	while len(node_plan) > 0:
-		for id in node_plan.keys():
-			var parent_id = node_plan[id]["parent_id"]
-			if parent_id == "None":
-				add_node(id, Vector2(0, 0))
-				node_plan.erase(id)
-			elif nodes.has(parent_id):
-				add_connected_node(id)
-				node_plan.erase(id)
+	var added_node = false
+	while true:
+		added_node = false
+		for id in physical_genome.keys():
+			if not nodes.has(id):
+				var parent_id = physical_genome[id]["parent_id"]
+				if nodes.size() == 0:
+					add_node(id, Vector2(0, 0))
+					added_node = true
+				elif nodes.has(parent_id):
+					add_connected_node(id)
+					added_node = true
+		if not added_node or nodes.size() == physical_genome.size():
+			break
 
 var behavior_step_progress = 0
 var behavior_step_id = 0
@@ -249,7 +215,8 @@ func _process(delta):
 		var behavior_step_angle = behavior_step[1]
 		var movement_percent = delta / behavior_step_seconds
 		var angle_change = behavior_step_angle * movement_percent
-		pivot_node(behavior_step_node_id, angle_change)
+		if nodes.has(behavior_step_node_id):
+			pivot_node(behavior_step_node_id, angle_change)
 
 	if inertia_angle > 0 and propulsion_angle < 0:
 		inertia_angle += propulsion_angle * 0.01
