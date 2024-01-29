@@ -11,13 +11,16 @@ public partial class temp_map : TileMap
     private int mapHeight = 250;
 
     [Export]
-    private int seed = 1001;
+    private int seed = 1000;
+
+    private SimulationMap simMap = SimulationMap.instance;
+
 
     // Called when the node enters the scene tree for the first time.
     public override void _Ready()
     {
-        ITerrainGenerator generator = new CellularGradientTerrainGeneratorInverse(seed, 3);
-        InitializeMap(generator);
+        simMap.InitializeMap();
+        InitializeMap();
     }
 
     // Called every frame. 'delta' is the elapsed time since the previous frame.
@@ -33,18 +36,23 @@ public partial class temp_map : TileMap
                 this.Show();
             }
         }
+
+        if (Input.IsActionJustPressed("regen_map"))
+        {
+           
+            //TerrainGenerator generator = new InverseCellularGradientTerrainGenerator(rand.Next());
+            //InitializeMap(generator);
+        }
     }
 
 
-    public void InitializeMap(ITerrainGenerator generator)
+    public void InitializeMap()
     {
-        Vector2I[,] tileMap = generator.GenerateMap(mapWidth, mapHeight);
-
         for (int x = 0; x < mapWidth; x++)
         {
             for (int y = 0; y < mapHeight; y++)
             {
-                SetCell(0, new Vector2I(x, y), 1, tileMap[x, y]);
+                SetCell(0, new Vector2I(x, y), 1, SimulationMap.getTileCoordinates((int)simMap.map[x, y].Temperature));
             }
         }
     }
