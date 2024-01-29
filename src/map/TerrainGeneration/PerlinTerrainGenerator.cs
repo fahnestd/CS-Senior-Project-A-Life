@@ -7,12 +7,11 @@ using System.Threading.Tasks;
 
 namespace SeniorProject.src.map.TerrainGeneration
 {
-    public class PerlinTerrainGenerator : ITerrainGenerator
+    public class PerlinTerrainGenerator : TerrainGenerator
     {
         public FastNoiseLite noise;
-        private int tileCount = 0;
 
-        public PerlinTerrainGenerator(int seed, int tileCount)
+        public PerlinTerrainGenerator(int seed)
         {
             noise = new FastNoiseLite();
 
@@ -23,28 +22,12 @@ namespace SeniorProject.src.map.TerrainGeneration
             noise.CellularReturnType = FastNoiseLite.CellularReturnTypeEnum.Distance2Add;
             noise.CellularJitter = 1.0f;
             noise.DomainWarpAmplitude = 0.8f;
-
-            this.tileCount = tileCount;
         }
 
-        public Vector2I[,] GenerateMap(int mapWidth, int mapHeight)
-        {
-            Vector2I[,] tilemap = new Vector2I[mapWidth, mapHeight];
-            for (int x = 0; x < mapWidth; x++)
-            {
-                for (int y = 0; y < mapHeight; y++)
-                {
-                    tilemap[x, y] = GetNoiseValueForCoordinate(x, y);
-                }
-            }
-            return tilemap;
-        }
-
-        private Vector2I GetNoiseValueForCoordinate(int x, int y)
+        protected override int GetNoiseValueForCoordinate(int x, int y)
         {
             float absNoise = Math.Abs(noise.GetNoise2D(x, y));
-            int value = (int)Math.Floor(absNoise * tileCount);
-            return new Vector2I(value % 2, value / 2); // 2 will need to be replaced with the tileset width
+            return (int)Math.Floor(absNoise * tileCount);
         }
     }
 }

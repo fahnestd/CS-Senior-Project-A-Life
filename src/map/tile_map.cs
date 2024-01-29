@@ -13,11 +13,13 @@ public partial class tile_map : TileMap
 	[Export]
 	private int seed = 1000;
 
+	private SimulationMap simMap = SimulationMap.instance;
+
 	// Called when the node enters the scene tree for the first time.
 	public override void _Ready()
 	{
-		ITerrainGenerator generator = new CellularTerrainGenerator(seed, 3);
-		InitializeMap(generator);
+        simMap.InitializeMap();
+		InitializeMap();
 	}
 
 	// Called every frame. 'delta' is the elapsed time since the previous frame.
@@ -25,24 +27,23 @@ public partial class tile_map : TileMap
 	{
 		if (Input.IsActionJustPressed("regen_map"))
 		{
-			Random rand = new Random();
-			CellularTerrainGenerator generator = new CellularTerrainGenerator(rand.Next(), 3);
-			generator.noise.Frequency = (float)GetNode<Slider>("freq").Value;
-			generator.noise.CellularJitter = (float)GetNode<Slider>("jitter").Value;
-			generator.noise.DomainWarpAmplitude = (float)GetNode<Slider>("amp").Value;
-			InitializeMap(generator);
+
+			//Random rand = new Random();
+			//CellularGradientTerrainGenerator generator = new CellularGradientTerrainGenerator(rand.Next(), 3);
+			//generator.noise.Frequency = (float)GetNode<Slider>("freq").Value;
+			//generator.noise.CellularJitter = (float)GetNode<Slider>("jitter").Value;
+			//generator.noise.DomainWarpAmplitude = (float)GetNode<Slider>("amp").Value;
+			//InitializeMap();
 		}
 	}
 
-	public void InitializeMap(ITerrainGenerator generator)
+	public void InitializeMap()
 	{
-		Vector2I[,] tileMap = generator.GenerateMap(mapWidth, mapHeight);
-
 		for (int x = 0; x < mapWidth; x++)
 		{
 			for (int y = 0; y < mapHeight; y++)
 			{
-				SetCell(0, new Vector2I(x, y), 2, tileMap[x, y]);
+				SetCell(0, new Vector2I(x, y), 2, SimulationMap.getTileCoordinates(simMap.map[x, y].TerrainType));
 			}
 		}
 	}
