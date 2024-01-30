@@ -1,7 +1,8 @@
-[gd_scene load_steps=9 format=3 uid="uid://dvweqacxjay7r"]
+[gd_scene load_steps=11 format=3 uid="uid://dvweqacxjay7r"]
 
 [ext_resource type="PackedScene" uid="uid://02k684x8aybd" path="res://Map.tscn" id="3_3o0j0"]
-[ext_resource type="Script" path="res://src/ui/main_ui.gd" id="4_jwwrs"]
+[ext_resource type="Script" path="res://src/ui/simtime_ui.gd" id="4_0otx1"]
+[ext_resource type="Script" path="res://src/ui/foodcontrol_ui.gd" id="4_hy7gx"]
 [ext_resource type="Script" path="res://src/creature/Camera2D.gd" id="4_kinps"]
 [ext_resource type="Script" path="res://src/creature/Creature Generator.gd" id="4_r0x6e"]
 [ext_resource type="StyleBox" uid="uid://m3372f0wk2mk" path="res://assets/ui/SepLineUIAsset.tres" id="5_romv8"]
@@ -16,6 +17,13 @@ corner_radius_top_left = 20
 corner_radius_top_right = 20
 corner_radius_bottom_right = 20
 corner_radius_bottom_left = 20
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_ulauv"]
+bg_color = Color(0.286275, 0.286275, 0.286275, 1)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
 
 [node name="MainScene" type="Node2D"]
 
@@ -56,14 +64,45 @@ offset_right = 425.0
 offset_bottom = 54.0
 theme_override_font_sizes/font_size = 12
 text = "Simulation Run Time:"
+script = ExtResource("4_0otx1")
+
+[node name="MsRunTimeLabel" type="Label" parent="CanvasLayer/UIOverlay/TopUIPanel/SimRunTimeLabel"]
+modulate = Color(0, 0, 0, 1)
+self_modulate = Color(0, 0, 0, 1)
+offset_left = 168.0
+offset_right = 192.0
+offset_bottom = 40.0
+theme_override_font_sizes/font_size = 12
+text = "000"
+horizontal_alignment = 2
+
+[node name="MinRunTimeLabel" type="Label" parent="CanvasLayer/UIOverlay/TopUIPanel/SimRunTimeLabel"]
+modulate = Color(0, 0, 0, 1)
+self_modulate = Color(0, 0, 0, 1)
+offset_left = 128.0
+offset_right = 152.0
+offset_bottom = 40.0
+theme_override_font_sizes/font_size = 12
+text = "00:"
+horizontal_alignment = 2
+
+[node name="SecRunTimeLabel" type="Label" parent="CanvasLayer/UIOverlay/TopUIPanel/SimRunTimeLabel"]
+modulate = Color(0, 0, 0, 1)
+self_modulate = Color(0, 0, 0, 1)
+offset_left = 146.0
+offset_right = 170.0
+offset_bottom = 40.0
+theme_override_font_sizes/font_size = 12
+text = "00."
+horizontal_alignment = 2
 
 [node name="SimSpeedLabel" type="Label" parent="CanvasLayer/UIOverlay/TopUIPanel"]
 modulate = Color(0, 0, 0, 1)
 self_modulate = Color(0, 0, 0, 1)
 layout_mode = 0
-offset_left = 535.0
+offset_left = 532.0
 offset_top = 14.0
-offset_right = 704.0
+offset_right = 701.0
 offset_bottom = 54.0
 theme_override_font_sizes/font_size = 12
 text = "Simulation Speed:"
@@ -109,7 +148,13 @@ offset_right = 176.0
 offset_bottom = 88.0
 theme_override_styles/panel = SubResource("StyleBoxFlat_2prp0")
 
-[node name="FoodPercentLabel" type="Label" parent="CanvasLayer/UIOverlay/SideUIPanel/FoodPanel"]
+[node name="FoodControl" type="Control" parent="CanvasLayer/UIOverlay/SideUIPanel/FoodPanel"]
+anchors_preset = 0
+offset_right = 160.0
+offset_bottom = 40.0
+script = ExtResource("4_hy7gx")
+
+[node name="FoodPercentLabel" type="Label" parent="CanvasLayer/UIOverlay/SideUIPanel/FoodPanel/FoodControl"]
 modulate = Color(0, 0, 0, 1)
 self_modulate = Color(0, 0, 0, 1)
 layout_mode = 0
@@ -120,7 +165,16 @@ offset_bottom = 20.0
 theme_override_font_sizes/font_size = 8
 text = "50%"
 horizontal_alignment = 1
-script = ExtResource("4_jwwrs")
+
+[node name="FoodHSlider" type="HSlider" parent="CanvasLayer/UIOverlay/SideUIPanel/FoodPanel/FoodControl"]
+layout_mode = 0
+offset_left = 16.0
+offset_top = 20.0
+offset_right = 144.0
+offset_bottom = 36.0
+max_value = 1.0
+step = 0.05
+value = 0.5
 
 [node name="FoodLabel" type="Label" parent="CanvasLayer/UIOverlay/SideUIPanel/FoodPanel"]
 modulate = Color(0, 0, 0, 1)
@@ -133,23 +187,19 @@ offset_bottom = 20.0
 theme_override_font_sizes/font_size = 8
 text = "Food Availability:"
 
-[node name="FoodHSlider" type="HSlider" parent="CanvasLayer/UIOverlay/SideUIPanel/FoodPanel"]
-layout_mode = 0
-offset_left = 16.0
-offset_top = 20.0
-offset_right = 144.0
-offset_bottom = 36.0
-max_value = 1.0
-step = 0.05
-value = 0.5
+[node name="FoodPanel" type="Panel" parent="CanvasLayer/UIOverlay/SideUIPanel/FoodPanel"]
+offset_top = 352.0
+offset_right = 160.0
+offset_bottom = 552.0
+theme_override_styles/panel = SubResource("StyleBoxFlat_ulauv")
 
 [node name="SelectedCreatureLabel" type="Label" parent="CanvasLayer/UIOverlay/SideUIPanel"]
 modulate = Color(0, 0, 0, 1)
 self_modulate = Color(0, 0, 0, 1)
 layout_mode = 0
-offset_left = 16.0
+offset_left = 12.0
 offset_top = 368.0
-offset_right = 185.0
+offset_right = 181.0
 offset_bottom = 408.0
 theme_override_colors/font_color = Color(0, 0, 0, 0.47451)
 theme_override_font_sizes/font_size = 12
@@ -173,4 +223,4 @@ offset_right = 970.0
 offset_bottom = 649.0
 theme_override_styles/separator = ExtResource("6_j2i2m")
 
-[connection signal="value_changed" from="CanvasLayer/UIOverlay/SideUIPanel/FoodPanel/FoodHSlider" to="CanvasLayer/UIOverlay" method="_on_food_h_slider_value_changed"]
+[connection signal="value_changed" from="CanvasLayer/UIOverlay/SideUIPanel/FoodPanel/FoodControl/FoodHSlider" to="CanvasLayer/UIOverlay/SideUIPanel/FoodPanel/FoodControl" method="_on_food_h_slider_value_changed"]
