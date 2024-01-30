@@ -53,7 +53,7 @@ func _process(_delta):
 		new_position = position
 		new_position += shift_sum / num_shifts
 		position_shift = Vector2(0, 0)
-		parent.move_node(node_id, new_position)
+		parent.move_node(node_id, new_position, true)
 
 	if collision_check:
 		var overlapping_areas = get_overlapping_areas()
@@ -64,3 +64,6 @@ func _process(_delta):
 			collision_check = false
 			shift_sum = Vector2(0, 0)
 			num_shifts = 0
+
+	parent.fix_connection_length(node_id)
+	#parent.fix_node_connections(node_id)

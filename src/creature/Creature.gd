@@ -6,7 +6,6 @@ var behavioral_genome
 # Changeable parameters
 var connection_distance = 20
 var max_speed = 1
-var distance_fix = true # Whether or not connections should adjust themselves to try to maintain the connection_distance
 
 var node_texture = preload("res://assets/creature/circle.png")
 var node_width = node_texture.get_width()
@@ -51,14 +50,14 @@ func add_node(id, pos):
 	new_area.add_child(new_collision)
 
 	new_area.position = pos
-	new_area.script = load("res://src/Area2D.gd")
+	new_area.script = load("res://src/creature/Area2D.gd")
 	new_area.size = Vector2(size, size)
 	new_area.node_id = id
 
 	add_child(new_area)
 	new_node["area"] = new_area
 
-	move_node(id, pos)
+	move_node(id, pos, false)
 
 	return id
 
@@ -97,13 +96,21 @@ func add_connected_node(id):
 		parent_node["child_connections"] = [new_connection]
 	new_node["parent_connection"] = new_connection
 
-func move_node(id, pos):
+func move_node(id, pos, propulsion):
 	var node = nodes[id]
 	var old_pos = node["position"]
 	var old_angle = node["angle"]
 	node["position"] = pos
 	node["area"].position = pos
 
+	fix_node_connections(id)
+
+	if propulsion:
+		propulsion_vector += pos - old_pos
+		propulsion_angle += node["angle"] - old_angle
+
+func fix_node_connections(id):
+	var node = nodes[id]
 	if node.has("child_connections"):
 		for connection in node["child_connections"]:
 			update_connection(connection)
@@ -113,12 +120,11 @@ func move_node(id, pos):
 		var parent_id = parent_connection["parent_id"]
 		var parent_node = nodes[parent_id]
 		var parent_pos = parent_node["position"]
-		var angle = rad_to_deg(parent_pos.angle_to_point(pos))
+		var angle = rad_to_deg(parent_pos.angle_to_point(node["position"]))
+		if angle < 0:
+			angle += 360
 		node["angle"] = angle
 		update_connection(node["parent_connection"])
-
-	propulsion_vector += pos - old_pos
-	propulsion_angle += node["angle"] - old_angle
 
 func update_connection(connection):
 	var parent_id = connection["parent_id"]
@@ -127,7 +133,7 @@ func update_connection(connection):
 	var child_id = connection["child_id"]
 	var child_node = nodes[child_id]
 	var child_pos = child_node["position"]
-	var distance = (child_pos - parent_pos).length()
+	var distance = child_pos.distance_to(parent_pos)
 	var angle = child_node["angle"]
 
 	connection["sprite"].position = parent_pos
@@ -135,41 +141,45 @@ func update_connection(connection):
 	connection["sprite"].scale.x = distance
 	connection["length"] = round(distance * 100.0) / 100.0
 
-func fix_connection_length(child_id):
-	var child_node = nodes[child_id]
-	if child_node.has("parent_connection"):
-		var connection = child_node["parent_connection"]
+func fix_connection_length(id):
+	var node = nodes[id]
+	if node.has("parent_connection"):
+		var connection = node["parent_connection"]
 		var parent_id = connection["parent_id"]
 		var parent_node = nodes[parent_id]
 		var parent_pos = parent_node["position"]
-		var direction = parent_pos - child_node["position"]
+		var direction = parent_pos - node["position"]
 		var distance = direction.length()
 		direction = direction / distance
-		
-		if distance > connection_distance * 2:
-			distance *= 0.99
-			distance = max(connection_distance * 0.5, distance)
-		elif distance < connection_distance * 0.5:
-			distance *= 1.01
-			distance = min(connection_distance * 2, distance)
+
+		if distance > connection_distance:
+			distance *= 0.9
+			distance = max(connection_distance, distance)
+		elif distance < connection_distance:
+			distance *= 1.1
+			distance = min(connection_distance, distance)
 
 		var new_node_pos = parent_pos - direction * distance
 
-		if new_node_pos != child_node["position"]:
-			move_node(child_id, new_node_pos)
+		move_node(id, new_node_pos, false)
 
-func pivot_node(id, angle_shift):
+func pivot_node(id, origin_id, angle_shift):
 	var node = nodes[id]
-	if node["joint"] == "pivot" and node.has("parent_connection"):
-		var parent_connection = node["parent_connection"]
-		var parent_id = parent_connection["parent_id"]
-		var parent_node = nodes[parent_id]
-		var parent_pos = parent_node["position"]
-		var distance = parent_connection["length"]
+	var origin_node = nodes[origin_id]
+	var origin_pos = origin_node["position"]
+	var distance = node["position"].distance_to(origin_pos)
+	var angle = rad_to_deg(origin_pos.angle_to_point(node["position"]))
+	if angle < 0:
+		angle += 360
 
-		var dir_vector = Vector2(1, 0).rotated(deg_to_rad(node["angle"] + angle_shift))
-		var endpoint = parent_pos + distance * dir_vector
-		move_node(id, endpoint)
+	var dir_vector = Vector2(1, 0).rotated(deg_to_rad(angle + angle_shift))
+	var endpoint = origin_pos + distance * dir_vector
+	move_node(id, endpoint, true)
+
+	if node.has("child_connections"):
+		for connection in node["child_connections"]:
+			var child_id = connection["child_id"]
+			pivot_node(child_id, origin_id, angle_shift)
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
@@ -177,12 +187,13 @@ func _ready():
 	while true:
 		added_node = false
 		for id in physical_genome.keys():
-			if not nodes.has(id):
+			if nodes.size() == 0:
+				physical_genome[id]["parent_id"] = id
+				add_node(id, Vector2(0, 0))
+				added_node = true
+			elif not nodes.has(id):
 				var parent_id = physical_genome[id]["parent_id"]
-				if nodes.size() == 0:
-					add_node(id, Vector2(0, 0))
-					added_node = true
-				elif nodes.has(parent_id):
+				if nodes.has(parent_id):
 					add_connected_node(id)
 					added_node = true
 		if not added_node or nodes.size() == physical_genome.size():
@@ -214,9 +225,13 @@ func _process(delta):
 		var behavior_step_node_id = behavior_step[0]
 		var behavior_step_angle = behavior_step[1]
 		var movement_percent = delta / behavior_step_seconds
-		var angle_change = behavior_step_angle * movement_percent
+		var angle_shift = behavior_step_angle * movement_percent
 		if nodes.has(behavior_step_node_id):
-			pivot_node(behavior_step_node_id, angle_change)
+			var node = nodes[behavior_step_node_id]
+			if node["joint"] == "pivot" and node.has("parent_connection"):
+				var parent_connection = node["parent_connection"]
+				var parent_id = parent_connection["parent_id"]
+				pivot_node(behavior_step_node_id, parent_id, angle_shift)
 
 	if inertia_angle > 0 and propulsion_angle < 0:
 		inertia_angle += propulsion_angle * 0.01
@@ -252,7 +267,3 @@ func _process(delta):
 
 	inertia_vector *= 0.95
 	inertia_angle *= 0.95
-
-	if distance_fix:
-		for id in nodes:
-			fix_connection_length(id)
