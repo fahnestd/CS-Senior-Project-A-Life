@@ -1,8 +1,9 @@
-[gd_scene load_steps=12 format=3 uid="uid://02k684x8aybd"]
+[gd_scene load_steps=15 format=3 uid="uid://02k684x8aybd"]
 
-[ext_resource type="PackedScene" uid="uid://dsign66iixx1o" path="res://src/map/tile_map.tscn" id="1_rwqex"]
 [ext_resource type="Script" path="res://src/map/SimulationMap.cs" id="1_xrqtm"]
 [ext_resource type="Shader" path="res://Shaders/TempMap.gdshader" id="2_n51vl"]
+[ext_resource type="Texture2D" uid="uid://bg0db2rnjvrs5" path="res://assets/tilemap/water.png" id="2_pwcnf"]
+[ext_resource type="Script" path="res://src/map/tile_map.cs" id="3_27xko"]
 [ext_resource type="Texture2D" uid="uid://bjnp4wei1qr7m" path="res://assets/tilemap/temps.png" id="3_vxegi"]
 [ext_resource type="Script" path="res://src/map/temp_map.cs" id="4_2ek4a"]
 
@@ -25,6 +26,18 @@ nodes/fragment/2/position = Vector2(345, 359)
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_udpxr"]
 shader = SubResource("VisualShader_cx41l")
 
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_mur1e"]
+texture = ExtResource("2_pwcnf")
+texture_region_size = Vector2i(32, 32)
+0:0/0 = 0
+1:0/0 = 0
+0:1/0 = 0
+1:1/0 = 0
+
+[sub_resource type="TileSet" id="TileSet_hdr7t"]
+tile_size = Vector2i(32, 32)
+sources/2 = SubResource("TileSetAtlasSource_mur1e")
+
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_u4vpo"]
 shader = ExtResource("2_n51vl")
 shader_parameter/overlayAmount = 0.554
@@ -45,7 +58,11 @@ sources/1 = SubResource("TileSetAtlasSource_n4771")
 material = SubResource("ShaderMaterial_udpxr")
 script = ExtResource("1_xrqtm")
 
-[node name="TileMap" parent="." instance=ExtResource("1_rwqex")]
+[node name="TileMap" type="TileMap" parent="."]
+tile_set = SubResource("TileSet_hdr7t")
+rendering_quadrant_size = 32
+format = 2
+script = ExtResource("3_27xko")
 
 [node name="TempMap" type="TileMap" parent="."]
 material = SubResource("ShaderMaterial_u4vpo")

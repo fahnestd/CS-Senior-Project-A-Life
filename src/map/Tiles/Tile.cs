@@ -29,5 +29,9 @@ namespace SeniorProject.src.map.Tiles
             Temperature = temperature;
         }
 
+        public int GetTemp()
+        {
+            return (int)Temperature;
+        }
     }
 }
