@@ -20,6 +20,8 @@ var propulsion_angle = 0
 var inertia_vector = Vector2(0, 0)
 var inertia_angle = 0
 
+@onready var world = get_node("../../World")
+
 func add_node(id, pos):
 	var node_plan = physical_genome[id]
 	var size = node_plan["size"]
@@ -261,9 +263,26 @@ func _process(delta):
 	propulsion_vector *= 0
 
 	if inertia_vector.length() <= max_speed:
-		self.position -= inertia_vector
+		get_parent().position -= inertia_vector
 	else:
-		self.position -= inertia_vector / inertia_vector.length() * max_speed
+		get_parent().position -= inertia_vector / inertia_vector.length() * max_speed
 
 	inertia_vector *= 0.95
 	inertia_angle *= 0.95
+	
+	handle_interactions()
+
+func handle_interactions():
+	handle_pressure();
+	handle_lightlevel();
+	handle_temperature();
+	
+func handle_pressure():
+	get_node("../TerrainLabel").text = str(Vector2i(get_parent().position) / world.GetTileSize());
+	get_node("../TerrainLabel").text += "\nTemperature: " + str(world.GetTileTemperature(Vector2i(get_parent().global_position) / world.GetTileSize())) + "\nTerrain: " + str(world.GetTileTerrainType(Vector2i(get_parent().global_position) / world.GetTileSize()));
+
+func handle_lightlevel():
+	pass
+	
+func handle_temperature():
+	pass

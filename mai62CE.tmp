@@ -28,6 +28,7 @@ corner_radius_bottom_left = 8
 [node name="MainScene" type="Node2D"]
 
 [node name="World" parent="." instance=ExtResource("3_3o0j0")]
+position = Vector2(-4000, -4000)
 
 [node name="Creature Generator" type="Node2D" parent="."]
 script = ExtResource("4_r0x6e")

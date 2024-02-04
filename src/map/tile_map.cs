@@ -13,13 +13,13 @@ public partial class tile_map : TileMap
 	[Export]
 	private int seed = 1000;
 
-	private SimulationMap simMap = SimulationMap.instance;
+	private SimulationMap simMap;
 
 	// Called when the node enters the scene tree for the first time.
 	public override void _Ready()
 	{
-        simMap.InitializeMap();
-		InitializeMap();
+        simMap = GetParent<SimulationMap>();
+		InitializeMap(simMap);
 	}
 
 	// Called every frame. 'delta' is the elapsed time since the previous frame.
@@ -37,13 +37,13 @@ public partial class tile_map : TileMap
 		}
 	}
 
-	public void InitializeMap()
+	public void InitializeMap(SimulationMap simMap)
 	{
-		for (int x = 0; x < mapWidth; x++)
-		{
-			for (int y = 0; y < mapHeight; y++)
-			{
-				SetCell(0, new Vector2I(x, y), 2, SimulationMap.getTileCoordinates(simMap.map[x, y].TerrainType));
+        for (int x = 0; x < simMap.GetMapWidth(); x++)
+        {
+            for (int y = 0; y < simMap.GetMapHeight(); y++)
+            {
+                SetCell(0, new Vector2I(x, y), 2, SimulationMap.getTileCoordinates((int)simMap.map[x, y].TerrainType));
 			}
 		}
 	}

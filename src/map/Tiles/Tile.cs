@@ -15,16 +15,15 @@ namespace SeniorProject.src.map.Tiles
         public double LightLevel { get; set; }
         public double WaterPressure { get; set; }
 
-        public int TerrainType {  get; set; }
+        public double TerrainType {  get; set; }
 
-        public Tile(int terrainType)
+        public Tile()
         {
-            TerrainType = terrainType;
         }
 
-        public Tile(int terrainType, double waterPressure, double lightLevel, double temperature)
+        public Tile(double terrainType, double waterPressure, double lightLevel, double temperature)
         {
-            TerrainType = terrainType;
+            TerrainType = (double)terrainType;
             WaterPressure = waterPressure;
             LightLevel = lightLevel;
             Temperature = temperature;
