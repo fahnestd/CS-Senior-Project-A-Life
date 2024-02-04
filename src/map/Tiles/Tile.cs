@@ -28,7 +28,6 @@ namespace SeniorProject.src.map.Tiles
             LightLevel = lightLevel;
             Temperature = temperature;
         }
-
         public int GetTemp()
         {
             return (int)Temperature;
