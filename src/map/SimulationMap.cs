@@ -54,24 +54,9 @@ namespace SeniorProject.src.map
             return new Vector2I(TileValue % TilesetWidth, TileValue / TilesetWidth);
         }
 
-        public double GetTileWaterPressure(Vector2I coordinates)
+        public Tile GetTile(Vector2I coordinates)
         {
-            return map[coordinates.X, coordinates.Y].WaterPressure;
-        }
-
-        public double GetTileLightLevel(Vector2I coordinates)
-        {
-            return map[coordinates.X, coordinates.Y].LightLevel;
-        }
-
-        public double GetTileTemperature(Vector2I coordinates)
-        {
-            return map[coordinates.X, coordinates.Y].Temperature;
-        }
-
-        public double GetTileTerrainType(Vector2I coordinates)
-        {
-            return map[coordinates.X, coordinates.Y].TerrainType;
+            return map[coordinates.X, coordinates.Y];
         }
 
         public int GetMapWidth()

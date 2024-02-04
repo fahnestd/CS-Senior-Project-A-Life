@@ -272,14 +272,27 @@ func _process(delta):
 	
 	handle_interactions()
 
+# On second thought, we should probably move this functionality into the tile, and have the tile apply any affects it needs or wants onto the creature
+# Ill leave it here for now though while I think it through.
 func handle_interactions():
 	handle_pressure();
 	handle_lightlevel();
 	handle_temperature();
+	handle_tiletype();
+	
+	update_label();
+	
+func update_label():
+	get_node("../TerrainLabel").text = str(Vector2i(get_parent().position) / world.GetTileSize());
+	get_node("../TerrainLabel").text += "\nTerrain: " + str(world.GetTile(Vector2i(get_parent().global_position) / world.GetTileSize()).TerrainType);
+	get_node("../TerrainLabel").text += "\nTemperature: " + str(world.GetTile(Vector2i(get_parent().global_position) / world.GetTileSize()).Temperature);
+	
+	
+func handle_tiletype():
+	pass
 	
 func handle_pressure():
-	get_node("../TerrainLabel").text = str(Vector2i(get_parent().position) / world.GetTileSize());
-	get_node("../TerrainLabel").text += "\nTemperature: " + str(world.GetTileTemperature(Vector2i(get_parent().global_position) / world.GetTileSize())) + "\nTerrain: " + str(world.GetTileTerrainType(Vector2i(get_parent().global_position) / world.GetTileSize()));
+	pass
 
 func handle_lightlevel():
 	pass

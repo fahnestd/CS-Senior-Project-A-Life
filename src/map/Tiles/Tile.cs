@@ -7,9 +7,8 @@ using System.Threading.Tasks;
 
 namespace SeniorProject.src.map.Tiles
 {
-    public class Tile
+    public partial class Tile : Node
     {
-        public string Name { get; }
 
         public double Temperature { get; set; }
         public double LightLevel { get; set; }
@@ -28,9 +27,6 @@ namespace SeniorProject.src.map.Tiles
             LightLevel = lightLevel;
             Temperature = temperature;
         }
-        public int GetTemp()
-        {
-            return (int)Temperature;
-        }
+        
     }
 }
