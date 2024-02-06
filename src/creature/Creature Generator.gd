@@ -2,15 +2,16 @@ extends Node2D
 
 var creature_scene = preload("res://creature.tscn")
 @onready var camera = get_node("Camera2D")
+@onready var world = get_node("../World")
 
 var mutation_chance = 10
 
 func create_offspring(creature_1, creature_2):
-	var trait_crossover = crossover({}, creature_1.physical_genome, creature_2.physical_genome)
+	var trait_crossover = crossover({}, creature_1.get_node("Creature").physical_genome, creature_2.get_node("Creature").physical_genome)
 	var trait_mutation = mutation(trait_crossover, trait_crossover.size(), mutation_chance, -50, 50)
 
-	var offspring_pos = (creature_1.position + creature_2.position) / 2.0
-	var offspring_rot = (creature_1.rotation + creature_2.rotation) / 2.0
+	var offspring_pos = (creature_1.global_position + creature_2.global_position) / 2.0
+	var offspring_rot = (creature_1.get_node("Creature").rotation + creature_2.get_node("Creature").rotation) / 2.0
 	create_creature(offspring_pos, offspring_rot, trait_mutation)
 	print("New Genome:")
 	print(trait_mutation)
@@ -34,10 +35,10 @@ func create_creature(pos, rot, physical_genome):
 		}
 	}
 
-	new_creature.physical_genome = physical_genome
-	new_creature.behavioral_genome = behavioral_genome
-	new_creature.position = pos
-	new_creature.rotation_degrees = rot
+	new_creature.get_node("Creature").physical_genome = physical_genome
+	new_creature.get_node("Creature").behavioral_genome = behavioral_genome
+	new_creature.global_position = pos
+	new_creature.get_node("Creature").rotation_degrees = rot
 
 	camera.reparent(new_creature)
 	camera.position = Vector2(0, 0)
@@ -152,7 +153,7 @@ func _ready():
 			"joint": "pivot"
 		}
 	}
-	create_creature(Vector2(0, 0), 90, physical_genome)
+	create_creature(world.GetSpawnCoordinates() * world.GetTileSize(), 90, physical_genome)
 
 var timer = 0
 func _process(delta):

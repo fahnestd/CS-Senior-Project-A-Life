@@ -9,38 +9,40 @@ using SeniorProject.src.map.Tiles;
 
 namespace SeniorProject.src.map
 {
-    internal class SimulationMap
+    
+    public partial class SimulationMap : Node2D
     {
         [Export]
         private static int mapWidth = 250;
         [Export]
         private static int mapHeight = 250;
 
-        public static SimulationMap instance = new();
+        public static int tileSize = 32;
+
+        //public static SimulationMap instance = new();
 
         public Tile[,] map = new Tile[mapWidth, mapHeight];
+
+        public SimulationMap()
+        {
+            InitializeMap();
+        }
 
         public void InitializeMap()
         {
             Random rand = new Random();
             int seed = rand.Next();
             TerrainGenerator TerrainGenerator = new CellularGradientTerrainGenerator(seed);
-            int[,] TerrainMap = TerrainGenerator.GenerateMap(mapWidth, mapHeight); 
-            for (int x = 0; x < mapWidth; x++)
-            {
-                for (int y = 0; y < mapHeight; y++)
-                {
-                    map[x, y] = new Tile(TerrainMap[x, y]);
-                }
-            }
-
+            int[,] TerrainMap = TerrainGenerator.GenerateMap(mapWidth, mapHeight);
             seed++;
             TerrainGenerator TemperatureGenerator = new InverseCellularGradientTerrainGenerator(seed);
             int[,] TemperatureMap = TemperatureGenerator.GenerateMap(mapWidth, mapHeight);
-            for (int x = 0; x < mapWidth; x++)
+            for (int y = 0; y < mapHeight; y++)
             {
-                for (int y = 0; y < mapHeight; y++)
+                for (int x = 0; x < mapWidth; x++)
                 {
+                    map[x, y] = new Tile();
+                    map[x, y].TerrainType = TerrainMap[x, y];
                     map[x, y].Temperature = TemperatureMap[x, y];
                 }
             }
@@ -52,5 +54,29 @@ namespace SeniorProject.src.map
             return new Vector2I(TileValue % TilesetWidth, TileValue / TilesetWidth);
         }
 
+        public Tile GetTile(Vector2I coordinates)
+        {
+            return map[coordinates.X, coordinates.Y];
+        }
+
+        public int GetMapWidth()
+        {
+            return mapWidth;
+        }
+
+        public int GetMapHeight()
+        {
+            return mapHeight;
+        }
+
+        public int GetTileSize()
+        {
+            return tileSize;
+        }
+
+        public Vector2 GetSpawnCoordinates()
+        {
+            return new Vector2(mapWidth / 2, mapHeight / 2);
+        }
     }
 }
