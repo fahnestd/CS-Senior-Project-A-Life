@@ -4,9 +4,14 @@ var creature_scene = preload("res://creature.tscn")
 @onready var camera = get_node("Camera2D")
 @onready var world = get_node("../World")
 
+signal next_generation
+signal creature_info(info)
+
 var mutation_chance = 10
 
 func create_offspring(creature_1, creature_2):
+	next_generation.emit()
+	
 	var trait_crossover = crossover({}, creature_1.get_node("Creature").physical_genome, creature_2.get_node("Creature").physical_genome)
 	var trait_mutation = mutation(trait_crossover, trait_crossover.size(), mutation_chance, -50, 50)
 
@@ -16,6 +21,7 @@ func create_offspring(creature_1, creature_2):
 	print("New Genome:")
 	print(trait_mutation)
 	print()
+	creature_info.emit(trait_mutation)
 
 func create_creature(pos, rot, physical_genome):
 	var new_creature = creature_scene.instantiate()
