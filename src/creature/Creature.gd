@@ -1,5 +1,7 @@
 extends Node2D
 
+var Behavior = preload("res://src/creature/Behavior.gd").new()
+
 var physical_genome
 var behavioral_genome
 
@@ -15,12 +17,14 @@ var pivot_texture = preload("res://assets/creature/pivot.png")
 
 var nodes = {}
 
+# Stores the ids of pivot nodes in creation order, so behavioral patterns can specify things like "rotate first pivot node, rotate second pivot node" without referring to their specific ids
+var pivot_node_ids = {}
+
 var propulsion_vector = Vector2(0, 0)
 var propulsion_angle = 0
-var inertia_vector = Vector2(0, 0)
-var inertia_angle = 0
 
 @onready var world = get_node("../../World")
+@onready var camera = get_node("../Camera2D")
 
 func add_node(id, pos):
 	var node_plan = physical_genome[id]
@@ -52,7 +56,7 @@ func add_node(id, pos):
 	new_area.add_child(new_collision)
 
 	new_area.position = pos
-	new_area.script = load("res://src/creature/Area2D.gd")
+	new_area.script = load("res://src/creature/Collision.gd")
 	new_area.size = Vector2(size, size)
 	new_area.node_id = id
 
@@ -85,6 +89,9 @@ func add_connected_node(id):
 	var new_node_id = add_node(id, endpoint)
 	var new_node = nodes[new_node_id]
 
+	if new_node["joint"] == "pivot":
+		pivot_node_ids[str(pivot_node_ids.size())] = id
+
 	var new_connection = {
 		"sprite": new_sprite,
 		"parent_id": parent_id,
@@ -105,18 +112,28 @@ func move_node(id, pos, propulsion):
 	node["position"] = pos
 	node["area"].position = pos
 
-	fix_node_connections(id)
+	update_node_angle(id)
+	update_node_connections(id)
+
+	var propulsion_angle_change
+	var angle_diff = old_angle - node["angle"]
+	if angle_diff < 0:
+		if abs(angle_diff) < angle_diff + 360:
+			propulsion_angle_change = angle_diff
+		else:
+			propulsion_angle_change = angle_diff + 360
+	else:
+		if angle_diff < abs(angle_diff - 360):
+			propulsion_angle_change = angle_diff
+		else:
+			propulsion_angle_change = angle_diff - 360
 
 	if propulsion:
-		propulsion_vector += pos - old_pos
-		propulsion_angle += node["angle"] - old_angle
+		propulsion_vector += old_pos - pos
+		propulsion_angle += propulsion_angle_change
 
-func fix_node_connections(id):
+func update_node_angle(id):
 	var node = nodes[id]
-	if node.has("child_connections"):
-		for connection in node["child_connections"]:
-			update_connection(connection)
-
 	if node.has("parent_connection"):
 		var parent_connection = node["parent_connection"]
 		var parent_id = parent_connection["parent_id"]
@@ -126,6 +143,14 @@ func fix_node_connections(id):
 		if angle < 0:
 			angle += 360
 		node["angle"] = angle
+
+func update_node_connections(id):
+	var node = nodes[id]
+	if node.has("child_connections"):
+		for connection in node["child_connections"]:
+			update_connection(connection)
+
+	if node.has("parent_connection"):
 		update_connection(node["parent_connection"])
 
 func update_connection(connection):
@@ -163,7 +188,8 @@ func fix_connection_length(id):
 
 		var new_node_pos = parent_pos - direction * distance
 
-		move_node(id, new_node_pos, false)
+		if new_node_pos != node["position"]:
+			move_node(id, new_node_pos, false)
 
 func pivot_node(id, origin_id, angle_shift):
 	var node = nodes[id]
@@ -183,17 +209,27 @@ func pivot_node(id, origin_id, angle_shift):
 			var child_id = connection["child_id"]
 			pivot_node(child_id, origin_id, angle_shift)
 
-# Called when the node enters the scene tree for the first time.
-func _ready():
+func build_creature():
+	add_first_node()
+	add_possible_nodes()
+	force_add_remaining_nodes()
+
+func add_first_node():
+	var lowest_id = 0
+	while not physical_genome.has(str(lowest_id)):
+		lowest_id += 1
+	var id = str(lowest_id)
+	physical_genome[id]["parent_id"] = id
+	add_node(id, Vector2(0, 0))
+	camera.reparent.call_deferred(nodes[id]["area"])
+	camera.position = Vector2(0, 0)
+
+func add_possible_nodes():
 	var added_node = false
 	while true:
 		added_node = false
 		for id in physical_genome.keys():
-			if nodes.size() == 0:
-				physical_genome[id]["parent_id"] = id
-				add_node(id, Vector2(0, 0))
-				added_node = true
-			elif not nodes.has(id):
+			if not nodes.has(id):
 				var parent_id = physical_genome[id]["parent_id"]
 				if nodes.has(parent_id):
 					add_connected_node(id)
@@ -201,74 +237,42 @@ func _ready():
 		if not added_node or nodes.size() == physical_genome.size():
 			break
 
-var behavior_step_progress = 0
-var behavior_step_id = 0
-var behavior_id = "0"
+func force_add_remaining_nodes():
+	if nodes.size() != physical_genome.size():
+		for id in physical_genome.keys():
+			if not nodes.has(id):
+				var parent_id = int(physical_genome[id]["parent_id"])
+				while not nodes.has(str(parent_id)):
+					parent_id -= 1
+					if parent_id < 0:
+						parent_id = int(physical_genome[id]["parent_id"]) + 1
+						while not nodes.has(str(parent_id)):
+							parent_id += 1
+				physical_genome[id]["parent_id"] = str(parent_id)
+				add_connected_node(id)
+
+# Called when the node enters the scene tree for the first time.
+func _ready():
+	Behavior.creature = self
+	build_creature()
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta):
-	if behavior_step_progress == 0 and behavior_step_id == 0:
-		behavior_id = str(randi_range(0, len(behavioral_genome) - 1))
+	Behavior.process_behavior(delta)
 
-	var behavior = behavioral_genome[behavior_id]
-	var behavior_pattern = behavior["pattern"]
-	var simultaneous_steps = behavior_pattern[behavior_step_id]
-	var behavior_step_seconds = simultaneous_steps[len(simultaneous_steps) - 1]
+	propulsion_angle = clamp(propulsion_angle, -180, 180)
 
-	behavior_step_progress += delta
-	if behavior_step_progress > behavior_step_seconds:
-		behavior_step_progress = 0
-		behavior_step_id += 1
-		if behavior_step_id >= len(behavior_pattern):
-			behavior_step_id = 0
+	self.rotation_degrees += propulsion_angle * delta
 
-	for i in range(len(simultaneous_steps) - 1):
-		var behavior_step = simultaneous_steps[i]
-		var behavior_step_node_id = behavior_step[0]
-		var behavior_step_angle = behavior_step[1]
-		var movement_percent = delta / behavior_step_seconds
-		var angle_shift = behavior_step_angle * movement_percent
-		if nodes.has(behavior_step_node_id):
-			var node = nodes[behavior_step_node_id]
-			if node["joint"] == "pivot" and node.has("parent_connection"):
-				var parent_connection = node["parent_connection"]
-				var parent_id = parent_connection["parent_id"]
-				pivot_node(behavior_step_node_id, parent_id, angle_shift)
+	var move_vector = propulsion_vector.rotated(deg_to_rad(self.rotation_degrees))
 
-	if inertia_angle > 0 and propulsion_angle < 0:
-		inertia_angle += propulsion_angle * 0.01
-	elif inertia_angle < 0 and propulsion_angle > 0:
-		inertia_angle += propulsion_angle * 0.01
+	if move_vector.length() <= max_speed:
+		get_parent().position += move_vector
 	else:
-		inertia_angle += propulsion_angle
+		get_parent().position += move_vector / move_vector.length() * max_speed
 
-	self.rotation_degrees += inertia_angle * delta
-	propulsion_angle = 0
-	propulsion_vector = propulsion_vector.rotated(deg_to_rad(self.rotation_degrees))
-
-	if inertia_vector.x > 0 and propulsion_vector.x < 0:
-		inertia_vector.x += propulsion_vector.x * 0.01
-	elif inertia_vector.x < 0 and propulsion_vector.x > 0:
-		inertia_vector.x += propulsion_vector.x * 0.01
-	else:
-		inertia_vector.x += propulsion_vector.x
-
-	if inertia_vector.y > 0 and propulsion_vector.y < 0:
-		inertia_vector.y += propulsion_vector.y * 0.01
-	elif inertia_vector.y < 0 and propulsion_vector.y > 0:
-		inertia_vector.y += propulsion_vector.y * 0.01
-	else:
-		inertia_vector.y += propulsion_vector.y
-
-	propulsion_vector *= 0
-
-	if inertia_vector.length() <= max_speed:
-		get_parent().position -= inertia_vector
-	else:
-		get_parent().position -= inertia_vector / inertia_vector.length() * max_speed
-
-	inertia_vector *= 0.95
-	inertia_angle *= 0.95
+	propulsion_vector *= 0.99999
+	propulsion_angle *= 0.99999
 	
 	handle_interactions()
 
@@ -283,11 +287,18 @@ func handle_interactions():
 	update_label();
 	
 func update_label():
-	get_node("../TerrainLabel").text = str(Vector2i(get_parent().position) / world.GetTileSize());
-	get_node("../TerrainLabel").text += "\nTerrain: " + str(world.GetTile(Vector2i(get_parent().global_position) / world.GetTileSize()).TerrainType);
-	get_node("../TerrainLabel").text += "\nTemperature: " + str(world.GetTile(Vector2i(get_parent().global_position) / world.GetTileSize()).Temperature);
-	
-	
+	var terrainLabel = get_node("../TerrainLabel")
+	var pos = Vector2i(get_parent().position)
+	var global_pos = Vector2i(get_parent().global_position)
+	terrainLabel.text = str(pos / world.GetTileSize());
+	var tile = world.GetTile(global_pos)
+	if tile != null:
+		terrainLabel.text += "\nTerrain: " + str(tile.TerrainType);
+		terrainLabel.text += "\nTemperature: " + str(tile.Temperature);
+	else:
+		pass
+
+
 func handle_tiletype():
 	pass
 	

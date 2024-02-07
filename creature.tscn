@@ -1,6 +1,9 @@
-[gd_scene load_steps=2 format=3 uid="uid://b00knpl443ako"]
+[gd_scene load_steps=3 format=3 uid="uid://b00knpl443ako"]
 
 [ext_resource type="Script" path="res://src/creature/Creature.gd" id="1_4o6i4"]
+
+[sub_resource type="LabelSettings" id="LabelSettings_2c82b"]
+font_size = 8
 
 [node name="creatureParent" type="Node2D"]
 
@@ -12,4 +15,6 @@ offset_left = -9.0
 offset_top = 10.0
 offset_right = 9.0
 offset_bottom = 33.0
+text = "	"
+label_settings = SubResource("LabelSettings_2c82b")
 horizontal_alignment = 1
