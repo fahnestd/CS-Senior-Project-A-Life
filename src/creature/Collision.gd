@@ -11,6 +11,7 @@ var position_shift = Vector2(0, 0)
 var new_position = position
 
 var parent
+var collision_area
 
 func _ready():
 	parent = get_parent()
@@ -21,6 +22,8 @@ func _on_area_entered(area):
 	collision_check = true
 
 func avoid_area(area):
+	collision_area = area
+
 	#Position should not be modified in this function or else there will be a race condition
 	#Modify position_shift instead
 	var position_difference = area.position - position
@@ -65,5 +68,11 @@ func _process(_delta):
 			shift_sum = Vector2(0, 0)
 			num_shifts = 0
 
-	parent.fix_connection_length(node_id)
-	#parent.fix_node_connections(node_id)
+	if collision_area != null:
+		if collision_area.parent != parent:
+			parent.fix_connection_length(node_id)
+		else:
+			parent.update_node_angle(node_id)
+			parent.update_node_connections(node_id)
+	else:
+		parent.fix_connection_length(node_id)

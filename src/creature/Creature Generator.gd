@@ -4,40 +4,95 @@ var creature_scene = preload("res://creature.tscn")
 @onready var camera = get_node("Camera2D")
 @onready var world = get_node("../World")
 
+var generate_creatures = false
+var mutation_chance = 50
+var print_new_genome = false
 signal next_generation
 signal creature_info(info)
 
-var mutation_chance = 10
-
 func create_offspring(creature_1, creature_2):
-	next_generation.emit()
-	
-	var trait_crossover = crossover({}, creature_1.get_node("Creature").physical_genome, creature_2.get_node("Creature").physical_genome)
-	var trait_mutation = mutation(trait_crossover, trait_crossover.size(), mutation_chance, -50, 50)
+  next_generation.emit()
+  
+	var physical_crossover = crossover({}, creature_1.get_node("Creature").physical_genome, creature_2.get_node("Creature").physical_genome)
+	var physical_mutation = mutation(physical_crossover, physical_crossover.size(), mutation_chance, -50, 50)
 
 	var offspring_pos = (creature_1.global_position + creature_2.global_position) / 2.0
 	var offspring_rot = (creature_1.get_node("Creature").rotation + creature_2.get_node("Creature").rotation) / 2.0
-	create_creature(offspring_pos, offspring_rot, trait_mutation)
-	print("New Genome:")
-	print(trait_mutation)
-	print()
-	creature_info.emit(trait_mutation)
+	create_creature(offspring_pos, offspring_rot, physical_mutation)
+	if print_new_genome:
+		print("New Genome:")
+		print(physical_mutation)
+		print()
 
 func create_creature(pos, rot, physical_genome):
 	var new_creature = creature_scene.instantiate()
 
 	var behavioral_genome = {
 		"0" = {
-			"pattern" = [[["2", 40.0], ["3", -40.0], 1.0], [["2", -40.0], ["3", 40.0], 1.0]]
+			"if" = {
+				"angle diff" = {
+					"conditional" = "less",
+					"value" = 15,
+					"and" = {
+						"angle diff" = {
+							"conditional" = "greater",
+							"value" = -15
+						}
+					}
+				}
+			},
+			"pattern" = {
+				"0" = {
+					"0" = 40.0,
+					"1" = -40.0,
+					"time" = 0.5
+				},
+				"1" = {
+					"0" = -40.0,
+					"1" = 40.0,
+					"time" = 1.0
+				}
+			}
 		},
 		"1" = {
-			"pattern" = [[["2", 40.0], 1.0], [["2", -40.0], 1.0]]
+			"if" = {
+				"angle diff" = {
+					"conditional" = "less",
+					"value" = -14
+				}
+			},
+			"pattern" = {
+				"0" = {
+					"0" = 40.0,
+					"1" = 40.0,
+					"time" = 0.25
+				},
+				"1" = {
+					"0" = -40.0,
+					"1" = -40.0,
+					"time" = 1.0
+				}
+			}
 		},
 		"2" = {
-			"pattern" = [[["3", -40.0], 1.0], [["3", 40.0], 1.0]]
-		},
-		"3" = {
-			"pattern" = [[1.0]]
+			"if" = {
+				"angle diff" = {
+					"conditional" = "greater",
+					"value" = 14
+				}
+			},
+			"pattern" = {
+				"0" = {
+					"0" = -40.0,
+					"1" = -40.0,
+					"time" = 0.25
+				},
+				"1" = {
+					"0" = 40.0,
+					"1" = 40.0,
+					"time" = 1.0
+				}
+			}
 		}
 	}
 
@@ -159,12 +214,13 @@ func _ready():
 			"joint": "pivot"
 		}
 	}
-	create_creature(world.GetSpawnCoordinates() * world.GetTileSize(), 90, physical_genome)
+	create_creature(world.GetSpawnCoordinates() * world.GetTileSize(), 0, physical_genome)
 
 var timer = 0
 func _process(delta):
-	timer += delta
-	if timer >= 1:
-		create_offspring(creatures[creatures.size() - 1],
-						 creatures[creatures.size() - 1])
-		timer = 0
+	if generate_creatures:
+		timer += delta
+		if timer >= 5:
+			create_offspring(creatures[creatures.size() - 1],
+							 creatures[creatures.size() - 1])
+			timer = 0
