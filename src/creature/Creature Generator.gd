@@ -7,8 +7,12 @@ var creature_scene = preload("res://creature.tscn")
 var generate_creatures = false
 var mutation_chance = 50
 var print_new_genome = false
+signal next_generation
+signal creature_info(info)
 
 func create_offspring(creature_1, creature_2):
+  next_generation.emit()
+  
 	var physical_crossover = crossover({}, creature_1.get_node("Creature").physical_genome, creature_2.get_node("Creature").physical_genome)
 	var physical_mutation = mutation(physical_crossover, physical_crossover.size(), mutation_chance, -50, 50)
 

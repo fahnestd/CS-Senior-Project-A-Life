@@ -1,12 +1,16 @@
-[gd_scene load_steps=12 format=3 uid="uid://dvweqacxjay7r"]
+[gd_scene load_steps=13 format=3 uid="uid://dvweqacxjay7r"]
 
 [ext_resource type="PackedScene" uid="uid://02k684x8aybd" path="res://Map.tscn" id="3_3o0j0"]
 [ext_resource type="Script" path="res://src/ui/simtime_ui.gd" id="4_0otx1"]
 [ext_resource type="Script" path="res://src/ui/foodcontrol_ui.gd" id="4_hy7gx"]
 [ext_resource type="Script" path="res://src/creature/Camera.gd" id="4_kinps"]
 [ext_resource type="Script" path="res://src/creature/Creature Generator.gd" id="4_r0x6e"]
+[ext_resource type="Script" path="res://src/ui/gencontrol_ui.gd" id="5_mav27"]
 [ext_resource type="StyleBox" uid="uid://m3372f0wk2mk" path="res://assets/ui/SepLineUIAsset.tres" id="5_romv8"]
 [ext_resource type="StyleBox" uid="uid://brqbxhceg7eji" path="res://assets/ui/VSepLineUIAsset.tres" id="6_j2i2m"]
+
+[ext_resource type="Script" path="res://src/ui/creaturepanel_ui.gd" id="7_fkd73"]
+
 [ext_resource type="Texture2D" uid="uid://boj5nvtsna5ol" path="res://assets/creature/circle.png" id="8_f5nnr"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_8urog"]
@@ -120,6 +124,16 @@ offset_right = 168.0
 offset_bottom = 54.0
 theme_override_font_sizes/font_size = 12
 text = "Current Generation:"
+script = ExtResource("5_mav27")
+
+[node name="GenNumLabel" type="Label" parent="CanvasLayer/UIOverlay/TopUIPanel/CurrentGenLabel"]
+modulate = Color(0, 0, 0, 1)
+self_modulate = Color(0, 0, 0, 1)
+offset_left = 128.0
+offset_right = 288.0
+offset_bottom = 40.0
+theme_override_font_sizes/font_size = 12
+text = "1"
 
 [node name="SideUIPanel" type="Panel" parent="CanvasLayer/UIOverlay"]
 modulate = Color(0.662745, 0.662745, 0.662745, 1)
@@ -179,7 +193,7 @@ max_value = 1.0
 step = 0.05
 value = 0.5
 
-[node name="FoodLabel" type="Label" parent="CanvasLayer/UIOverlay/SideUIPanel/FoodPanel"]
+[node name="FoodLabel" type="Label" parent="CanvasLayer/UIOverlay/SideUIPanel/FoodPanel/FoodControl"]
 modulate = Color(0, 0, 0, 1)
 self_modulate = Color(0, 0, 0, 1)
 layout_mode = 0
@@ -190,21 +204,32 @@ offset_bottom = 20.0
 theme_override_font_sizes/font_size = 8
 text = "Food Availability:"
 
-[node name="FoodPanel" type="Panel" parent="CanvasLayer/UIOverlay/SideUIPanel/FoodPanel"]
+[node name="CreaturePanel" type="Panel" parent="CanvasLayer/UIOverlay/SideUIPanel/FoodPanel"]
 layout_mode = 0
 offset_top = 352.0
 offset_right = 160.0
 offset_bottom = 552.0
 theme_override_styles/panel = SubResource("StyleBoxFlat_ulauv")
+script = ExtResource("7_fkd73")
 
-[node name="SelectedCreatureLabel" type="Label" parent="CanvasLayer/UIOverlay/SideUIPanel"]
+[node name="CreatureInfoLabel" type="Label" parent="CanvasLayer/UIOverlay/SideUIPanel/FoodPanel/CreaturePanel"]
+layout_mode = 0
+offset_left = 8.0
+offset_top = 8.0
+offset_right = 152.0
+offset_bottom = 192.0
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_font_sizes/font_size = 14
+autowrap_mode = 3
+
+[node name="SelectedCreatureLabel" type="Label" parent="CanvasLayer/UIOverlay"]
 modulate = Color(0, 0, 0, 1)
 self_modulate = Color(0, 0, 0, 1)
 layout_mode = 0
-offset_left = 12.0
-offset_top = 368.0
-offset_right = 181.0
-offset_bottom = 408.0
+offset_left = 972.0
+offset_top = 408.0
+offset_right = 1141.0
+offset_bottom = 448.0
 theme_override_colors/font_color = Color(0, 0, 0, 0.47451)
 theme_override_font_sizes/font_size = 12
 text = "Selected Creature"
@@ -226,6 +251,10 @@ offset_top = 40.0
 offset_right = 970.0
 offset_bottom = 649.0
 theme_override_styles/separator = ExtResource("6_j2i2m")
+
+
+[connection signal="creature_info" from="Creature Generator" to="CanvasLayer/UIOverlay/SideUIPanel/FoodPanel/CreaturePanel" method="_on_creature_generator_creature_info"]
+[connection signal="next_generation" from="Creature Generator" to="CanvasLayer/UIOverlay/TopUIPanel/CurrentGenLabel" method="_on_creature_generator_next_generation"]
 
 [node name="Target Node" type="Sprite2D" parent="."]
 position = Vector2(4000, 4000)
