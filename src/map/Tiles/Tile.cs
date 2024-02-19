@@ -22,7 +22,7 @@ namespace SeniorProject.src.map.Tiles
         {
         }
 
-        public Tile(Vector2I Coordinates,double terrainType, double waterPressure, double lightLevel, double temperature)
+        public Tile(Vector2I Coordinates, double terrainType, double waterPressure, double lightLevel, double temperature)
         {
             this.Coordinates = Coordinates;
             TerrainType = (double)terrainType;
