@@ -3,7 +3,7 @@ using SeniorProject.src.map;
 using SeniorProject.src.map.TerrainGeneration;
 using System;
 
-public partial class tile_map : TileMap
+public partial class TerrainMap: TileMap
 {
 	[Export]
 	private int mapWidth = 250;
@@ -20,21 +20,6 @@ public partial class tile_map : TileMap
 	{
         simMap = GetParent<SimulationMap>();
 		InitializeMap(simMap);
-	}
-
-	// Called every frame. 'delta' is the elapsed time since the previous frame.
-	public override void _Process(double delta)
-	{
-		if (Input.IsActionJustPressed("regen_map"))
-		{
-
-			//Random rand = new Random();
-			//CellularGradientTerrainGenerator generator = new CellularGradientTerrainGenerator(rand.Next(), 3);
-			//generator.noise.Frequency = (float)GetNode<Slider>("freq").Value;
-			//generator.noise.CellularJitter = (float)GetNode<Slider>("jitter").Value;
-			//generator.noise.DomainWarpAmplitude = (float)GetNode<Slider>("amp").Value;
-			//InitializeMap();
-		}
 	}
 
 	public void InitializeMap(SimulationMap simMap)

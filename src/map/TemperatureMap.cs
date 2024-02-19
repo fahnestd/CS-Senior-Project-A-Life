@@ -3,13 +3,12 @@ using SeniorProject.src.map;
 using SeniorProject.src.map.TerrainGeneration;
 using System;
 
-public partial class temp_map : TileMap
+public partial class TemperatureMap: TileMap
 {
     [Export]
     private int seed = 1000;
 
     private SimulationMap simMap;
-
 
     // Called when the node enters the scene tree for the first time.
     public override void _Ready()
@@ -17,29 +16,6 @@ public partial class temp_map : TileMap
         simMap = GetParent<SimulationMap>();
         InitializeMap(simMap);
     }
-
-    // Called every frame. 'delta' is the elapsed time since the previous frame.
-    public override void _Process(double delta)
-    {
-        if (Input.IsActionJustPressed("toggle_tempmap"))
-        {
-            if (this.IsVisibleInTree())
-            {
-                this.Hide();
-            } else
-            {
-                this.Show();
-            }
-        }
-
-        if (Input.IsActionJustPressed("regen_map"))
-        {
-           
-            //TerrainGenerator generator = new InverseCellularGradientTerrainGenerator(rand.Next());
-            //InitializeMap(generator);
-        }
-    }
-
 
     public void InitializeMap(SimulationMap simMap)
     {
