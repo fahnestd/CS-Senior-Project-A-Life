@@ -4,7 +4,7 @@ using System;
 public partial class CreatureHealth : Node2D
 {
     [Export]
-    int health = 1000;
+    int health = 100;
 
     public override void _Ready()
     {

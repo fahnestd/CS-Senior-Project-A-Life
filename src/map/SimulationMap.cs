@@ -42,6 +42,7 @@ namespace SeniorProject.src.map
 				for (int x = 0; x < mapWidth; x++)
 				{
 					map[x, y] = new Tile();
+					map[x, y].Coordinates = new Vector2I(x, y);
 					map[x, y].TerrainType = TerrainMap[x, y];
 					map[x, y].Temperature = TemperatureMap[x, y];
 				}
