@@ -102,8 +102,8 @@ func create_creature(pos, rot, physical_genome):
 	new_creature.global_position = pos
 	new_creature.get_node("Creature").rotation_degrees = rot
 
-	camera.reparent(new_creature)
-	camera.position = Vector2(0, 0)
+	#camera.reparent(new_creature)
+	#camera.position = Vector2(0, 0)
 	self.get_parent().add_child.call_deferred(new_creature)
 
 	creatures.append(new_creature)

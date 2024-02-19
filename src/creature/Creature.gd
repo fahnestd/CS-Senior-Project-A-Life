@@ -24,7 +24,7 @@ var propulsion_vector = Vector2(0, 0)
 var propulsion_angle = 0
 
 @onready var world = get_node("../../World")
-@onready var camera = get_node("../Camera2D")
+#@onready var camera = get_node("../Camera2D")
 
 func add_node(id, pos):
 	var node_plan = physical_genome[id]
@@ -221,8 +221,8 @@ func add_first_node():
 	var id = str(lowest_id)
 	physical_genome[id]["parent_id"] = id
 	add_node(id, Vector2(0, 0))
-	camera.reparent.call_deferred(nodes[id]["area"])
-	camera.position = Vector2(0, 0)
+	#camera.reparent.call_deferred(nodes[id]["area"])
+	#camera.position = Vector2(0, 0)
 
 func add_possible_nodes():
 	var added_node = false
