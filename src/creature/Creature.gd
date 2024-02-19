@@ -25,6 +25,7 @@ var propulsion_angle = 0
 
 @onready var world = get_node("../../World")
 @onready var camera = get_node("../Camera2D")
+@onready var health = get_node("../CreatureHealth")
 
 func add_node(id, pos):
 	var node_plan = physical_genome[id]
@@ -293,8 +294,11 @@ func update_label():
 	terrainLabel.text = str(pos / world.GetTileSize());
 	var tile = world.GetTile(global_pos)
 	if tile != null:
+		terrainLabel.text += "\nHealth: " + str(health.health);
 		terrainLabel.text += "\nTerrain: " + str(tile.TerrainType);
 		terrainLabel.text += "\nTemperature: " + str(tile.Temperature);
+		if tile.Temperature == 1:
+			health.Damage(1)
 	else:
 		pass
 
