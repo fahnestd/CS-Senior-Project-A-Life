@@ -24,7 +24,7 @@ var propulsion_vector = Vector2(0, 0)
 var propulsion_angle = 0
 
 @onready var world = get_node("../../World")
-#@onready var camera = get_node("../Camera2D")
+#@onready var camera = get_node("Camera2D")
 
 func add_node(id, pos):
 	var node_plan = physical_genome[id]
@@ -49,6 +49,7 @@ func add_node(id, pos):
 	new_area.add_child(new_sprite)
 
 	var new_collision = CollisionShape2D.new()
+	
 	var new_rectangle = RectangleShape2D.new()
 	new_rectangle.size = Vector2(size - 1, size - 1)
 	new_collision.shape = new_rectangle
@@ -59,6 +60,7 @@ func add_node(id, pos):
 	new_area.script = load("res://src/creature/Collision.gd")
 	new_area.size = Vector2(size, size)
 	new_area.node_id = id
+	new_area.input_pickable = true
 
 	add_child(new_area)
 	new_node["area"] = new_area
@@ -253,6 +255,7 @@ func force_add_remaining_nodes():
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
+	set_process_input(true)
 	Behavior.creature = self
 	build_creature()
 
@@ -310,3 +313,4 @@ func handle_lightlevel():
 	
 func handle_temperature():
 	pass
+

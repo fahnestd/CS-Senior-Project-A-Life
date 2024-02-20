@@ -20,7 +20,7 @@ func _input(event):
 
 func _process(delta):
 	var movement = Vector2.ZERO
-
+	
 	if Input.is_action_pressed("ui_up"): # W
 		movement.y -= movement_speed
 	if Input.is_action_pressed("ui_down"): # S

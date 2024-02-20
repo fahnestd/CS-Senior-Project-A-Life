@@ -7,6 +7,7 @@ var creature_scene = preload("res://creature.tscn")
 var generate_creatures = true
 var mutation_chance = 50
 var print_new_genome = true
+var distance_check = 30.0
 signal next_generation
 signal creature_info(info)
 
@@ -225,3 +226,16 @@ func _process(delta):
 			create_offspring(creatures[creatures.size() - 1],
 							 creatures[creatures.size() - 1])
 			timer = 0
+
+func _input(event):
+	if event is InputEventMouseButton:
+		if event.button_index == MOUSE_BUTTON_LEFT:
+			var count = 0
+			var max = creatures.size()
+			while count < max:
+				if get_global_mouse_position().distance_to(creatures[count].global_position) <= distance_check:
+					camera.reparent(creatures[count])
+					camera.position = Vector2(0, 0)
+					break
+				count += 1
+				
