@@ -25,6 +25,7 @@ var propulsion_angle = 0
 
 @onready var world = get_node("../../World")
 @onready var camera = get_node("../Camera2D")
+@onready var health = get_node("../CreatureHealth")
 
 func add_node(id, pos):
 	var node_plan = physical_genome[id]
@@ -274,39 +275,42 @@ func _process(delta):
 	propulsion_vector *= 0.99999
 	propulsion_angle *= 0.99999
 	
-	handle_interactions()
+	handle_interactions(delta)
 
 # On second thought, we should probably move this functionality into the tile, and have the tile apply any affects it needs or wants onto the creature
 # Ill leave it here for now though while I think it through.
-func handle_interactions():
-	handle_pressure();
-	handle_lightlevel();
-	handle_temperature();
-	handle_tiletype();
-	
-	update_label();
-	
-func update_label():
-	var terrainLabel = get_node("../TerrainLabel")
+func handle_interactions(delta):
 	var pos = Vector2i(get_parent().position)
 	var global_pos = Vector2i(get_parent().global_position)
-	terrainLabel.text = str(pos / world.GetTileSize());
 	var tile = world.GetTile(global_pos)
+	handle_pressure(delta, tile);
+	handle_lightlevel(delta, tile);
+	handle_temperature(delta, tile);
+	handle_tiletype(delta, tile);
+	
+	update_label(delta, tile);
+	
+func update_label(delta, tile):
+	var terrainLabel = get_node("../TerrainLabel")
+	terrainLabel.text = str(tile.Coordinates);
 	if tile != null:
+		terrainLabel.text += "\nHealth: " + str(health.health);
 		terrainLabel.text += "\nTerrain: " + str(tile.TerrainType);
 		terrainLabel.text += "\nTemperature: " + str(tile.Temperature);
-	else:
-		pass
 
-
-func handle_tiletype():
+func handle_tiletype(delta, tile):
 	pass
 	
-func handle_pressure():
+func handle_pressure(delta, tile):
 	pass
 
-func handle_lightlevel():
+func handle_lightlevel(delta, tile):
 	pass
 	
-func handle_temperature():
-	pass
+var temp_timer = 0;
+func handle_temperature(delta, tile):
+	if tile.Temperature >= 1:
+		temp_timer += delta
+	if temp_timer > 2:
+		health.Damage(10 * tile.Temperature)
+		temp_timer = 0
