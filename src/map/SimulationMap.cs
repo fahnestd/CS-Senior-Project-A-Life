@@ -34,10 +34,20 @@ namespace SeniorProject.src.map
 			int seed = rand.Next();
 			TerrainGenerator TerrainGenerator = new CellularGradientTerrainGenerator(seed);
 			int[,] TerrainMap = TerrainGenerator.GenerateMap(mapWidth, mapHeight);
+			
 			seed++;
 			TerrainGenerator TemperatureGenerator = new InverseCellularGradientTerrainGenerator(seed);
 			int[,] TemperatureMap = TemperatureGenerator.GenerateMap(mapWidth, mapHeight);
-			for (int y = 0; y < mapHeight; y++)
+
+            seed++;
+            TerrainGenerator LightLevelGenerator = new ExponentialTerrainGenerator(seed);
+            int[,] LightLevelMap = LightLevelGenerator.GenerateMap(mapWidth, mapHeight);
+
+            seed++;
+            TerrainGenerator WaterPressureGenerator = new LinearTerrainGenerator(seed);
+            int[,] WaterPressureMap = WaterPressureGenerator.GenerateMap(mapWidth, mapHeight);
+
+            for (int y = 0; y < mapHeight; y++)
 			{
 				for (int x = 0; x < mapWidth; x++)
 				{
@@ -45,6 +55,8 @@ namespace SeniorProject.src.map
 					{
 						Temperature = TemperatureMap[x, y],
 						TerrainType = TerrainMap[x, y],
+						LightLevel = LightLevelMap[x, y],
+						WaterPressure = WaterPressureMap[x, y],
 						Coordinates = new Vector2I(x, y),
 					};
 				}

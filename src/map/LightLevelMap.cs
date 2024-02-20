@@ -9,6 +9,9 @@ public partial class LightLevelMap : TileMap
 
     private SimulationMap simMap;
 
+    [Export]
+    private int sourceID = 3;
+
     // Called when the node enters the scene tree for the first time.
     public override void _Ready()
     {
@@ -22,7 +25,7 @@ public partial class LightLevelMap : TileMap
         {
             for (int y = 0; y < simMap.GetMapHeight(); y++)
             {
-                SetCell(0, new Vector2I(x, y), 1, SimulationMap.getTileCoordinates((int)simMap.map[x, y].Temperature));
+                SetCell(0, new Vector2I(x, y), sourceID, SimulationMap.getTileCoordinates((int)simMap.map[x, y].LightLevel));
             }
         }
     }

@@ -13,6 +13,9 @@ public partial class TerrainMap: TileMap
 	[Export]
 	private int seed = 1000;
 
+	[Export]
+	private int sourceID = 2;
+
 	private SimulationMap simMap;
 
 	// Called when the node enters the scene tree for the first time.
@@ -28,7 +31,7 @@ public partial class TerrainMap: TileMap
         {
             for (int y = 0; y < simMap.GetMapHeight(); y++)
             {
-                SetCell(0, new Vector2I(x, y), 2, SimulationMap.getTileCoordinates((int)simMap.map[x, y].TerrainType));
+                SetCell(0, new Vector2I(x, y), sourceID, SimulationMap.getTileCoordinates((int)simMap.map[x, y].TerrainType));
 			}
 		}
 	}
