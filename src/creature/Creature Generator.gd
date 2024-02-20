@@ -14,11 +14,11 @@ signal creature_info(info)
 func create_offspring(creature_1, creature_2):
 	next_generation.emit()
   
-	var physical_crossover = crossover({}, creature_1.get_node("Creature").physical_genome, creature_2.get_node("Creature").physical_genome)
+	var physical_crossover = crossover({}, creature_1.physical_genome, creature_2.physical_genome)
 	var physical_mutation = mutation(physical_crossover, physical_crossover.size(), mutation_chance, -50, 50)
 
 	var offspring_pos = (creature_1.global_position + creature_2.global_position) / 2.0
-	var offspring_rot = (creature_1.get_node("Creature").rotation + creature_2.get_node("Creature").rotation) / 2.0
+	var offspring_rot = (creature_1.rotation + creature_2.rotation) / 2.0
 	create_creature(offspring_pos, offspring_rot, physical_mutation)
 	if print_new_genome:
 		print("New Genome:")
@@ -27,7 +27,6 @@ func create_offspring(creature_1, creature_2):
 
 func create_creature(pos, rot, physical_genome):
 	var new_creature = creature_scene.instantiate()
-	new_creature.get_node("Creature").camera = camera
 
 	var behavioral_genome = {
 		"0" = {
@@ -98,17 +97,20 @@ func create_creature(pos, rot, physical_genome):
 		}
 	}
 
-	new_creature.get_node("Creature").physical_genome = physical_genome
+	new_creature.physical_genome = physical_genome
 	creature_info.emit(physical_genome)
-	new_creature.get_node("Creature").behavioral_genome = behavioral_genome
+	new_creature.behavioral_genome = behavioral_genome
 	new_creature.global_position = pos
-	new_creature.get_node("Creature").rotation_degrees = rot
+	new_creature.rotation_degrees = rot
+	var new_creature_index = 0
+	while creatures.has(new_creature_index):
+		new_creature_index += 1
+	new_creature.creature_index = new_creature_index
+	new_creature.creature_died.connect(_on_creature_died)
 
-	#camera.reparent(new_creature)
-	#camera.position = Vector2(0, 0)
 	self.get_parent().add_child.call_deferred(new_creature)
 
-	creatures.append(new_creature)
+	creatures[new_creature_index] = new_creature
 
 # Checks each key value pair in both dict_1 and dict_2, constructing return_dict from the winning values
 # If both values are dictionaries, recursively calls crossover, setting the key in return_dict to the returned value
@@ -189,7 +191,7 @@ func mutation_values(dict, num_nodes, chance, min_intensity, max_intensity):
 						dict[key] = "fixed"
 	return dict
 
-var creatures = []
+var creatures = {}
 func _ready():
 	var physical_genome = {
 		"0" = {
@@ -224,19 +226,26 @@ func _process(delta):
 	if generate_creatures:
 		timer += delta
 		if timer >= 5:
-			create_offspring(creatures[creatures.size() - 1],
-							 creatures[creatures.size() - 1])
+			create_offspring(get_random_creature(),
+							 get_random_creature())
 			timer = 0
 
 func _input(event):
 	if event is InputEventMouseButton:
 		if event.button_index == MOUSE_BUTTON_LEFT:
-			var count = 0
-			var max = creatures.size()
-			while count < max:
-				if get_global_mouse_position().distance_to(creatures[count].global_position) <= distance_check:
-					camera.reparent(creatures[count])
-					camera.position = Vector2(0, 0)
+			for creature_index in creatures:
+				var creature = creatures[creature_index]
+				if get_global_mouse_position().distance_to(creature.global_position) <= distance_check:
+					camera.target(creature)
 					break
-				count += 1
-				
+
+func _on_creature_died(creature_index):
+	var creature = creatures[creature_index]
+	creatures.erase(creature_index)
+	if camera.target_node == creature.root_node:
+		camera.target_node = null
+	creature.queue_free()
+
+func get_random_creature():
+	var random_index = randi_range(0, creatures.size() - 1)
+	return creatures[creatures.keys()[random_index]]

@@ -36,6 +36,7 @@ corner_radius_bottom_left = 8
 script = ExtResource("4_r0x6e")
 
 [node name="Camera2D" type="Camera2D" parent="Creature Generator"]
+position = Vector2(4000, 4000)
 zoom = Vector2(4, 4)
 position_smoothing_enabled = true
 position_smoothing_speed = 12.0

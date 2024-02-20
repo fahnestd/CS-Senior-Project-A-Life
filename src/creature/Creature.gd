@@ -4,6 +4,7 @@ var Behavior = preload("res://src/creature/Behavior.gd").new()
 
 var physical_genome
 var behavioral_genome
+var creature_index
 
 # Changeable parameters
 var connection_distance = 20
@@ -16,6 +17,7 @@ var fixed_texture = preload("res://assets/creature/fixed.png")
 var pivot_texture = preload("res://assets/creature/pivot.png")
 
 var nodes = {}
+var root_node
 
 # Stores the ids of pivot nodes in creation order, so behavioral patterns can specify things like "rotate first pivot node, rotate second pivot node" without referring to their specific ids
 var pivot_node_ids = {}
@@ -23,8 +25,9 @@ var pivot_node_ids = {}
 var propulsion_vector = Vector2(0, 0)
 var propulsion_angle = 0
 
-@onready var world = get_node("../../World")
-@onready var health = get_node("../CreatureHealth")
+@onready var world = get_node("../World")
+@onready var health = get_node("Health")
+@onready var body = get_node("Body")
 
 func add_node(id, pos):
 	var node_plan = physical_genome[id]
@@ -62,8 +65,8 @@ func add_node(id, pos):
 	new_area.node_id = id
 	new_area.input_pickable = true
 
-	add_child(new_area)
-	new_node["area"] = new_area
+	body.add_child(new_area)
+	new_node["object"] = new_area
 
 	move_node(id, pos, false)
 
@@ -74,7 +77,7 @@ func add_connected_node(id):
 	var parent_id = node["parent_id"]
 	var parent_node = nodes[parent_id]
 	var new_sprite = Sprite2D.new()
-	add_child(new_sprite)
+	body.add_child(new_sprite)
 	new_sprite.offset.x = 0.5
 	new_sprite.position = parent_node.position
 	new_sprite.rotation_degrees = node["angle"]
@@ -112,7 +115,7 @@ func move_node(id, pos, propulsion):
 	var old_pos = node["position"]
 	var old_angle = node["angle"]
 	node["position"] = pos
-	node["area"].position = pos
+	node["object"].position = pos
 
 	update_node_angle(id)
 	update_node_connections(id)
@@ -221,8 +224,12 @@ func add_first_node():
 	while not physical_genome.has(str(lowest_id)):
 		lowest_id += 1
 	var id = str(lowest_id)
-	physical_genome[id]["parent_id"] = id
-	add_node(id, Vector2(0, 0))
+	if id != "0":
+		physical_genome["0"] = physical_genome[id]
+		physical_genome["0"]["parent_id"] = "0"	
+		physical_genome.erase(id)
+	add_node("0", Vector2(0, 0))
+	root_node = nodes["0"]["object"]
 
 func add_possible_nodes():
 	var added_node = false
@@ -263,14 +270,14 @@ func _process(delta):
 
 	propulsion_angle = clamp(propulsion_angle, -180, 180)
 
-	self.rotation_degrees += propulsion_angle * delta
+	body.rotation_degrees += propulsion_angle * delta
 
-	var move_vector = propulsion_vector.rotated(deg_to_rad(self.rotation_degrees))
+	var move_vector = propulsion_vector.rotated(deg_to_rad(body.rotation_degrees))
 
 	if move_vector.length() <= max_speed:
-		get_parent().position += move_vector
+		self.position += move_vector
 	else:
-		get_parent().position += move_vector / move_vector.length() * max_speed
+		self.position += move_vector / move_vector.length() * max_speed
 
 	propulsion_vector *= 0.99999
 	propulsion_angle *= 0.99999
@@ -280,7 +287,7 @@ func _process(delta):
 # On second thought, we should probably move this functionality into the tile, and have the tile apply any affects it needs or wants onto the creature
 # Ill leave it here for now though while I think it through.
 func handle_interactions(delta):
-	var pos = Vector2i(get_parent().position)
+	var _pos = Vector2i(get_parent().position)
 	var global_pos = Vector2i(get_parent().global_position)
 	var tile = world.GetTile(global_pos)
 	handle_pressure(delta, tile);
@@ -290,27 +297,34 @@ func handle_interactions(delta):
 	
 	update_label(delta, tile);
 	
-func update_label(delta, tile):
-	var terrainLabel = get_node("../TerrainLabel")
-	terrainLabel.text = str(tile.Coordinates);
+func update_label(_delta, tile):
+	var terrainLabel = get_node("TerrainLabel")
 	if tile != null:
+		terrainLabel.text = str(tile.Coordinates);
 		terrainLabel.text += "\nHealth: " + str(health.health);
 		terrainLabel.text += "\nTerrain: " + str(tile.TerrainType);
 		terrainLabel.text += "\nTemperature: " + str(tile.Temperature);
 
-func handle_tiletype(delta, tile):
+func handle_tiletype(_delta, _tile):
 	pass
 	
-func handle_pressure(delta, tile):
+func handle_pressure(_delta, _tile):
 	pass
 
-func handle_lightlevel(delta, tile):
+func handle_lightlevel(_delta, _tile):
 	pass
 
 var temp_timer = 0;
 func handle_temperature(delta, tile):
-	if tile.Temperature >= 1:
-		temp_timer += delta
-	if temp_timer > 2:
-		health.Damage(10 * tile.Temperature)
-		temp_timer = 0
+	if tile:
+		if tile.Temperature >= 1:
+			temp_timer += delta
+		if temp_timer > 2:
+			health.Damage(10 * tile.Temperature)
+			if health.health <= 0:
+				die()
+			temp_timer = 0
+
+signal creature_died(creature_index);
+func die():
+	creature_died.emit(creature_index)

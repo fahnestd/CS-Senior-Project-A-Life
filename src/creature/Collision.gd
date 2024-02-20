@@ -14,7 +14,7 @@ var parent
 var collision_area
 
 func _ready():
-	parent = get_parent()
+	parent = get_parent().get_parent()
 	area_entered.connect(_on_area_entered)
 
 func _on_area_entered(area):
