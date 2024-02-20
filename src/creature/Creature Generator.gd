@@ -27,6 +27,7 @@ func create_offspring(creature_1, creature_2):
 
 func create_creature(pos, rot, physical_genome):
 	var new_creature = creature_scene.instantiate()
+	new_creature.get_node("Creature").camera = camera
 
 	var behavioral_genome = {
 		"0" = {
