@@ -50,6 +50,7 @@ func add_node(id, pos):
 	new_area.add_child(new_sprite)
 
 	var new_collision = CollisionShape2D.new()
+	
 	var new_rectangle = RectangleShape2D.new()
 	new_rectangle.size = Vector2(size - 1, size - 1)
 	new_collision.shape = new_rectangle
@@ -60,6 +61,7 @@ func add_node(id, pos):
 	new_area.script = load("res://src/creature/Collision.gd")
 	new_area.size = Vector2(size, size)
 	new_area.node_id = id
+	new_area.input_pickable = true
 
 	add_child(new_area)
 	new_node["area"] = new_area
@@ -222,8 +224,8 @@ func add_first_node():
 	var id = str(lowest_id)
 	physical_genome[id]["parent_id"] = id
 	add_node(id, Vector2(0, 0))
-	camera.reparent.call_deferred(nodes[id]["area"])
-	camera.position = Vector2(0, 0)
+	#camera.reparent.call_deferred(nodes[id]["area"])
+	#camera.position = Vector2(0, 0)
 
 func add_possible_nodes():
 	var added_node = false
@@ -254,6 +256,7 @@ func force_add_remaining_nodes():
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
+	set_process_input(true)
 	Behavior.creature = self
 	build_creature()
 
@@ -306,7 +309,7 @@ func handle_pressure(delta, tile):
 
 func handle_lightlevel(delta, tile):
 	pass
-	
+
 var temp_timer = 0;
 func handle_temperature(delta, tile):
 	if tile.Temperature >= 1:
