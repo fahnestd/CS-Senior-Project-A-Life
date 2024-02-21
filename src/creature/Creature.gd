@@ -4,91 +4,96 @@ var Behavior = preload("res://src/creature/Behavior.gd").new()
 
 var physical_genome
 var behavioral_genome
+var creature_index
 
 # Changeable parameters
 var connection_distance = 20
 var max_speed = 1
 
-var node_texture = preload("res://assets/creature/circle.png")
-var node_width = node_texture.get_width()
-var node_height = node_texture.get_height()
-var fixed_texture = preload("res://assets/creature/fixed.png")
-var pivot_texture = preload("res://assets/creature/pivot.png")
+var textures = {
+	"body" = preload("res://assets/creature/circle.png"),
+	"reproduction" = preload("res://assets/creature/pink_circle.png"),
+	"eye" = preload("res://assets/creature/blue_circle.png"),
+	"fixed" = preload("res://assets/creature/fixed.png"),
+	"pivot" = preload("res://assets/creature/pivot.png")
+}
+var node_width = textures["body"].get_width()
+var node_height = textures["body"].get_height()
 
 var nodes = {}
+var root_node
 
 # Stores the ids of pivot nodes in creation order, so behavioral patterns can specify things like "rotate first pivot node, rotate second pivot node" without referring to their specific ids
 var pivot_node_ids = {}
 
-var propulsion_vector = Vector2(0, 0)
-var propulsion_angle = 0
+var propulsion_vectors = {}
+var propulsion_angles = {}
 
-@onready var world = get_node("../../World")
-@onready var camera = get_node("../Camera2D")
-@onready var health = get_node("../CreatureHealth")
+@onready var world = get_node("../World")
+@onready var health = get_node("Health")
+@onready var body = get_node("Body")
+
+var reproduction_cooldown = 5
+var reproduction_cooldown_progress = 5
 
 func add_node(id, pos):
 	var node_plan = physical_genome[id]
-	var size = node_plan["size"]
-	var angle = node_plan["angle"]
-	var joint = node_plan["joint"]
-	var new_node = {
+	var node = {
+		"id": id,
 		"position": pos,
-		"size": size,
-		"angle": angle,
-		"joint": joint
+		"size": node_plan["size"],
+		"angle": node_plan["angle"],
+		"joint": node_plan["joint"],
+		"type": node_plan["type"],
+		"object": Area2D.new(),
+		"sprite": Sprite2D.new()
 	}
-
-	nodes[id] = new_node
-
-	var new_area = Area2D.new()
-
-	var new_sprite = Sprite2D.new()
-	new_sprite.texture = node_texture
-	new_sprite.scale.x = size / node_width
-	new_sprite.scale.y = size / node_height
-	new_area.add_child(new_sprite)
-
-	var new_collision = CollisionShape2D.new()
-	var new_rectangle = RectangleShape2D.new()
-	new_rectangle.size = Vector2(size - 1, size - 1)
-	new_collision.shape = new_rectangle
-
-	new_area.add_child(new_collision)
-
-	new_area.position = pos
-	new_area.script = load("res://src/creature/Collision.gd")
-	new_area.size = Vector2(size, size)
-	new_area.node_id = id
-
-	add_child(new_area)
-	new_node["area"] = new_area
-
+	nodes[id] = node
+	initialize_object(node)
+	initialize_sprite(node)
 	move_node(id, pos, false)
 
-	return id
+func initialize_object(node):
+	initialize_collision(node)
+	node["object"].position = node["position"]
+	node["object"].script = load("res://src/creature/Node.gd")
+	node["object"].size = Vector2(node["size"], node["size"])
+	node["object"].node_id = node["id"]
+	node["object"].type = node["type"]
+	node["object"].reproduce.connect(_on_reproduce)
+	body.add_child(node["object"])
+
+func initialize_collision(node):
+	var rectangle = RectangleShape2D.new()
+	rectangle.size = Vector2(node["size"], node["size"])
+	var collision = CollisionShape2D.new()
+	collision.shape = rectangle
+	node["object"].add_child(collision)
+
+func initialize_sprite(node):
+	node["sprite"].texture = textures[node["type"]]
+	node["sprite"].scale.x = node["size"] / node_width
+	node["sprite"].scale.y = node["size"] / node_height
+	node["object"].add_child(node["sprite"])
 
 func add_connected_node(id):
 	var node = physical_genome[id]
 	var parent_id = node["parent_id"]
 	var parent_node = nodes[parent_id]
 	var new_sprite = Sprite2D.new()
-	add_child(new_sprite)
+	body.add_child(new_sprite)
 	new_sprite.offset.x = 0.5
 	new_sprite.position = parent_node.position
 	new_sprite.rotation_degrees = node["angle"]
 	new_sprite.scale.x = connection_distance
-	if node["joint"] == "pivot":
-		new_sprite.texture = pivot_texture
-	else:
-		new_sprite.texture = fixed_texture
+	new_sprite.texture = textures[node["joint"]]
 	new_sprite.texture_repeat = CanvasItem.TEXTURE_REPEAT_ENABLED
 	new_sprite.z_index = 1
 
 	var dir_vector = Vector2(1, 0).rotated(deg_to_rad(node["angle"]))
 	var endpoint = parent_node.position + connection_distance * dir_vector
-	var new_node_id = add_node(id, endpoint)
-	var new_node = nodes[new_node_id]
+	add_node(id, endpoint)
+	var new_node = nodes[id]
 
 	if new_node["joint"] == "pivot":
 		pivot_node_ids[str(pivot_node_ids.size())] = id
@@ -96,7 +101,7 @@ func add_connected_node(id):
 	var new_connection = {
 		"sprite": new_sprite,
 		"parent_id": parent_id,
-		"child_id": new_node_id,
+		"child_id": id,
 		"length": connection_distance
 	}
 
@@ -111,27 +116,28 @@ func move_node(id, pos, propulsion):
 	var old_pos = node["position"]
 	var old_angle = node["angle"]
 	node["position"] = pos
-	node["area"].position = pos
+	node["object"].position = pos
 
 	update_node_angle(id)
 	update_node_connections(id)
 
-	var propulsion_angle_change
-	var angle_diff = old_angle - node["angle"]
-	if angle_diff < 0:
-		if abs(angle_diff) < angle_diff + 360:
-			propulsion_angle_change = angle_diff
-		else:
-			propulsion_angle_change = angle_diff + 360
-	else:
-		if angle_diff < abs(angle_diff - 360):
-			propulsion_angle_change = angle_diff
-		else:
-			propulsion_angle_change = angle_diff - 360
-
 	if propulsion:
-		propulsion_vector += old_pos - pos
-		propulsion_angle += propulsion_angle_change
+		var propulsion_vector_change = old_pos - pos
+		var propulsion_angle_change
+		var angle_diff = old_angle - node["angle"]
+		if angle_diff < 0:
+			if abs(angle_diff) < angle_diff + 360:
+				propulsion_angle_change = angle_diff
+			else:
+				propulsion_angle_change = angle_diff + 360
+		else:
+			if angle_diff < abs(angle_diff - 360):
+				propulsion_angle_change = angle_diff
+			else:
+				propulsion_angle_change = angle_diff - 360
+
+		add_indexed_dictionary_entry(propulsion_vectors, propulsion_vector_change)
+		add_indexed_dictionary_entry(propulsion_angles, propulsion_angle_change)
 
 func update_node_angle(id):
 	var node = nodes[id]
@@ -169,6 +175,12 @@ func update_connection(connection):
 	connection["sprite"].scale.x = distance
 	connection["length"] = round(distance * 100.0) / 100.0
 
+func add_indexed_dictionary_entry(dictionary, entry):
+	var lowest_index = 0
+	while dictionary.has(lowest_index):
+		lowest_index += 1
+	dictionary[lowest_index] = entry
+
 func fix_connection_length(id):
 	var node = nodes[id]
 	if node.has("parent_connection"):
@@ -192,7 +204,7 @@ func fix_connection_length(id):
 		if new_node_pos != node["position"]:
 			move_node(id, new_node_pos, false)
 
-func pivot_node(id, origin_id, angle_shift):
+func pivot_node(id, origin_id, angle_shift, propulsion):
 	var node = nodes[id]
 	var origin_node = nodes[origin_id]
 	var origin_pos = origin_node["position"]
@@ -203,12 +215,12 @@ func pivot_node(id, origin_id, angle_shift):
 
 	var dir_vector = Vector2(1, 0).rotated(deg_to_rad(angle + angle_shift))
 	var endpoint = origin_pos + distance * dir_vector
-	move_node(id, endpoint, true)
+	move_node(id, endpoint, propulsion)
 
 	if node.has("child_connections"):
 		for connection in node["child_connections"]:
 			var child_id = connection["child_id"]
-			pivot_node(child_id, origin_id, angle_shift)
+			pivot_node(child_id, origin_id, angle_shift, false)
 
 func build_creature():
 	add_first_node()
@@ -220,10 +232,12 @@ func add_first_node():
 	while not physical_genome.has(str(lowest_id)):
 		lowest_id += 1
 	var id = str(lowest_id)
-	physical_genome[id]["parent_id"] = id
-	add_node(id, Vector2(0, 0))
-	camera.reparent.call_deferred(nodes[id]["area"])
-	camera.position = Vector2(0, 0)
+	if id != "0":
+		physical_genome["0"] = physical_genome[id]
+		physical_genome["0"]["parent_id"] = "0"	
+		physical_genome.erase(id)
+	add_node("0", Vector2(0, 0))
+	root_node = nodes["0"]["object"]
 
 func add_possible_nodes():
 	var added_node = false
@@ -254,6 +268,7 @@ func force_add_remaining_nodes():
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
+	set_process_input(true)
 	Behavior.creature = self
 	build_creature()
 
@@ -261,27 +276,40 @@ func _ready():
 func _process(delta):
 	Behavior.process_behavior(delta)
 
-	propulsion_angle = clamp(propulsion_angle, -180, 180)
+	var propulsion_vector_sum = Vector2(0, 0)
+	var propulsion_angle_sum = 0
 
-	self.rotation_degrees += propulsion_angle * delta
+	for key in propulsion_vectors.keys():
+		propulsion_vector_sum += propulsion_vectors[key]
+		propulsion_vectors[key] *= 0.97
+		if propulsion_vectors[key].length() < 0.2:
+			propulsion_vectors.erase(key)
 
-	var move_vector = propulsion_vector.rotated(deg_to_rad(self.rotation_degrees))
+	for key in propulsion_angles.keys():
+		propulsion_angle_sum += propulsion_angles[key]
+		propulsion_angles[key] *= 0.97
+		if abs(propulsion_angles[key]) < 0.5:
+			propulsion_angles.erase(key)
+
+	body.rotation_degrees += propulsion_angle_sum * delta * 2
+	var move_vector = propulsion_vector_sum.rotated(deg_to_rad(body.rotation_degrees)) * delta * 5
 
 	if move_vector.length() <= max_speed:
-		get_parent().position += move_vector
+		self.position += move_vector
 	else:
-		get_parent().position += move_vector / move_vector.length() * max_speed
+		self.position += move_vector / move_vector.length() * max_speed
 
-	propulsion_vector *= 0.99999
-	propulsion_angle *= 0.99999
-	
+	if reproduction_cooldown_progress > 0:
+		reproduction_cooldown_progress -= delta
+		reproduction_cooldown_progress = max(reproduction_cooldown_progress, 0)
+
 	handle_interactions(delta)
 
 # On second thought, we should probably move this functionality into the tile, and have the tile apply any affects it needs or wants onto the creature
 # Ill leave it here for now though while I think it through.
 func handle_interactions(delta):
-	var pos = Vector2i(get_parent().position)
-	var global_pos = Vector2i(get_parent().global_position)
+	var _pos = Vector2i(position)
+	var global_pos = Vector2i(global_position)
 	var tile = world.GetTile(global_pos)
 	handle_pressure(delta, tile);
 	handle_lightlevel(delta, tile);
@@ -290,27 +318,40 @@ func handle_interactions(delta):
 	
 	update_label(delta, tile);
 	
-func update_label(delta, tile):
-	var terrainLabel = get_node("../TerrainLabel")
-	terrainLabel.text = str(tile.Coordinates);
+func update_label(_delta, tile):
+	var terrainLabel = get_node("TerrainLabel")
 	if tile != null:
+		terrainLabel.text = str(tile.Coordinates);
 		terrainLabel.text += "\nHealth: " + str(health.health);
 		terrainLabel.text += "\nTerrain: " + str(tile.TerrainType);
 		terrainLabel.text += "\nTemperature: " + str(tile.Temperature);
 
-func handle_tiletype(delta, tile):
+func handle_tiletype(_delta, _tile):
 	pass
 	
-func handle_pressure(delta, tile):
+func handle_pressure(_delta, _tile):
 	pass
 
-func handle_lightlevel(delta, tile):
+func handle_lightlevel(_delta, _tile):
 	pass
-	
+
 var temp_timer = 0;
 func handle_temperature(delta, tile):
-	if tile.Temperature >= 1:
-		temp_timer += delta
-	if temp_timer > 2:
-		health.Damage(10 * tile.Temperature)
-		temp_timer = 0
+	if tile:
+		if tile.Temperature >= 1:
+			temp_timer += delta
+		if temp_timer > 2:
+			health.Damage(tile.Temperature)
+			if health.health <= 0:
+				die()
+			temp_timer = 0
+
+signal reproduce(creature_1, creature_2)
+func _on_reproduce(creature_1, creature_2):
+	if reproduction_cooldown_progress == 0:
+		reproduce.emit(creature_1, creature_2)
+		reproduction_cooldown_progress = reproduction_cooldown
+
+signal creature_died(creature_index)
+func die():
+	creature_died.emit(creature_index)

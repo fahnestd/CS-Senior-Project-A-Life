@@ -97,7 +97,6 @@ format = 2
 script = ExtResource("3_27xko")
 
 [node name="Temperature" type="TileMap" parent="."]
-visible = false
 material = SubResource("ShaderMaterial_u4vpo")
 tile_set = SubResource("TileSet_5m0ds")
 format = 2

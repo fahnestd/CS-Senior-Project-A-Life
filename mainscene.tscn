@@ -1,4 +1,4 @@
-[gd_scene load_steps=14 format=3 uid="uid://dvweqacxjay7r"]
+[gd_scene load_steps=13 format=3 uid="uid://dvweqacxjay7r"]
 
 [ext_resource type="PackedScene" uid="uid://02k684x8aybd" path="res://Map.tscn" id="3_3o0j0"]
 [ext_resource type="Script" path="res://src/ui/simtime_ui.gd" id="4_0otx1"]
@@ -9,7 +9,6 @@
 [ext_resource type="StyleBox" uid="uid://m3372f0wk2mk" path="res://assets/ui/SepLineUIAsset.tres" id="5_romv8"]
 [ext_resource type="StyleBox" uid="uid://brqbxhceg7eji" path="res://assets/ui/VSepLineUIAsset.tres" id="6_j2i2m"]
 [ext_resource type="Script" path="res://src/ui/creaturepanel_ui.gd" id="7_fkd73"]
-[ext_resource type="Texture2D" uid="uid://boj5nvtsna5ol" path="res://assets/creature/circle.png" id="8_f5nnr"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_8urog"]
 bg_color = Color(0.509804, 0.509804, 0.509804, 1)
@@ -34,10 +33,6 @@ corner_radius_bottom_left = 8
 
 [node name="Creature Generator" type="Node2D" parent="."]
 script = ExtResource("4_r0x6e")
-
-[node name="Camera2D" type="Camera2D" parent="Creature Generator"]
-zoom = Vector2(4, 4)
-script = ExtResource("4_kinps")
 
 [node name="CanvasLayer" type="CanvasLayer" parent="."]
 
@@ -251,9 +246,12 @@ offset_right = 970.0
 offset_bottom = 649.0
 theme_override_styles/separator = ExtResource("6_j2i2m")
 
-[node name="Target Node" type="Sprite2D" parent="."]
+[node name="Camera" type="Camera2D" parent="."]
 position = Vector2(4000, 4000)
-texture = ExtResource("8_f5nnr")
+zoom = Vector2(4, 4)
+position_smoothing_enabled = true
+position_smoothing_speed = 12.0
+script = ExtResource("4_kinps")
 
 [connection signal="creature_info" from="Creature Generator" to="CanvasLayer/UIOverlay/SideUIPanel/FoodPanel/CreaturePanel" method="_on_creature_generator_creature_info"]
 [connection signal="next_generation" from="Creature Generator" to="CanvasLayer/UIOverlay/TopUIPanel/CurrentGenLabel" method="_on_creature_generator_next_generation"]
