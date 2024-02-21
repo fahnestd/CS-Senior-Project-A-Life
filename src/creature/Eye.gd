@@ -14,8 +14,9 @@ func _ready():
 
 func _on_area_entered(node):
 	if node.parent_creature != parent_creature:
-		if not visible_nodes.has(node):
-			visible_nodes[node] = null
+		if node.type != "sight":
+			if not visible_nodes.has(node):
+				visible_nodes[node] = null
 
 func _on_area_exited(node):
 	if node.parent_creature != parent_creature:

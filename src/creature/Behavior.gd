@@ -27,8 +27,14 @@ func evaluate_condition(condition, target_coords):
 		if conditional_type == "less":
 			if angle_diff < conditional_value:
 				evaluation = true
+		elif conditional_type == "lessEqual":
+			if angle_diff <= conditional_value:
+				evaluation = true
 		elif conditional_type == "greater":
 			if angle_diff > conditional_value:
+				evaluation = true
+		elif conditional_type == "greaterEqual":
+			if angle_diff >= conditional_value:
 				evaluation = true
 		if condition_details.has("and"):
 			evaluation = evaluation and evaluate_condition(condition_details["and"], target_coords)
@@ -46,13 +52,22 @@ func decide_pattern(target_coords):
 			viable_patterns.append(key)
 
 	if viable_patterns.size() > 0:
-		behavior_id = viable_patterns[randi_range(0, viable_patterns.size() - 1)]
+#		behavior_id = viable_patterns[randi_range(0, viable_patterns.size() - 1)]
+		behavior_id = viable_patterns[0]
 	else:
 		behavior_id = null
 
 func process_behavior(delta):
 	if behavior_step_progress == 0 and behavior_step_id == 0:
-		decide_pattern(Vector2(4000, 4000))
+		var detected_node = false
+		for node in visible_nodes:
+			if node.type == "reproduction":
+				decide_pattern(node.global_position)
+				detected_node = true
+				break
+		if not detected_node:
+			# Target the point 1 unit in front of the creature
+			decide_pattern(creature.global_position + Vector2(1, 0).rotated(deg_to_rad(creature.body.rotation_degrees)))
 
 	if behavior_id:
 		if behavior_id == "0":

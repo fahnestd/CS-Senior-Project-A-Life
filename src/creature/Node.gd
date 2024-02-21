@@ -33,7 +33,11 @@ func _ready():
 	if type == "eye":
 		initialize_eye()
 
+signal reproduce(creature_1, creature_2)
 func _on_area_entered(node):
+	if type == "reproduction" and node.type == "reproduction":
+		reproduce.emit(parent_creature, node.parent_creature)
+
 	if node.type != "sight":
 		avoid_area(node)
 		collision_check = true

@@ -4,13 +4,122 @@ var creature_scene = preload("res://creature.tscn")
 @onready var camera = get_node("../Camera")
 @onready var world = get_node("../World")
 
-var generate_creatures = true
-var mutation_chance = 50
+var generate_creatures = false
+var mutation_chance = 10
 var print_new_genome = false
 var distance_check = 30.0
 
 signal next_generation
 signal creature_info(info)
+
+var behavioral_genome = {
+	"0" = {
+		"if" = {
+			"angle diff" = {
+				"conditional" = "lessEqual",
+				"value" = -10
+			}
+		},
+		"pattern" = {
+			"0" = {
+				"0" = 20.0,
+				"1" = 20.0,
+				"time" = 0.25
+			},
+			"1" = {
+				"0" = -20.0,
+				"1" = -20.0,
+				"time" = 1.0
+			}
+		}
+	},
+	"1" = {
+		"if" = {
+			"angle diff" = {
+				"conditional" = "greaterEqual",
+				"value" = 10
+			}
+		},
+		"pattern" = {
+			"0" = {
+				"0" = -20.0,
+				"1" = -20.0,
+				"time" = 0.25
+			},
+			"1" = {
+				"0" = 20.0,
+				"1" = 20.0,
+				"time" = 1.0
+			}
+		}
+	},
+	"2" = {
+		"if" = {
+			"angle diff" = {
+				"conditional" = "lessEqual",
+				"value" = -5,
+				"and" = {
+					"angle diff" = {
+						"conditional" = "greater",
+						"value" = -10
+					}
+				}
+			}
+		},
+		"pattern" = {
+			"0" = {
+				"0" = 10.0,
+				"1" = 10.0,
+				"time" = 0.25
+			},
+			"1" = {
+				"0" = -10.0,
+				"1" = -10.0,
+				"time" = 1.0
+			}
+		}
+	},
+	"3" = {
+		"if" = {
+			"angle diff" = {
+				"conditional" = "greaterEqual",
+				"value" = 5,
+				"and" = {
+					"angle diff" = {
+						"conditional" = "less",
+						"value" = 10
+					}
+				}
+			}
+		},
+		"pattern" = {
+			"0" = {
+				"0" = -10.0,
+				"1" = -10.0,
+				"time" = 0.25
+			},
+			"1" = {
+				"0" = 10.0,
+				"1" = 10.0,
+				"time" = 1.0
+			}
+		}
+	},
+	"4" = {
+		"pattern" = {
+			"0" = {
+				"0" = 40.0,
+				"1" = -40.0,
+				"time" = 0.5
+			},
+			"1" = {
+				"0" = -40.0,
+				"1" = 40.0,
+				"time" = 1.0
+			}
+		}
+	}
+}
 
 func create_offspring(creature_1, creature_2):
 	next_generation.emit()
@@ -29,75 +138,6 @@ func create_offspring(creature_1, creature_2):
 func create_creature(pos, rot, physical_genome):
 	var new_creature = creature_scene.instantiate()
 
-	var behavioral_genome = {
-		"0" = {
-			"if" = {
-				"angle diff" = {
-					"conditional" = "less",
-					"value" = 15,
-					"and" = {
-						"angle diff" = {
-							"conditional" = "greater",
-							"value" = -15
-						}
-					}
-				}
-			},
-			"pattern" = {
-				"0" = {
-					"0" = 40.0,
-					"1" = -40.0,
-					"time" = 0.5
-				},
-				"1" = {
-					"0" = -40.0,
-					"1" = 40.0,
-					"time" = 1.0
-				}
-			}
-		},
-		"1" = {
-			"if" = {
-				"angle diff" = {
-					"conditional" = "less",
-					"value" = -14
-				}
-			},
-			"pattern" = {
-				"0" = {
-					"0" = 40.0,
-					"1" = 40.0,
-					"time" = 0.25
-				},
-				"1" = {
-					"0" = -40.0,
-					"1" = -40.0,
-					"time" = 1.0
-				}
-			}
-		},
-		"2" = {
-			"if" = {
-				"angle diff" = {
-					"conditional" = "greater",
-					"value" = 14
-				}
-			},
-			"pattern" = {
-				"0" = {
-					"0" = -40.0,
-					"1" = -40.0,
-					"time" = 0.25
-				},
-				"1" = {
-					"0" = 40.0,
-					"1" = 40.0,
-					"time" = 1.0
-				}
-			}
-		}
-	}
-
 	new_creature.physical_genome = physical_genome
 	creature_info.emit(physical_genome)
 	new_creature.behavioral_genome = behavioral_genome
@@ -107,6 +147,7 @@ func create_creature(pos, rot, physical_genome):
 	while creatures.has(new_creature_index):
 		new_creature_index += 1
 	new_creature.creature_index = new_creature_index
+	new_creature.reproduce.connect(_on_reproduce)
 	new_creature.creature_died.connect(_on_creature_died)
 
 	self.get_parent().add_child.call_deferred(new_creature)
@@ -230,8 +271,8 @@ func _ready():
 			"type": "body"
 		}
 	}
-	create_creature((world.GetSpawnCoordinates() - Vector2(5, 0)) * world.GetTileSize(), 180, physical_genome)
-	create_creature((world.GetSpawnCoordinates() + Vector2(5, 0)) * world.GetTileSize(), 0, physical_genome)
+	create_creature((world.GetSpawnCoordinates() - Vector2(10, 2)) * world.GetTileSize(), 0, physical_genome)
+	create_creature((world.GetSpawnCoordinates() + Vector2(10, 2)) * world.GetTileSize(), 180, physical_genome)
 
 var timer = 0
 func _process(delta):
@@ -250,6 +291,16 @@ func _input(event):
 				if get_global_mouse_position().distance_to(creature.global_position) <= distance_check:
 					camera.target(creature)
 					break
+
+var last_creature_1 = null
+var last_creature_2 = null
+func _on_reproduce(creature_1, creature_2):
+	# Reproduction collisions create two signals (one from each creature)
+	# Ensures only one signal is received
+	if last_creature_1 != creature_2 and last_creature_2 != creature_1:
+		create_offspring(creature_1, creature_2)
+		last_creature_1 = creature_1
+		last_creature_2 = creature_2
 
 func _on_creature_died(creature_index):
 	var creature = creatures[creature_index]

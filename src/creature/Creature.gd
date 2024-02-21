@@ -33,6 +33,9 @@ var propulsion_angles = {}
 @onready var health = get_node("Health")
 @onready var body = get_node("Body")
 
+var reproduction_cooldown = 5
+var reproduction_cooldown_progress = 5
+
 func add_node(id, pos):
 	var node_plan = physical_genome[id]
 	var node = {
@@ -57,6 +60,7 @@ func initialize_object(node):
 	node["object"].size = Vector2(node["size"], node["size"])
 	node["object"].node_id = node["id"]
 	node["object"].type = node["type"]
+	node["object"].reproduce.connect(_on_reproduce)
 	body.add_child(node["object"])
 
 func initialize_collision(node):
@@ -295,6 +299,10 @@ func _process(delta):
 	else:
 		self.position += move_vector / move_vector.length() * max_speed
 
+	if reproduction_cooldown_progress > 0:
+		reproduction_cooldown_progress -= delta
+		reproduction_cooldown_progress = max(reproduction_cooldown_progress, 0)
+
 	handle_interactions(delta)
 
 # On second thought, we should probably move this functionality into the tile, and have the tile apply any affects it needs or wants onto the creature
@@ -338,6 +346,12 @@ func handle_temperature(delta, tile):
 				die()
 			temp_timer = 0
 
-signal creature_died(creature_index);
+signal reproduce(creature_1, creature_2)
+func _on_reproduce(creature_1, creature_2):
+	if reproduction_cooldown_progress == 0:
+		reproduce.emit(creature_1, creature_2)
+		reproduction_cooldown_progress = reproduction_cooldown
+
+signal creature_died(creature_index)
 func die():
 	creature_died.emit(creature_index)
