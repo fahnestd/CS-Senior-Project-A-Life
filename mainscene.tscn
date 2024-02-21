@@ -35,13 +35,6 @@ corner_radius_bottom_left = 8
 [node name="Creature Generator" type="Node2D" parent="."]
 script = ExtResource("4_r0x6e")
 
-[node name="Camera2D" type="Camera2D" parent="Creature Generator"]
-position = Vector2(4000, 4000)
-zoom = Vector2(4, 4)
-position_smoothing_enabled = true
-position_smoothing_speed = 12.0
-script = ExtResource("4_kinps")
-
 [node name="CanvasLayer" type="CanvasLayer" parent="."]
 
 [node name="UIOverlay" type="Control" parent="CanvasLayer"]
@@ -253,6 +246,13 @@ offset_top = 40.0
 offset_right = 970.0
 offset_bottom = 649.0
 theme_override_styles/separator = ExtResource("6_j2i2m")
+
+[node name="Camera" type="Camera2D" parent="."]
+position = Vector2(4000, 4000)
+zoom = Vector2(4, 4)
+position_smoothing_enabled = true
+position_smoothing_speed = 12.0
+script = ExtResource("4_kinps")
 
 [node name="Target Node" type="Sprite2D" parent="."]
 position = Vector2(4000, 4000)

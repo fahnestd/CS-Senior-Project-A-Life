@@ -2,6 +2,8 @@ extends Node2D
 
 var creature
 
+var visible_nodes = {}
+
 var behavior_step_progress = 0
 var behavior_step_id = 0
 var behavior_id = "0"
@@ -10,7 +12,7 @@ var behavior_id = "0"
 func calculate_angle_diff(target_coords):
 	var pos = creature.get_global_position()
 	var vec_diff = target_coords - pos 
-	var dir_vec = Vector2(1, 0).rotated(creature.rotation)
+	var dir_vec = Vector2(1, 0).rotated(creature.body.rotation)
 	var angle_diff = round(rad_to_deg(dir_vec.angle_to(vec_diff)))
 	return angle_diff
 
@@ -74,7 +76,7 @@ func process_behavior(delta):
 					var node = creature.nodes[id]
 					var parent_connection = node["parent_connection"]
 					var parent_id = parent_connection["parent_id"]
-					creature.pivot_node(id, parent_id, angle_shift)
+					creature.pivot_node(id, parent_id, angle_shift, true)
 
 		if behavior_step_progress == behavior_step_seconds:
 			behavior_step_progress = 0

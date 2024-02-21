@@ -1,13 +1,14 @@
 extends Node2D
 
 var creature_scene = preload("res://creature.tscn")
-@onready var camera = get_node("Camera2D")
+@onready var camera = get_node("../Camera")
 @onready var world = get_node("../World")
 
 var generate_creatures = true
 var mutation_chance = 50
-var print_new_genome = true
+var print_new_genome = false
 var distance_check = 30.0
+
 signal next_generation
 signal creature_info(info)
 
@@ -101,7 +102,7 @@ func create_creature(pos, rot, physical_genome):
 	creature_info.emit(physical_genome)
 	new_creature.behavioral_genome = behavioral_genome
 	new_creature.global_position = pos
-	new_creature.rotation_degrees = rot
+	new_creature.get_node("Body").rotation_degrees = rot
 	var new_creature_index = 0
 	while creatures.has(new_creature_index):
 		new_creature_index += 1
@@ -157,16 +158,16 @@ func mutation(dict, num_nodes, chance, min_intensity, max_intensity):
 			new_key += 1
 		dict[str(new_key)] = dict[dict.keys()[randi_range(0, dict.size() - 1)]]
 
-	return mutation_values(dict, num_nodes, chance, min_intensity, max_intensity)
+	return mutation_traversal(dict, num_nodes, chance, min_intensity, max_intensity)
 
 # Iterates through each key in the genome
 # chance is the percentage chance that each value mutates
 # min_intensity is the min percentage that a value can mutate by (-50 means the value can be halved)
 # max_intensity is the max percentage that a value can mutate by (100 means the value can double)
-func mutation_values(dict, num_nodes, chance, min_intensity, max_intensity):
+func mutation_traversal(dict, num_nodes, chance, min_intensity, max_intensity):
 	for key in dict.keys():
 		if dict[key] is Dictionary:
-			dict[key] = mutation_values(dict[key], num_nodes, chance, min_intensity, max_intensity)
+			dict[key] = mutation_traversal(dict[key], num_nodes, chance, min_intensity, max_intensity)
 		else:
 			if chance > randi_range(0, 99):
 				if key == "parent_id":
@@ -189,7 +190,13 @@ func mutation_values(dict, num_nodes, chance, min_intensity, max_intensity):
 						dict[key] = "pivot"
 					else:
 						dict[key] = "fixed"
+				elif key == "type":
+					dict[key] = mutate_type()
 	return dict
+
+var types = ["body", "reproduction", "eye"]
+func mutate_type():
+	return types[randi_range(0, types.size() - 1)]
 
 var creatures = {}
 func _ready():
@@ -198,28 +205,33 @@ func _ready():
 			"parent_id": "0",
 			"angle": 0,
 			"size": 10.0,
-			"joint": "fixed"
+			"joint": "fixed",
+			"type": "eye"
 		},
 		"1" = {
 			"parent_id": "0",
 			"angle": 0,
 			"size": 10.0,
-			"joint": "fixed"
+			"joint": "fixed",
+			"type": "reproduction"
 		},
 		"2" = {
 			"parent_id": "0",
 			"angle": 120,
 			"size": 10.0,
-			"joint": "pivot"
+			"joint": "pivot",
+			"type": "body"
 		},
 		"3" = {
 			"parent_id": "0",
 			"angle": 240,
 			"size": 10.0,
-			"joint": "pivot"
+			"joint": "pivot",
+			"type": "body"
 		}
 	}
-	create_creature(world.GetSpawnCoordinates() * world.GetTileSize(), 0, physical_genome)
+	create_creature((world.GetSpawnCoordinates() - Vector2(5, 0)) * world.GetTileSize(), 180, physical_genome)
+	create_creature((world.GetSpawnCoordinates() + Vector2(5, 0)) * world.GetTileSize(), 0, physical_genome)
 
 var timer = 0
 func _process(delta):

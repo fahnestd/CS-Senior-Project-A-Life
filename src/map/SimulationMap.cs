@@ -39,15 +39,15 @@ namespace SeniorProject.src.map
 			TerrainGenerator TemperatureGenerator = new InverseCellularGradientTerrainGenerator(seed);
 			int[,] TemperatureMap = TemperatureGenerator.GenerateMap(mapWidth, mapHeight);
 
-            seed++;
-            TerrainGenerator LightLevelGenerator = new ExponentialTerrainGenerator(seed);
-            int[,] LightLevelMap = LightLevelGenerator.GenerateMap(mapWidth, mapHeight);
+			seed++;
+			TerrainGenerator LightLevelGenerator = new ExponentialTerrainGenerator(seed);
+			int[,] LightLevelMap = LightLevelGenerator.GenerateMap(mapWidth, mapHeight);
 
-            seed++;
-            TerrainGenerator WaterPressureGenerator = new LinearTerrainGenerator(seed);
-            int[,] WaterPressureMap = WaterPressureGenerator.GenerateMap(mapWidth, mapHeight);
+			seed++;
+			TerrainGenerator WaterPressureGenerator = new LinearTerrainGenerator(seed);
+			int[,] WaterPressureMap = WaterPressureGenerator.GenerateMap(mapWidth, mapHeight);
 
-            for (int y = 0; y < mapHeight; y++)
+			for (int y = 0; y < mapHeight; y++)
 			{
 				for (int x = 0; x < mapWidth; x++)
 				{
@@ -96,7 +96,7 @@ namespace SeniorProject.src.map
 
 		public Vector2 GetSpawnCoordinates()
 		{
-			return new Vector2(mapWidth / 2 - 5, mapHeight / 2 - 5);
+			return new Vector2(mapWidth / 2, mapHeight / 2);
 		}
 	}
 }
