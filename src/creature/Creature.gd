@@ -308,8 +308,8 @@ func _process(delta):
 # On second thought, we should probably move this functionality into the tile, and have the tile apply any affects it needs or wants onto the creature
 # Ill leave it here for now though while I think it through.
 func handle_interactions(delta):
-	var _pos = Vector2i(get_parent().position)
-	var global_pos = Vector2i(get_parent().global_position)
+	var _pos = Vector2i(position)
+	var global_pos = Vector2i(global_position)
 	var tile = world.GetTile(global_pos)
 	handle_pressure(delta, tile);
 	handle_lightlevel(delta, tile);
