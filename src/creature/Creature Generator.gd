@@ -1,6 +1,5 @@
 extends Node2D
 
-var creature_scene = preload("res://creature.tscn")
 @onready var camera = get_node("../Camera")
 @onready var world = get_node("../World")
 
@@ -12,147 +11,21 @@ var distance_check = 30.0
 signal next_generation
 signal creature_info(info)
 
-var behavioral_genome = {
-	"0" = {
-		"if" = {
-			"angle diff" = {
-				"conditional" = "lessEqual",
-				"value" = -10
-			}
-		},
-		"pattern" = {
-			"0" = {
-				"0" = 20.0,
-				"1" = 20.0,
-				"time" = 0.25
-			},
-			"1" = {
-				"0" = -20.0,
-				"1" = -20.0,
-				"time" = 1.0
-			}
-		}
-	},
-	"1" = {
-		"if" = {
-			"angle diff" = {
-				"conditional" = "greaterEqual",
-				"value" = 10
-			}
-		},
-		"pattern" = {
-			"0" = {
-				"0" = -20.0,
-				"1" = -20.0,
-				"time" = 0.25
-			},
-			"1" = {
-				"0" = 20.0,
-				"1" = 20.0,
-				"time" = 1.0
-			}
-		}
-	},
-	"2" = {
-		"if" = {
-			"angle diff" = {
-				"conditional" = "lessEqual",
-				"value" = -5,
-				"and" = {
-					"angle diff" = {
-						"conditional" = "greater",
-						"value" = -10
-					}
-				}
-			}
-		},
-		"pattern" = {
-			"0" = {
-				"0" = 10.0,
-				"1" = 10.0,
-				"time" = 0.25
-			},
-			"1" = {
-				"0" = -10.0,
-				"1" = -10.0,
-				"time" = 1.0
-			}
-		}
-	},
-	"3" = {
-		"if" = {
-			"angle diff" = {
-				"conditional" = "greaterEqual",
-				"value" = 5,
-				"and" = {
-					"angle diff" = {
-						"conditional" = "less",
-						"value" = 10
-					}
-				}
-			}
-		},
-		"pattern" = {
-			"0" = {
-				"0" = -10.0,
-				"1" = -10.0,
-				"time" = 0.25
-			},
-			"1" = {
-				"0" = 10.0,
-				"1" = 10.0,
-				"time" = 1.0
-			}
-		}
-	},
-	"4" = {
-		"pattern" = {
-			"0" = {
-				"0" = 40.0,
-				"1" = -40.0,
-				"time" = 0.5
-			},
-			"1" = {
-				"0" = -40.0,
-				"1" = 40.0,
-				"time" = 1.0
-			}
-		}
-	}
-}
+
 
 func create_offspring(creature_1, creature_2):
 	next_generation.emit()
-  
+	
 	var physical_crossover = crossover({}, creature_1.physical_genome, creature_2.physical_genome)
 	var physical_mutation = mutation(physical_crossover, physical_crossover.size(), mutation_chance, -50, 50)
 
 	var offspring_pos = (creature_1.global_position + creature_2.global_position) / 2.0
 	var offspring_rot = (creature_1.rotation + creature_2.rotation) / 2.0
-	create_creature(offspring_pos, offspring_rot, physical_mutation)
+	#create_creature(offspring_pos, offspring_rot, physical_mutation)
 	if print_new_genome:
 		print("New Genome:")
 		print(physical_mutation)
 		print()
-
-func create_creature(pos, rot, physical_genome):
-	var new_creature = creature_scene.instantiate()
-
-	new_creature.physical_genome = physical_genome
-	creature_info.emit(physical_genome)
-	new_creature.behavioral_genome = behavioral_genome
-	new_creature.global_position = pos
-	new_creature.get_node("Body").rotation_degrees = rot
-	var new_creature_index = 0
-	while creatures.has(new_creature_index):
-		new_creature_index += 1
-	new_creature.creature_index = new_creature_index
-	new_creature.reproduce.connect(_on_reproduce)
-	new_creature.creature_died.connect(_on_creature_died)
-
-	self.get_parent().add_child.call_deferred(new_creature)
-
-	creatures[new_creature_index] = new_creature
 
 # Checks each key value pair in both dict_1 and dict_2, constructing return_dict from the winning values
 # If both values are dictionaries, recursively calls crossover, setting the key in return_dict to the returned value
@@ -241,46 +114,15 @@ func mutate_type():
 
 var creatures = {}
 func _ready():
-	var physical_genome = {
-		"0" = {
-			"parent_id": "0",
-			"angle": 0,
-			"size": 10.0,
-			"joint": "fixed",
-			"type": "eye"
-		},
-		"1" = {
-			"parent_id": "0",
-			"angle": 0,
-			"size": 10.0,
-			"joint": "fixed",
-			"type": "reproduction"
-		},
-		"2" = {
-			"parent_id": "0",
-			"angle": 120,
-			"size": 10.0,
-			"joint": "pivot",
-			"type": "body"
-		},
-		"3" = {
-			"parent_id": "0",
-			"angle": 240,
-			"size": 10.0,
-			"joint": "pivot",
-			"type": "body"
-		}
-	}
-	create_creature((world.GetSpawnCoordinates() - Vector2(10, 2)) * world.GetTileSize(), 0, physical_genome)
-	create_creature((world.GetSpawnCoordinates() + Vector2(10, 2)) * world.GetTileSize(), 180, physical_genome)
+	pass
 
 var timer = 0
 func _process(delta):
 	if generate_creatures:
 		timer += delta
 		if timer >= 5:
-			create_offspring(get_random_creature(),
-							 get_random_creature())
+			#create_offspring(get_random_creature(),
+							 #get_random_creature())
 			timer = 0
 
 func _input(event):
@@ -298,7 +140,7 @@ func _on_reproduce(creature_1, creature_2):
 	# Reproduction collisions create two signals (one from each creature)
 	# Ensures only one signal is received
 	if last_creature_1 != creature_2 and last_creature_2 != creature_1:
-		create_offspring(creature_1, creature_2)
+		#create_offspring(creature_1, creature_2)
 		last_creature_1 = creature_1
 		last_creature_2 = creature_2
 

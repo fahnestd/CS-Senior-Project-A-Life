@@ -17,14 +17,17 @@ var parent_creature
 var collision_area
 
 func initialize_eye():
-	var sight_object = Area2D.new()
-	var circle = CircleShape2D.new()
-	circle.radius = eye_radius
-	var collision = CollisionShape2D.new()
-	collision.shape = circle
-	sight_object.add_child(collision)
-	sight_object.script = load("res://src/creature/Eye.gd")
-	self.add_child(sight_object)
+	#var sight_object = Area2D.new()
+	#var circle = CircleShape2D.new()
+	#circle.radius = eye_radius
+	#var collision = CollisionShape2D.new()
+	#collision.shape = circle
+	#sight_object.add_child(collision)
+	#sight_object.script = load("res://src/creature/Eye.gd")
+	
+	var eye_node = preload("res://src/creature/nodes/Eye.tscn").instantiate()
+	eye_node.get_node("Area2D").initialize(parent_creature)
+	self.add_child(eye_node)
 
 func _ready():
 	parent_creature = get_parent().get_parent()
@@ -106,7 +109,7 @@ func _process(_delta):
 			parent_creature.update_node_connections(node_id)
 	else:
 		parent_creature.fix_connection_length(node_id)
-
-func _draw():
-	if type == "eye":
-		draw_circle(self.position, eye_radius, Color(1, 1, 1, 0.1))
+#
+#func _draw():
+	#if type == "eye":
+		#draw_circle(self.position, eye_radius, Color(1, 1, 1, 0.1))

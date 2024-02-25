@@ -2,8 +2,6 @@ extends Node2D
 
 var Behavior = preload("res://src/creature/Behavior.gd").new()
 
-var physical_genome
-var behavioral_genome
 var creature_index
 
 # Changeable parameters
@@ -20,8 +18,6 @@ var textures = {
 var node_width = textures["body"].get_width()
 var node_height = textures["body"].get_height()
 
-var nodes = {}
-var root_node
 
 # Stores the ids of pivot nodes in creation order, so behavioral patterns can specify things like "rotate first pivot node, rotate second pivot node" without referring to their specific ids
 var pivot_node_ids = {}
@@ -35,81 +31,6 @@ var propulsion_angles = {}
 
 var reproduction_cooldown = 5
 var reproduction_cooldown_progress = 5
-
-func add_node(id, pos):
-	var node_plan = physical_genome[id]
-	var node = {
-		"id": id,
-		"position": pos,
-		"size": node_plan["size"],
-		"angle": node_plan["angle"],
-		"joint": node_plan["joint"],
-		"type": node_plan["type"],
-		"object": Area2D.new(),
-		"sprite": Sprite2D.new()
-	}
-	nodes[id] = node
-	initialize_object(node)
-	initialize_sprite(node)
-	move_node(id, pos, false)
-
-func initialize_object(node):
-	initialize_collision(node)
-	node["object"].position = node["position"]
-	node["object"].script = load("res://src/creature/Node.gd")
-	node["object"].size = Vector2(node["size"], node["size"])
-	node["object"].node_id = node["id"]
-	node["object"].type = node["type"]
-	node["object"].reproduce.connect(_on_reproduce)
-	body.add_child(node["object"])
-
-func initialize_collision(node):
-	var rectangle = RectangleShape2D.new()
-	rectangle.size = Vector2(node["size"], node["size"])
-	var collision = CollisionShape2D.new()
-	collision.shape = rectangle
-	node["object"].add_child(collision)
-
-func initialize_sprite(node):
-	node["sprite"].texture = textures[node["type"]]
-	node["sprite"].scale.x = node["size"] / node_width
-	node["sprite"].scale.y = node["size"] / node_height
-	node["object"].add_child(node["sprite"])
-
-func add_connected_node(id):
-	var node = physical_genome[id]
-	var parent_id = node["parent_id"]
-	var parent_node = nodes[parent_id]
-	var new_sprite = Sprite2D.new()
-	body.add_child(new_sprite)
-	new_sprite.offset.x = 0.5
-	new_sprite.position = parent_node.position
-	new_sprite.rotation_degrees = node["angle"]
-	new_sprite.scale.x = connection_distance
-	new_sprite.texture = textures[node["joint"]]
-	new_sprite.texture_repeat = CanvasItem.TEXTURE_REPEAT_ENABLED
-	new_sprite.z_index = 1
-
-	var dir_vector = Vector2(1, 0).rotated(deg_to_rad(node["angle"]))
-	var endpoint = parent_node.position + connection_distance * dir_vector
-	add_node(id, endpoint)
-	var new_node = nodes[id]
-
-	if new_node["joint"] == "pivot":
-		pivot_node_ids[str(pivot_node_ids.size())] = id
-
-	var new_connection = {
-		"sprite": new_sprite,
-		"parent_id": parent_id,
-		"child_id": id,
-		"length": connection_distance
-	}
-
-	if parent_node.has("child_connections"):
-		parent_node["child_connections"].append(new_connection)
-	else:
-		parent_node["child_connections"] = [new_connection]
-	new_node["parent_connection"] = new_connection
 
 func move_node(id, pos, propulsion):
 	var node = nodes[id]
@@ -222,55 +143,10 @@ func pivot_node(id, origin_id, angle_shift, propulsion):
 			var child_id = connection["child_id"]
 			pivot_node(child_id, origin_id, angle_shift, false)
 
-func build_creature():
-	add_first_node()
-	add_possible_nodes()
-	force_add_remaining_nodes()
-
-func add_first_node():
-	var lowest_id = 0
-	while not physical_genome.has(str(lowest_id)):
-		lowest_id += 1
-	var id = str(lowest_id)
-	if id != "0":
-		physical_genome["0"] = physical_genome[id]
-		physical_genome["0"]["parent_id"] = "0"	
-		physical_genome.erase(id)
-	add_node("0", Vector2(0, 0))
-	root_node = nodes["0"]["object"]
-
-func add_possible_nodes():
-	var added_node = false
-	while true:
-		added_node = false
-		for id in physical_genome.keys():
-			if not nodes.has(id):
-				var parent_id = physical_genome[id]["parent_id"]
-				if nodes.has(parent_id):
-					add_connected_node(id)
-					added_node = true
-		if not added_node or nodes.size() == physical_genome.size():
-			break
-
-func force_add_remaining_nodes():
-	if nodes.size() != physical_genome.size():
-		for id in physical_genome.keys():
-			if not nodes.has(id):
-				var parent_id = int(physical_genome[id]["parent_id"])
-				while not nodes.has(str(parent_id)):
-					parent_id -= 1
-					if parent_id < 0:
-						parent_id = int(physical_genome[id]["parent_id"]) + 1
-						while not nodes.has(str(parent_id)):
-							parent_id += 1
-				physical_genome[id]["parent_id"] = str(parent_id)
-				add_connected_node(id)
-
 # Called when the node enters the scene tree for the first time.
 func _ready():
 	set_process_input(true)
 	Behavior.creature = self
-	build_creature()
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta):

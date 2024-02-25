@@ -1,12 +1,11 @@
 extends Area2D
 
-var type = "sight"
+#var type = "sight"
 var parent_creature
 var Behavior
 var visible_nodes
 
-func _ready():
-	parent_creature = get_parent().parent_creature
+func initialize(parent_creature):
 	Behavior = parent_creature.Behavior
 	visible_nodes = Behavior.visible_nodes
 	area_entered.connect(_on_area_entered)
