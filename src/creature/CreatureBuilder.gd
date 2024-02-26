@@ -186,16 +186,23 @@ func add_node(creature, genome, node_plan, node_id, parent_node = null):
 		node = preload("res://src/creature/nodes/Eye.tscn").instantiate()
 		node.scale_node(node_plan["size"])
 		node.node_plan = node_plan
+		node.angle = node_plan["angle"]
 		node.parent = parent_node
 		creature.get_node('Body').add_child(node)
 		fix_connection_length(creature, node)
 	if node_plan["type"] == "reproduction":
 		node = preload("res://src/creature/nodes/Reproduction.tscn").instantiate()
-		#node.connect(_on_reproduce)		
-		node.parent = parent_node	
+		#node.connect(_on_reproduce)
+		node.angle = node_plan["angle"]
+		node.parent = parent_node
 		creature.get_node('Body').add_child(node)
-		fix_connection_length(creature, node)			
-		#move_node(id, Vector2(0, 0), false)
+		fix_connection_length(creature, node)
+	if node_plan["type"] == "body":
+		node = preload("res://src/creature/nodes/Body.tscn").instantiate()	
+		node.angle = node_plan["angle"]
+		node.parent = parent_node
+		creature.get_node('Body').add_child(node)
+		fix_connection_length(creature, node)
 		
 	# Add other nodes
 	var child_nodes = node_plan_filter_children(creature.get_node('PhysicalGenome').physical_genome, node_id)

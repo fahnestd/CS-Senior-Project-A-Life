@@ -1,6 +1,6 @@
 [gd_scene load_steps=5 format=3 uid="uid://ce3qe0su5jy22"]
 
-[ext_resource type="Script" path="res://src/creature/nodes/Eye.gd" id="1_g5hv4"]
+[ext_resource type="Script" path="res://src/creature/nodes/Node.gd" id="1_2hlt4"]
 [ext_resource type="Script" path="res://src/creature/nodes/EyeArea.gd" id="2_owl0t"]
 [ext_resource type="Texture2D" uid="uid://6us7wlyvdjbp" path="res://assets/creature/blue_circle.png" id="2_tc77r"]
 
@@ -8,7 +8,7 @@
 radius = 5.0
 
 [node name="Eye" type="Node2D"]
-script = ExtResource("1_g5hv4")
+script = ExtResource("1_2hlt4")
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
 texture = ExtResource("2_tc77r")

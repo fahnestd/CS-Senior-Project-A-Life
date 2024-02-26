@@ -1,0 +1,20 @@
+[gd_scene load_steps=5 format=3 uid="uid://d2i01vu72ff4u"]
+
+[ext_resource type="Script" path="res://src/creature/nodes/Node.gd" id="1_lxulr"]
+[ext_resource type="Texture2D" uid="uid://boj5nvtsna5ol" path="res://assets/creature/circle.png" id="2_kv60x"]
+[ext_resource type="Script" path="res://src/creature/nodes/BodyArea.gd" id="3_wpuee"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_o72xe"]
+radius = 5.0
+
+[node name="Body" type="Node2D"]
+script = ExtResource("1_lxulr")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+texture = ExtResource("2_kv60x")
+
+[node name="Area2D" type="Area2D" parent="."]
+script = ExtResource("3_wpuee")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Area2D"]
+shape = SubResource("CircleShape2D_o72xe")
