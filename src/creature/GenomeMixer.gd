@@ -1,7 +1,8 @@
-extends Node2D
+extends Node
 
 @onready var camera = get_node("../Camera")
 @onready var world = get_node("../World")
+@onready var spawner = get_node("../CreatureSpawner")
 
 var generate_creatures = false
 var mutation_chance = 10
@@ -112,10 +113,6 @@ var types = ["body", "reproduction", "eye"]
 func mutate_type():
 	return types[randi_range(0, types.size() - 1)]
 
-var creatures = {}
-func _ready():
-	pass
-
 var timer = 0
 func _process(delta):
 	if generate_creatures:
@@ -128,11 +125,12 @@ func _process(delta):
 func _input(event):
 	if event is InputEventMouseButton:
 		if event.button_index == MOUSE_BUTTON_LEFT:
-			for creature_index in creatures:
-				var creature = creatures[creature_index]
-				if get_global_mouse_position().distance_to(creature.global_position) <= distance_check:
-					camera.target(creature)
-					break
+			#for creature_index in creatures:
+				#var creature = creatures[creature_index]
+				#if get_global_mouse_position().distance_to(creature.global_position) <= distance_check:
+					#camera.target(creature)
+					#break
+			pass
 
 var last_creature_1 = null
 var last_creature_2 = null
@@ -144,13 +142,14 @@ func _on_reproduce(creature_1, creature_2):
 		last_creature_1 = creature_1
 		last_creature_2 = creature_2
 
-func _on_creature_died(creature_index):
-	var creature = creatures[creature_index]
-	creatures.erase(creature_index)
-	if camera.target_node == creature.root_node:
-		camera.target_node = null
-	creature.queue_free()
+#func _on_creature_died(creature_index):
+	#var creature = creatures[creature_index]
+	#creatures.erase(creature_index)
+	#if camera.target_node == creature.root_node:
+		#camera.target_node = null
+	#creature.queue_free()
 
 func get_random_creature():
-	var random_index = randi_range(0, creatures.size() - 1)
-	return creatures[creatures.keys()[random_index]]
+	#var random_index = randi_range(0, creatures.size() - 1)
+	#return creatures[creatures.keys()[random_index]]
+	pass

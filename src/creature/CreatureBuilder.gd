@@ -3,6 +3,9 @@ extends Node
 var creature_scene = preload("res://creature.tscn")
 
 @onready var world = get_node("../World")
+@onready var genome_mixer = get_node("../GenomeMixer")
+
+var connection_distance = 20
 
 var behavioral_genome = {
 	"0" = {
@@ -115,7 +118,7 @@ var behavioral_genome = {
 
 var default_physical_genome = {
 		"0" = {
-			"parent_id": "0",
+			"parent_id": "",
 			"angle": 0,
 			"size": 10.0,
 			"joint": "fixed",
@@ -144,13 +147,14 @@ var default_physical_genome = {
 		}
 	}
 
-
+# Generate 2 starter creatures
 func _ready():
 	var creature1 = create_creature((world.GetSpawnCoordinates() - Vector2(10, 2)) * world.GetTileSize(), 0, default_physical_genome)
 	build_creature(creature1)
 	var creature2 = create_creature((world.GetSpawnCoordinates() + Vector2(10, 2)) * world.GetTileSize(), 180, default_physical_genome)
 	build_creature(creature2)
 
+# Generate a new creature
 func create_creature(pos, rot, physical_genome):
 	var new_creature = creature_scene.instantiate()
 	
@@ -168,37 +172,49 @@ func create_creature(pos, rot, physical_genome):
 	#creature_info.emit(physical_genome)
 	
 	# add the creature to the mainscene node.
-	self.get_parent().add_child.call_deferred(new_creature)
+	self.get_node("../Creatures").add_child.call_deferred(new_creature)
 	return new_creature
 
 func build_creature(creature):
 	var physical_genome = creature.get_node('PhysicalGenome').physical_genome
-	var root_node = physical_genome["0"]
-	for key in physical_genome:
-		add_node(key, physical_genome[key])
+	add_node(creature, physical_genome, physical_genome["0"], "0")
+	
 
-func add_node(id, node_plan):
+func add_node(creature, genome, node_plan, node_id, parent_node = null):
+	var node
 	if node_plan["type"] == "eye":
-		var eye_node = preload("res://src/creature/nodes/Eye.tscn").instantiate()
-		eye_node.get_node("Area2D").initialize(self)
-		eye_node.size = node_plan["size"]
-		eye_node.node_id = node_plan["id"]
-		eye_node.scale.x = node_plan["size"]
-		eye_node.scale.y = node_plan["size"]
-		get_node('Body').add_child(eye_node)
-		#move_node(id, Vector2(0, 0), false)
+		node = preload("res://src/creature/nodes/Eye.tscn").instantiate()
+		node.scale_node(node_plan["size"])
+		node.node_plan = node_plan
+		node.parent = parent_node
+		creature.get_node('Body').add_child(node)
+		fix_connection_length(creature, node)
 	if node_plan["type"] == "reproduction":
-		var reproduction_node = preload("res://src/creature/nodes/Reproduction.tscn").instantiate()
-		#reproduction_node.connect(_on_reproduce)		
-		get_node('Body').add_child(reproduction_node)
+		node = preload("res://src/creature/nodes/Reproduction.tscn").instantiate()
+		#node.connect(_on_reproduce)		
+		node.parent = parent_node	
+		creature.get_node('Body').add_child(node)
+		fix_connection_length(creature, node)			
 		#move_node(id, Vector2(0, 0), false)
+		
+	# Add other nodes
+	var child_nodes = node_plan_filter_children(creature.get_node('PhysicalGenome').physical_genome, node_id)
+	for child_node in child_nodes:
+		add_node(creature, genome, genome[child_node], child_node, node)
 
-func add_connected_node(id):
-	#var node = physical_genome[id]
-	#var parent_id = node["parent_id"]
-	#var parent_node = nodes[parent_id]
-	#var new_sprite = Sprite2D.new()
-	#body.add_child(new_sprite)
+
+func node_plan_filter_children(plan, node_id):
+	var filtered = {}
+	for key in plan.keys():
+		if plan[key]["parent_id"] == null:
+			continue
+		if plan[key]["parent_id"] == node_id:
+			filtered[key] = plan[key]
+	return filtered
+	
+#func initialize_leg_node(node, pos):
+	#node["position"] = pos
+	#node["object"].position = pos
 	#new_sprite.offset.x = 0.5
 	#new_sprite.position = parent_node.position
 	#new_sprite.rotation_degrees = node["angle"]
@@ -206,30 +222,48 @@ func add_connected_node(id):
 	#new_sprite.texture = textures[node["joint"]]
 	#new_sprite.texture_repeat = CanvasItem.TEXTURE_REPEAT_ENABLED
 	#new_sprite.z_index = 1
-	pass
+
+func fix_connection_length(creature, node):
+	if node.parent != null:
+		var direction = node.parent["position"] - node["position"]
+		var distance = direction.length()
+		direction = direction / distance
+
+		if distance > connection_distance:
+			distance *= 0.9
+			distance = max(connection_distance, distance)
+		elif distance < connection_distance:
+			distance *= 1.1
+			distance = min(connection_distance, distance)
+
+		var new_node_pos =  node.parent["position"] - direction * distance
+		
+		if new_node_pos != node["position"]:
+			node["position"] = new_node_pos
 
 
-func add_possible_nodes():
-	var added_node = false
-	while added_node and nodes.size() != physical_genome.size():
-		added_node = false
-		for id in physical_genome.keys():
-			if not nodes.has(id):
-				var parent_id = physical_genome[id]["parent_id"]
-				if nodes.has(parent_id):
-					add_connected_node(id)
-					added_node = true
 
-func force_add_remaining_nodes():
-	if nodes.size() != physical_genome.size():
-		for id in physical_genome.keys():
-			if not nodes.has(id):
-				var parent_id = int(physical_genome[id]["parent_id"])
-				while not nodes.has(str(parent_id)):
-					parent_id -= 1
-					if parent_id < 0:
-						parent_id = int(physical_genome[id]["parent_id"]) + 1
-						while not nodes.has(str(parent_id)):
-							parent_id += 1
-				physical_genome[id]["parent_id"] = str(parent_id)
-				add_connected_node(id)
+#func add_possible_nodes():
+	#var added_node = false
+	#while added_node and nodes.size() != physical_genome.size():
+		#added_node = false
+		#for id in physical_genome.keys():
+			#if not nodes.has(id):
+				#var parent_id = physical_genome[id]["parent_id"]
+				#if nodes.has(parent_id):
+					#add_connected_node(id)
+					#added_node = true
+#
+#func force_add_remaining_nodes():
+	#if nodes.size() != physical_genome.size():
+		#for id in physical_genome.keys():
+			#if not nodes.has(id):
+				#var parent_id = int(physical_genome[id]["parent_id"])
+				#while not nodes.has(str(parent_id)):
+					#parent_id -= 1
+					#if parent_id < 0:
+						#parent_id = int(physical_genome[id]["parent_id"]) + 1
+						#while not nodes.has(str(parent_id)):
+							#parent_id += 1
+				#physical_genome[id]["parent_id"] = str(parent_id)
+				#add_connected_node(id)

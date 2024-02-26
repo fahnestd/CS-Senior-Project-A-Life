@@ -1,5 +1,6 @@
-[gd_scene load_steps=4 format=3 uid="uid://b5wj4ov437jmo"]
+[gd_scene load_steps=5 format=3 uid="uid://b5wj4ov437jmo"]
 
+[ext_resource type="Script" path="res://src/creature/nodes/Reproduction.gd" id="1_coloi"]
 [ext_resource type="Texture2D" uid="uid://bfbcwxekbsxek" path="res://assets/creature/pink_circle.png" id="1_vuwcv"]
 [ext_resource type="Script" path="res://src/creature/nodes/ReproductionArea2D.gd" id="2_xm7fx"]
 
@@ -7,6 +8,7 @@
 radius = 5.0
 
 [node name="Eye" type="Node2D"]
+script = ExtResource("1_coloi")
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
 texture = ExtResource("1_vuwcv")
