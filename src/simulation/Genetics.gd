@@ -1,8 +1,9 @@
 extends Node
 
 @onready var camera = get_node("../Camera")
+@onready var Utility = get_node("../Utility")
 @onready var world = get_node("../World")
-@onready var spawner = get_node("../CreatureSpawner")
+#@onready var spawner = get_node("../CreatureSpawner")
 
 var generate_creatures = false
 var mutation_chance = 10
@@ -20,8 +21,6 @@ func create_offspring(creature_1, creature_2):
 	var physical_crossover = crossover({}, creature_1.physical_genome, creature_2.physical_genome)
 	var physical_mutation = mutation(physical_crossover, physical_crossover.size(), mutation_chance, -50, 50)
 
-	var offspring_pos = (creature_1.global_position + creature_2.global_position) / 2.0
-	var offspring_rot = (creature_1.rotation + creature_2.rotation) / 2.0
 	#create_creature(offspring_pos, offspring_rot, physical_mutation)
 	if print_new_genome:
 		print("New Genome:")
@@ -67,11 +66,8 @@ func mutation(dict, num_nodes, chance, min_intensity, max_intensity):
 	while num_nodes < dict.size():
 		dict.erase(dict.keys()[randi_range(0, dict.size() - 1)])
 
-	var new_key = 0
 	while num_nodes > dict.size():
-		while dict.has(str(new_key)):
-			new_key += 1
-		dict[str(new_key)] = dict[dict.keys()[randi_range(0, dict.size() - 1)]]
+		Utility.dictionary_next(dict, dict.keys()[randi_range(0, dict.size() - 1)])
 
 	return mutation_traversal(dict, num_nodes, chance, min_intensity, max_intensity)
 
@@ -112,15 +108,6 @@ func mutation_traversal(dict, num_nodes, chance, min_intensity, max_intensity):
 var types = ["body", "reproduction", "eye"]
 func mutate_type():
 	return types[randi_range(0, types.size() - 1)]
-
-var timer = 0
-func _process(delta):
-	if generate_creatures:
-		timer += delta
-		if timer >= 5:
-			#create_offspring(get_random_creature(),
-							 #get_random_creature())
-			timer = 0
 
 func _input(event):
 	if event is InputEventMouseButton:

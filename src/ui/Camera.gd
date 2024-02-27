@@ -1,6 +1,5 @@
 extends Camera2D
 
-
 # Called when the node enters the scene tree for the first time.
 var zoom_speed = 0.10
 var movement_speed = 300.00
@@ -24,7 +23,7 @@ func _input(event):
 
 func _process(delta):
 	var movement = Vector2.ZERO
-	
+
 	if Input.is_action_pressed("ui_up"): # W
 		movement.y -= movement_speed
 	if Input.is_action_pressed("ui_down"): # S
