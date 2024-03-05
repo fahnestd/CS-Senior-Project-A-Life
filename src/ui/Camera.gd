@@ -6,7 +6,10 @@ var movement_speed = 300.00
 
 var target_node = null
 
+signal creature_info(creature)
+
 func target(creature):
+	creature_info.emit(creature)
 	target_node = creature
 
 func _ready():
