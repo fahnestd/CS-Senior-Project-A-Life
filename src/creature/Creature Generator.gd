@@ -139,7 +139,6 @@ func create_creature(pos, rot, physical_genome):
 	var new_creature = creature_scene.instantiate()
 
 	new_creature.physical_genome = physical_genome
-	creature_info.emit(physical_genome)
 	new_creature.behavioral_genome = behavioral_genome
 	new_creature.global_position = pos
 	new_creature.get_node("Body").rotation_degrees = rot
@@ -290,6 +289,7 @@ func _input(event):
 				var creature = creatures[creature_index]
 				if get_global_mouse_position().distance_to(creature.global_position) <= distance_check:
 					camera.target(creature)
+					creature_info.emit(creature)
 					break
 
 var last_creature_1 = null
