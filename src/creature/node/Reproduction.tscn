@@ -1,0 +1,20 @@
+[gd_scene load_steps=5 format=3 uid="uid://b5wj4ov437jmo"]
+
+[ext_resource type="Script" path="res://src/creature/node/Node.gd" id="1_ibcvn"]
+[ext_resource type="Texture2D" uid="uid://bfbcwxekbsxek" path="res://assets/creature/pink_circle.png" id="1_vuwcv"]
+[ext_resource type="Script" path="res://src/creature/node/ReproductionArea2D.gd" id="2_xm7fx"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_o72xe"]
+radius = 5.0
+
+[node name="Reproduction" type="Node2D"]
+script = ExtResource("1_ibcvn")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+texture = ExtResource("1_vuwcv")
+
+[node name="Area2D" type="Area2D" parent="."]
+script = ExtResource("2_xm7fx")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Area2D"]
+shape = SubResource("CircleShape2D_o72xe")

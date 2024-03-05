@@ -1,0 +1,38 @@
+[gd_scene load_steps=8 format=3 uid="uid://b00knpl443ako"]
+
+[ext_resource type="Script" path="res://src/creature/Creature.gd" id="1_0d14m"]
+[ext_resource type="Script" path="res://src/creature/Body.gd" id="2_3ai1c"]
+[ext_resource type="Script" path="res://src/creature/Status.gd" id="2_ywqsr"]
+[ext_resource type="Script" path="res://src/creature/Behavior.gd" id="3_tnwbp"]
+[ext_resource type="Script" path="res://src/creature/Growth.gd" id="4_sf1a4"]
+[ext_resource type="Script" path="res://src/creature/Motion.gd" id="5_lt5u0"]
+
+[sub_resource type="LabelSettings" id="LabelSettings_2c82b"]
+font_size = 8
+
+[node name="Creature" type="Node2D"]
+script = ExtResource("1_0d14m")
+
+[node name="TerrainLabel" type="Label" parent="."]
+offset_left = -9.0
+offset_top = 10.0
+offset_right = 9.0
+offset_bottom = 33.0
+text = "	"
+label_settings = SubResource("LabelSettings_2c82b")
+horizontal_alignment = 1
+
+[node name="Body" type="Node2D" parent="."]
+script = ExtResource("2_3ai1c")
+
+[node name="Status" type="Node" parent="."]
+script = ExtResource("2_ywqsr")
+
+[node name="Behavior" type="Node" parent="."]
+script = ExtResource("3_tnwbp")
+
+[node name="Growth" type="Node" parent="."]
+script = ExtResource("4_sf1a4")
+
+[node name="Motion" type="Node" parent="."]
+script = ExtResource("5_lt5u0")
