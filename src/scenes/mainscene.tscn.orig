@@ -175,11 +175,17 @@ theme_override_styles/panel = SubResource("StyleBoxFlat_2prp0")
 
 [node name="FoodControl" type="Control" parent="CanvasLayer/UIOverlay/SideUIPanel"]
 anchors_preset = 0
-offset_left = 9.0
-offset_top = 76.0
+<<<<<<< HEAD:src/scenes/mainscene.tscn
 offset_right = 160.0
 offset_bottom = 40.0
 script = ExtResource("6_uxs3m")
+=======
+offset_left = 9.0
+offset_top = 76.0
+offset_right = 169.0
+offset_bottom = 116.0
+script = ExtResource("4_hy7gx")
+>>>>>>> master:mainscene.tscn
 
 [node name="FoodPercentLabel" type="Label" parent="CanvasLayer/UIOverlay/SideUIPanel/FoodControl"]
 modulate = Color(0, 0, 0, 1)
@@ -261,6 +267,23 @@ text = "Selected Creature"
 horizontal_alignment = 1
 vertical_alignment = 1
 
+<<<<<<< HEAD:src/scenes/mainscene.tscn
+[node name="HSeparator" type="HSeparator" parent="CanvasLayer/UIOverlay"]
+layout_mode = 0
+offset_left = 960.0
+offset_top = 36.0
+offset_right = 1152.0
+offset_bottom = 44.0
+theme_override_styles/separator = ExtResource("8_3ihby")
+
+[node name="VSeparator" type="VSeparator" parent="CanvasLayer/UIOverlay"]
+layout_mode = 0
+offset_left = 952.0
+offset_top = 40.0
+offset_right = 970.0
+offset_bottom = 649.0
+theme_override_styles/separator = ExtResource("9_5tlr3")
+=======
 [node name="HSeparator" type="HSeparator" parent="CanvasLayer/UIOverlay/SideUIPanel"]
 layout_mode = 1
 anchors_preset = 1
@@ -270,7 +293,7 @@ offset_left = -192.0
 offset_top = 38.0
 offset_bottom = 42.0
 grow_horizontal = 0
-theme_override_styles/separator = ExtResource("8_3ihby")
+theme_override_styles/separator = ExtResource("5_romv8")
 
 [node name="VSeparator" type="VSeparator" parent="CanvasLayer/UIOverlay/SideUIPanel"]
 layout_mode = 1
@@ -283,7 +306,8 @@ offset_top = 42.0
 offset_right = -189.0
 grow_horizontal = 0
 grow_vertical = 2
-theme_override_styles/separator = ExtResource("9_5tlr3")
+theme_override_styles/separator = ExtResource("6_j2i2m")
+>>>>>>> master:mainscene.tscn
 
 [node name="Camera" type="Camera2D" parent="."]
 position = Vector2(4000, 4000)
@@ -292,6 +316,7 @@ position_smoothing_enabled = true
 position_smoothing_speed = 12.0
 script = ExtResource("10_epbi7")
 
+<<<<<<< HEAD:src/scenes/mainscene.tscn
 [node name="Creatures" type="Node" parent="."]
 
 [node name="Resources" type="Node" parent="."]
@@ -300,4 +325,11 @@ script = ExtResource("11_ptsgc")
 [node name="Utility" type="Node" parent="."]
 script = ExtResource("12_o42hk")
 
+[connection signal="creature_info" from="Genetics" to="CanvasLayer/UIOverlay/SideUIPanel/FoodPanel/CreaturePanel" method="_on_creature_generator_creature_info"]
+[connection signal="next_generation" from="Genetics" to="CanvasLayer/UIOverlay/TopUIPanel/CurrentGenLabel" method="_on_creature_generator_next_generation"]
+[connection signal="value_changed" from="CanvasLayer/UIOverlay/SideUIPanel/FoodPanel/FoodControl/FoodHSlider" to="CanvasLayer/UIOverlay/SideUIPanel/FoodPanel/FoodControl" method="_on_food_h_slider_value_changed"]
+=======
+[connection signal="creature_info" from="Creature Generator" to="CanvasLayer/UIOverlay/SideUIPanel/CreaturePanel" method="_on_creature_generator_creature_info"]
+[connection signal="next_generation" from="Creature Generator" to="CanvasLayer/UIOverlay/TopUIPanel/CurrentGenLabel" method="_on_creature_generator_next_generation"]
 [connection signal="value_changed" from="CanvasLayer/UIOverlay/SideUIPanel/FoodControl/FoodHSlider" to="CanvasLayer/UIOverlay/SideUIPanel/FoodControl" method="_on_food_h_slider_value_changed"]
+>>>>>>> master:mainscene.tscn

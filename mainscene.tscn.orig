@@ -1,17 +1,15 @@
-[gd_scene load_steps=16 format=3 uid="uid://dvweqacxjay7r"]
+[gd_scene load_steps=14 format=3 uid="uid://dvweqacxjay7r"]
 
-[ext_resource type="PackedScene" uid="uid://02k684x8aybd" path="res://src/scenes/map.tscn" id="1_w7ogu"]
-[ext_resource type="Script" path="res://src/simulation/Genetics.gd" id="2_s28hq"]
-[ext_resource type="Script" path="res://src/simulation/Zookeeper.gd" id="3_6e6li"]
-[ext_resource type="Script" path="res://src/ui/simtime_ui.gd" id="4_vy1np"]
-[ext_resource type="Script" path="res://src/ui/gencontrol_ui.gd" id="5_in2cl"]
-[ext_resource type="Script" path="res://src/ui/foodcontrol_ui.gd" id="6_uxs3m"]
-[ext_resource type="Script" path="res://src/ui/creaturepanel_ui.gd" id="7_e3w55"]
-[ext_resource type="StyleBox" uid="uid://m3372f0wk2mk" path="res://assets/ui/SepLineUIAsset.tres" id="8_3ihby"]
-[ext_resource type="StyleBox" uid="uid://brqbxhceg7eji" path="res://assets/ui/VSepLineUIAsset.tres" id="9_5tlr3"]
-[ext_resource type="Script" path="res://src/ui/Camera.gd" id="10_epbi7"]
-[ext_resource type="Script" path="res://src/simulation/Resources.gd" id="11_ptsgc"]
-[ext_resource type="Script" path="res://src/simulation/Utility.gd" id="12_o42hk"]
+[ext_resource type="PackedScene" uid="uid://02k684x8aybd" path="res://Map.tscn" id="3_3o0j0"]
+[ext_resource type="Script" path="res://src/ui/simtime_ui.gd" id="4_0otx1"]
+[ext_resource type="Script" path="res://src/ui/foodcontrol_ui.gd" id="4_hy7gx"]
+[ext_resource type="Script" path="res://src/creature/Camera.gd" id="4_kinps"]
+[ext_resource type="Script" path="res://src/creature/GenomeMixer.gd" id="4_r0x6e"]
+[ext_resource type="Script" path="res://src/ui/gencontrol_ui.gd" id="5_mav27"]
+[ext_resource type="StyleBox" uid="uid://m3372f0wk2mk" path="res://assets/ui/SepLineUIAsset.tres" id="5_romv8"]
+[ext_resource type="StyleBox" uid="uid://brqbxhceg7eji" path="res://assets/ui/VSepLineUIAsset.tres" id="6_j2i2m"]
+[ext_resource type="Script" path="res://src/ui/creaturepanel_ui.gd" id="7_fkd73"]
+[ext_resource type="Script" path="res://src/creature/CreatureBuilder.gd" id="10_wanol"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_8urog"]
 bg_color = Color(0.509804, 0.509804, 0.509804, 1)
@@ -32,13 +30,13 @@ corner_radius_bottom_left = 8
 
 [node name="MainScene" type="Node2D"]
 
-[node name="World" parent="." instance=ExtResource("1_w7ogu")]
+[node name="World" parent="." instance=ExtResource("3_3o0j0")]
 
-[node name="Genetics" type="Node" parent="."]
-script = ExtResource("2_s28hq")
+[node name="GenomeMixer" type="Node" parent="."]
+script = ExtResource("4_r0x6e")
 
-[node name="Zookeeper" type="Node" parent="."]
-script = ExtResource("3_6e6li")
+[node name="CreatureBuilder" type="Node" parent="."]
+script = ExtResource("10_wanol")
 
 [node name="CanvasLayer" type="CanvasLayer" parent="."]
 
@@ -69,7 +67,7 @@ offset_right = 425.0
 offset_bottom = 54.0
 theme_override_font_sizes/font_size = 12
 text = "Simulation Run Time:"
-script = ExtResource("4_vy1np")
+script = ExtResource("4_0otx1")
 
 [node name="MsRunTimeLabel" type="Label" parent="CanvasLayer/UIOverlay/TopUIPanel/SimRunTimeLabel"]
 modulate = Color(0, 0, 0, 1)
@@ -125,7 +123,7 @@ offset_right = 168.0
 offset_bottom = 54.0
 theme_override_font_sizes/font_size = 12
 text = "Current Generation:"
-script = ExtResource("5_in2cl")
+script = ExtResource("5_mav27")
 
 [node name="GenNumLabel" type="Label" parent="CanvasLayer/UIOverlay/TopUIPanel/CurrentGenLabel"]
 modulate = Color(0, 0, 0, 1)
@@ -177,9 +175,9 @@ theme_override_styles/panel = SubResource("StyleBoxFlat_2prp0")
 anchors_preset = 0
 offset_left = 9.0
 offset_top = 76.0
-offset_right = 160.0
-offset_bottom = 40.0
-script = ExtResource("6_uxs3m")
+offset_right = 169.0
+offset_bottom = 116.0
+script = ExtResource("4_hy7gx")
 
 [node name="FoodPercentLabel" type="Label" parent="CanvasLayer/UIOverlay/SideUIPanel/FoodControl"]
 modulate = Color(0, 0, 0, 1)
@@ -228,7 +226,7 @@ offset_bottom = -13.0
 grow_horizontal = 0
 grow_vertical = 0
 theme_override_styles/panel = SubResource("StyleBoxFlat_ulauv")
-script = ExtResource("7_e3w55")
+script = ExtResource("7_fkd73")
 
 [node name="CreatureInfoLabel" type="Label" parent="CanvasLayer/UIOverlay/SideUIPanel/CreaturePanel"]
 layout_mode = 0
@@ -270,7 +268,7 @@ offset_left = -192.0
 offset_top = 38.0
 offset_bottom = 42.0
 grow_horizontal = 0
-theme_override_styles/separator = ExtResource("8_3ihby")
+theme_override_styles/separator = ExtResource("5_romv8")
 
 [node name="VSeparator" type="VSeparator" parent="CanvasLayer/UIOverlay/SideUIPanel"]
 layout_mode = 1
@@ -283,21 +281,23 @@ offset_top = 42.0
 offset_right = -189.0
 grow_horizontal = 0
 grow_vertical = 2
-theme_override_styles/separator = ExtResource("9_5tlr3")
+theme_override_styles/separator = ExtResource("6_j2i2m")
 
 [node name="Camera" type="Camera2D" parent="."]
 position = Vector2(4000, 4000)
 zoom = Vector2(4, 4)
 position_smoothing_enabled = true
 position_smoothing_speed = 12.0
-script = ExtResource("10_epbi7")
+script = ExtResource("4_kinps")
 
+<<<<<<< HEAD
+[connection signal="creature_info" from="Creature Generator" to="CanvasLayer/UIOverlay/SideUIPanel/CreaturePanel" method="_on_creature_generator_creature_info"]
+[connection signal="next_generation" from="Creature Generator" to="CanvasLayer/UIOverlay/TopUIPanel/CurrentGenLabel" method="_on_creature_generator_next_generation"]
+[connection signal="value_changed" from="CanvasLayer/UIOverlay/SideUIPanel/FoodControl/FoodHSlider" to="CanvasLayer/UIOverlay/SideUIPanel/FoodControl" method="_on_food_h_slider_value_changed"]
+=======
 [node name="Creatures" type="Node" parent="."]
 
-[node name="Resources" type="Node" parent="."]
-script = ExtResource("11_ptsgc")
-
-[node name="Utility" type="Node" parent="."]
-script = ExtResource("12_o42hk")
-
-[connection signal="value_changed" from="CanvasLayer/UIOverlay/SideUIPanel/FoodControl/FoodHSlider" to="CanvasLayer/UIOverlay/SideUIPanel/FoodControl" method="_on_food_h_slider_value_changed"]
+[connection signal="creature_info" from="GenomeMixer" to="CanvasLayer/UIOverlay/SideUIPanel/FoodPanel/CreaturePanel" method="_on_creature_generator_creature_info"]
+[connection signal="next_generation" from="GenomeMixer" to="CanvasLayer/UIOverlay/TopUIPanel/CurrentGenLabel" method="_on_creature_generator_next_generation"]
+[connection signal="value_changed" from="CanvasLayer/UIOverlay/SideUIPanel/FoodPanel/FoodControl/FoodHSlider" to="CanvasLayer/UIOverlay/SideUIPanel/FoodPanel/FoodControl" method="_on_food_h_slider_value_changed"]
+>>>>>>> CreatureNodeStructure

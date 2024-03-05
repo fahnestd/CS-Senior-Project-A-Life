@@ -27,6 +27,27 @@ func create_offspring(creature_1, creature_2):
 		print(physical_mutation)
 		print()
 
+<<<<<<< HEAD:src/simulation/Genetics.gd
+=======
+func create_creature(pos, rot, physical_genome):
+	var new_creature = creature_scene.instantiate()
+
+	new_creature.physical_genome = physical_genome
+	new_creature.behavioral_genome = behavioral_genome
+	new_creature.global_position = pos
+	new_creature.get_node("Body").rotation_degrees = rot
+	var new_creature_index = 0
+	while creatures.has(new_creature_index):
+		new_creature_index += 1
+	new_creature.creature_index = new_creature_index
+	new_creature.reproduce.connect(_on_reproduce)
+	new_creature.creature_died.connect(_on_creature_died)
+
+	self.get_parent().add_child.call_deferred(new_creature)
+
+	creatures[new_creature_index] = new_creature
+
+>>>>>>> master:src/creature/Creature Generator.gd
 # Checks each key value pair in both dict_1 and dict_2, constructing return_dict from the winning values
 # If both values are dictionaries, recursively calls crossover, setting the key in return_dict to the returned value
 # Otherwise, has a 50% chance to set the key in return_dict to either value
@@ -112,13 +133,21 @@ func mutate_type():
 func _input(event):
 	if event is InputEventMouseButton:
 		if event.button_index == MOUSE_BUTTON_LEFT:
+<<<<<<< HEAD:src/simulation/Genetics.gd
 			#for creature_index in creatures:
 				#var creature = creatures[creature_index]
 				#if get_global_mouse_position().distance_to(creature.global_position) <= distance_check:
 					#camera.target(creature)
 					#break
 			pass
-
+=======
+			for creature_index in creatures:
+				var creature = creatures[creature_index]
+				if get_global_mouse_position().distance_to(creature.global_position) <= distance_check:
+					camera.target(creature)
+					creature_info.emit(creature)
+					break
+>>>>>>> master:src/creature/Creature Generator.gd
 
 var last_creature_1 = null
 var last_creature_2 = null
