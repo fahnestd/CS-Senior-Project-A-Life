@@ -301,3 +301,4 @@ script = ExtResource("11_ptsgc")
 script = ExtResource("12_o42hk")
 
 [connection signal="value_changed" from="CanvasLayer/UIOverlay/SideUIPanel/FoodControl/FoodHSlider" to="CanvasLayer/UIOverlay/SideUIPanel/FoodControl" method="_on_food_h_slider_value_changed"]
+[connection signal="creature_info" from="Camera" to="CanvasLayer/UIOverlay/SideUIPanel/CreaturePanel" method="_on_camera_creature_info"]

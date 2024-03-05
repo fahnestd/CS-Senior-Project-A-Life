@@ -6,8 +6,11 @@ var movement_speed = 300.00
 
 var target_node = null
 
+signal creature_info(creature)
+
 func target(creature):
-	target_node = creature.root_node
+	creature_info.emit(creature)
+	target_node = creature
 
 func _ready():
 	self.set_process_input(true)
@@ -20,6 +23,13 @@ func _input(event):
 		elif event.button_index == MOUSE_BUTTON_WHEEL_UP:
 			self.zoom.x += zoom_speed
 			self.zoom.y += zoom_speed
+		elif event.button_index == MOUSE_BUTTON_LEFT:
+			for child in get_parent().get_node('Creatures').get_children():
+				if child == target_node:
+					continue
+				if child.global_position.distance_to(get_global_mouse_position()) < 200:
+					target(child)
+					break
 
 func _process(delta):
 	var movement = Vector2.ZERO
