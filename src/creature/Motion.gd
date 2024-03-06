@@ -2,47 +2,21 @@
 extends Node
 
 @onready var Body = get_node("../Body")
-@onready var Creature = get_node("../../Creature")
+@onready var Creature = get_parent()
 @onready var Status = get_node("../Status")
 @onready var Utility = get_node("../../../Utility")
 
 var propulsion_vectors = {}
 var propulsion_angles = {}
 
-func move_node(node, pos, propulsion):
-	var old_pos = node["position"]
-	var old_angle = node["angle"]
-	node["position"] = pos
-	node["object"].position = pos
+func pivot_node(node, angle_shift):
+	node.turn(angle_shift, true)
 
-	#update_node_angle(node)
+func add_propulsion_position(position_shift):
+	Utility.dictionary_next(propulsion_vectors, position_shift)
 
-	if propulsion:
-		var propulsion_vector_change = old_pos - pos
-		var propulsion_angle_change
-		var angle_diff = old_angle - node["angle"]
-		if angle_diff < 0:
-			if abs(angle_diff) < angle_diff + 360:
-				propulsion_angle_change = angle_diff
-			else:
-				propulsion_angle_change = angle_diff + 360
-		else:
-			if angle_diff < abs(angle_diff - 360):
-				propulsion_angle_change = angle_diff
-			else:
-				propulsion_angle_change = angle_diff - 360
-
-		Utility.dictionary_next(propulsion_vectors, propulsion_vector_change)
-		Utility.dictionary_next(propulsion_angles, propulsion_angle_change)
-
-func pivot_node(node, angle_shift, propulsion):
-	node.rotation_degrees += angle_shift
-	node.update_position()
-#
-	#if node.has("child_connections"):
-		#for connection in node["child_connections"]:
-			#var child_id = connection["child_id"]
-			#pivot_node(child_id, origin_id, angle_shift, false)
+func add_propulsion_angle(angle_shift):
+	Utility.dictionary_next(propulsion_angles, angle_shift)
 
 func process_motion(delta):
 	var propulsion_vector_sum = Vector2(0, 0)

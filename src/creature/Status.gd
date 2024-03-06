@@ -1,7 +1,7 @@
 # Status stores information about the creature as a whole and responds accordingly
 extends Node
 
-@onready var Creature = get_node("../../Creature")
+@onready var Creature = get_parent()
 
 # How far away nodes are from each other
 var node_distance = 20
@@ -120,36 +120,82 @@ var behavioral_genome = {
 }
 
 # Default physical genome. Gets set to a crossover of the creature's parents after it is born.
+# Small Preset
 var physical_genome = {
-	1: {
+	0: {
 		"parent_id": 0,
 		"angle": 0,
 		"size": 10.0,
 		"joint": "fixed",
 		"type": "eye"
 	},
-	2: {
+	1: {
 		"parent_id": 0,
 		"angle": 0,
 		"size": 10.0,
 		"joint": "fixed",
 		"type": "reproduction"
 	},
-	3: {
+	2: {
 		"parent_id": 0,
 		"angle": 120,
 		"size": 10.0,
 		"joint": "pivot",
 		"type": "body"
 	},
-	4: {
+	3: {
 		"parent_id": 0,
-		"angle": 240,
+		"angle": -120,
 		"size": 10.0,
 		"joint": "pivot",
 		"type": "body"
 	}
 }
+# Larger preset
+#var physical_genome = {
+	#0: {
+		#"parent_id": 0,
+		#"angle": 0,
+		#"size": 10.0,
+		#"joint": "fixed",
+		#"type": "eye"
+	#},
+	#1: {
+		#"parent_id": 0,
+		#"angle": 0,
+		#"size": 10.0,
+		#"joint": "fixed",
+		#"type": "reproduction"
+	#},
+	#2: {
+		#"parent_id": 0,
+		#"angle": 120,
+		#"size": 10.0,
+		#"joint": "pivot",
+		#"type": "body"
+	#},
+	#3: {
+		#"parent_id": 0,
+		#"angle": -120,
+		#"size": 10.0,
+		#"joint": "pivot",
+		#"type": "body"
+	#},
+	#4: {
+		#"parent_id": 2,
+		#"angle": 0,
+		#"size": 10.0,
+		#"joint": "fixed",
+		#"type": "body"
+	#},
+	#5: {
+		#"parent_id": 3,
+		#"angle": 0,
+		#"size": 10.0,
+		#"joint": "fixed",
+		#"type": "body"
+	#}
+#}
 
 # TODO: Replace health with the energy system
 var health = 100

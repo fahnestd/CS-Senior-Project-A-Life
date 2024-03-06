@@ -4,7 +4,7 @@ extends Node
 var NodeScene = preload("res://src/scenes/node.tscn")
 @onready var Behavior = get_node("../Behavior")
 @onready var Body = get_node("../Body")
-@onready var Creature = get_node("../../Creature")
+@onready var Creature = get_parent()
 @onready var Status = get_node("../Status")
 @onready var Utility = get_node("../../../Utility")
 
@@ -15,7 +15,8 @@ var nodes = {}
 # {order: node id}
 var growth_order = {}
 
-# Determinse the order that nodes should grow in
+# TODO: Update this system so that parent_id refers to the nth node instead of the node with id n
+# Determines the order that nodes should grow in
 # Ensures that all nodes in the genome will connect to existing nodes
 func initialize_growth_order():
 	var nodes_to_add = Status.physical_genome.duplicate()

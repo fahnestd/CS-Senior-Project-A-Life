@@ -21,7 +21,7 @@ func handle_interactions(delta):
 	handle_tiletype(delta, tile);
 	
 	update_label(delta, tile);
-	
+
 func update_label(_delta, tile):
 	var terrainLabel = get_node("TerrainLabel")
 	if tile != null:

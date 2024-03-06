@@ -6,10 +6,11 @@ var CreatureScene = preload("res://src/scenes/creature.tscn")
 @onready var Genetics = get_node("../Genetics")
 @onready var Creatures = get_node("../Creatures")
 
-# Generate 2 starter creatures
+# Generate 3 starter creatures
 func _ready():
-	create_creature((World.GetSpawnCoordinates() - Vector2(10, 2)) * World.GetTileSize(), 0)
-	create_creature((World.GetSpawnCoordinates() + Vector2(10, 2)) * World.GetTileSize(), 180)
+	create_creature((World.GetSpawnCoordinates() - Vector2(1, 0)) * World.GetTileSize(), 0)
+	create_creature((World.GetSpawnCoordinates() + Vector2(1, 0)) * World.GetTileSize(), 180)
+	create_creature((World.GetSpawnCoordinates() - Vector2(10, 0)) * World.GetTileSize(), 1)
 
 # Generate a new creature
 func create_creature(pos, rot):

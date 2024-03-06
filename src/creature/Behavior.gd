@@ -1,7 +1,7 @@
 # Behavior evaluates which conditions in the behavioral genome are met and carries out a chosen behavior pattern
 extends Node
 
-@onready var Creature = get_node("../../Creature")
+@onready var Creature = get_parent()
 @onready var Body = get_node("../Body")
 @onready var Growth = get_node("../Growth")
 @onready var Motion = get_node("../Motion")
@@ -92,7 +92,7 @@ func process_behavior(delta):
 				var movement_percent = delta / behavior_step_seconds
 				var angle_shift = behavior_step_angle * movement_percent
 				if pivot_nodes.size() >= nth_pivot + 1:
-					Motion.pivot_node(pivot_nodes[nth_pivot], angle_shift, true)
+					Motion.pivot_node(pivot_nodes[nth_pivot], angle_shift)
 
 		if behavior_step_progress == behavior_step_seconds:
 			behavior_step_progress = 0

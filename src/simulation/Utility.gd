@@ -12,3 +12,11 @@ func dictionary_next(dictionary, entry):
 # Faster, but do not use after erasing an entry
 func dictionary_append(dictionary, entry):
 	dictionary[dictionary.size()] = entry
+
+# Clamps an angle from -180 (exclusive) to 180 (inclusive)
+func angle_clamp(angle):
+	while angle <= -180:
+		angle += 360
+	while angle > 180:
+		angle -= 360
+	return angle
