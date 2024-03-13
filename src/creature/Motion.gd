@@ -9,14 +9,11 @@ extends Node
 var propulsion_vectors = {}
 var propulsion_angles = {}
 
-func pivot_node(node, angle_shift):
-	node.turn(angle_shift, true)
-
 func add_propulsion_position(position_shift):
-	Utility.dictionary_next(propulsion_vectors, position_shift)
+	Utility.dictionary_append(propulsion_vectors, position_shift)
 
 func add_propulsion_angle(angle_shift):
-	Utility.dictionary_next(propulsion_angles, angle_shift)
+	Utility.dictionary_append(propulsion_angles, angle_shift)
 
 func process_motion(delta):
 	var propulsion_vector_sum = Vector2(0, 0)

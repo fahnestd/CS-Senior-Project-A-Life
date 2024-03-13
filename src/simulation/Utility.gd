@@ -9,9 +9,12 @@ func dictionary_next(dictionary, entry):
 	dictionary[lowest_index] = entry
 
 # Adds an entry to the dictionary at the next numerical index based on size
-# Faster, but do not use after erasing an entry
+# Faster, but does not maintain numerical key order
 func dictionary_append(dictionary, entry):
-	dictionary[dictionary.size()] = entry
+	var index = dictionary.size()
+	while dictionary.has(index):
+		index += 1
+	dictionary[index] = entry
 
 # Clamps an angle from -180 (exclusive) to 180 (inclusive)
 func angle_clamp(angle):

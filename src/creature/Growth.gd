@@ -1,12 +1,17 @@
 # Growth determines the order of node creation and builds the node structure
 extends Node
 
-var NodeScene = preload("res://src/scenes/node.tscn")
 @onready var Behavior = get_node("../Behavior")
 @onready var Body = get_node("../Body")
 @onready var Creature = get_parent()
 @onready var Status = get_node("../Status")
 @onready var Utility = get_node("../../../Utility")
+
+var node_scenes = {
+	"body" = preload("res://src/scenes/node.tscn"),
+	"reproduction" = preload("res://src/scenes/reproduction.tscn"),
+	"eye" = preload("res://src/scenes/eye.tscn")
+}
 
 # Contains nodes that have been grown
 var nodes = {}
@@ -45,8 +50,8 @@ func fully_grow():
 # Creates a node instance as a child of body or its parent
 func add_node(id):
 	var node_genes = Status.physical_genome[id]
-	var node = NodeScene.instantiate()
-	node.id = id
+	var node = node_scenes[node_genes["type"]].instantiate()
+	node.id = nodes.size()
 	if nodes.size() == 0:
 		Body.add_child.call_deferred(node)
 	else:

@@ -5,7 +5,6 @@ func _on_one_time_button_pressed():
 	update_physics_ticks()
 	get_node("SimLabel").text = "1"
 
-
 func _on_two_time_button_pressed():
 	Engine.time_scale = 2.0
 	update_physics_ticks()
@@ -21,7 +20,7 @@ func _on_simulation_skip_timer_timeout():
 	Engine.time_scale = 1.0
 	update_physics_ticks()
 	get_node('FFImage').visible = false
-	
+
 func _on_skip_five_minutes_button_pressed():
 	start_warp(5)
 

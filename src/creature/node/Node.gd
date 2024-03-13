@@ -15,11 +15,21 @@ var id
 @onready var Status = get_node("Status")
 @onready var Utility = get_node("/root/MainScene/Utility")
 
-func move(position_shift, propulsion):
+func global_move(position_shift, propulsion):
 	if not Status.origin:
 		global_position += position_shift
 	else:
 		Creature.global_position += position_shift
+	if propulsion:
+		CreatureMotion.add_propulsion_position(position_shift)
+	update_angle(propulsion)
+	queue_redraw()
+
+func move(position_shift, propulsion):
+	if not Status.origin:
+		position += position_shift
+	else:
+		Creature.position += position_shift
 	if propulsion:
 		CreatureMotion.add_propulsion_position(position_shift)
 	update_angle(propulsion)
@@ -36,16 +46,18 @@ func turn(angle_shift, propulsion):
 func update_position(propulsion):
 	if not Status.origin:
 		var initial_position = position
-		position = Vector2(CreatureStatus.node_distance, 0).rotated(deg_to_rad(rotation_degrees))
+		position = Vector2(CreatureStatus.node_distance, 0).rotated(rotation)
 		if propulsion:
 			CreatureMotion.add_propulsion_position(initial_position - position)
+	queue_redraw()
 
 # Typically used by move() or turn()
 func update_angle(propulsion):
 	var initial_angle = rotation_degrees
 	var angle = Utility.angle_clamp(rad_to_deg(ParentNode.position.angle_to_point(position)))
+	var angle_diff = Utility.angle_clamp(initial_angle - angle)
 	if propulsion:
-		CreatureMotion.add_propulsion_angle(initial_angle - angle)
+		CreatureMotion.add_propulsion_angle(angle_diff)
 	rotation_degrees = Utility.angle_clamp(angle)
 
 func initialize_position():
@@ -53,9 +65,6 @@ func initialize_position():
 	update_position(false)
 	Status.home_position = position
 	Status.home_rotation = rotation_degrees
-
-func initialize_sprite():
-	Sprite.texture = Resources.textures[Status.genes["type"]]
 
 func initialize_connection():
 	if not Status.origin:
@@ -74,7 +83,6 @@ func initialize_scale():
 func _ready():
 	if not Status.origin:
 		initialize_position()
-	initialize_sprite()
 	initialize_connection()
 	initialize_scale()
 
@@ -84,11 +92,11 @@ func _physics_process(delta):
 
 func drift_home(delta):
 	if rotation_degrees != Status.home_rotation:
-		var difference = Status.home_rotation - rotation_degrees
-		turn(difference * delta, false)
+		var difference = Utility.angle_clamp(Status.home_rotation - rotation_degrees)
+		turn(difference * delta * 0.5, false)
 	elif position != Status.home_position:
 		var difference = Status.home_position - position
-		move(difference * delta, false)
+		move(difference * delta * 0.5, false)
 
 func _draw():
 	if not Status.origin:

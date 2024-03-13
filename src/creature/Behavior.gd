@@ -4,7 +4,6 @@ extends Node
 @onready var Creature = get_parent()
 @onready var Body = get_node("../Body")
 @onready var Growth = get_node("../Growth")
-@onready var Motion = get_node("../Motion")
 @onready var Status = get_node("../Status")
 
 # Stores the pivot nodes in creation order, so behavioral patterns can specify things like "rotate first pivot node, rotate second pivot node" without referring to their specific ids
@@ -92,7 +91,7 @@ func process_behavior(delta):
 				var movement_percent = delta / behavior_step_seconds
 				var angle_shift = behavior_step_angle * movement_percent
 				if pivot_nodes.size() >= nth_pivot + 1:
-					Motion.pivot_node(pivot_nodes[nth_pivot], angle_shift)
+					pivot_nodes[nth_pivot].turn(angle_shift, true)
 
 		if behavior_step_progress == behavior_step_seconds:
 			behavior_step_progress = 0

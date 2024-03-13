@@ -1,0 +1,13 @@
+[gd_scene load_steps=4 format=3 uid="uid://b5wj4ov437jmo"]
+
+[ext_resource type="PackedScene" uid="uid://d2i01vu72ff4u" path="res://src/scenes/node.tscn" id="1_ucecy"]
+[ext_resource type="Texture2D" uid="uid://bfbcwxekbsxek" path="res://assets/creature/pink_circle.png" id="1_vuwcv"]
+[ext_resource type="Script" path="res://src/creature/node/Reproduction.gd" id="3_28g64"]
+
+[node name="Node" instance=ExtResource("1_ucecy")]
+
+[node name="Sprite" parent="." index="0"]
+texture = ExtResource("1_vuwcv")
+
+[node name="Reproduction" type="Node" parent="." index="3"]
+script = ExtResource("3_28g64")

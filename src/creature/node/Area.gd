@@ -29,5 +29,5 @@ func _physics_process(_delta):
 			var overlap = size_allowance - distance_to
 			position_shift += direction * overlap * 0.5
 	if position_shift != Vector2(0, 0):
-		NodeObject.move(position_shift, true)
+		NodeObject.global_move(position_shift, false)
 		position_shift = Vector2(0, 0)

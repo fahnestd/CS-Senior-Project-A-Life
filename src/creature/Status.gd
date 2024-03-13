@@ -210,6 +210,9 @@ func is_dead():
 	if health <= 0:
 		Creature.queue_free()
 
+func reset_reproduction_cooldown():
+	reproduction_cooldown_progress = reproduction_cooldown
+
 # Reduces cooldown variable to 0 over time
 func cooldown(delta):
 	if reproduction_cooldown_progress > 0:
