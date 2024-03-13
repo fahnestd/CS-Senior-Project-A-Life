@@ -1,4 +1,4 @@
-[gd_scene load_steps=17 format=3 uid="uid://dvweqacxjay7r"]
+[gd_scene load_steps=18 format=3 uid="uid://dvweqacxjay7r"]
 
 [ext_resource type="PackedScene" uid="uid://02k684x8aybd" path="res://src/scenes/map.tscn" id="1_w7ogu"]
 [ext_resource type="Script" path="res://src/simulation/Genetics.gd" id="2_s28hq"]
@@ -6,6 +6,7 @@
 [ext_resource type="Script" path="res://src/ui/simtime_ui.gd" id="4_vy1np"]
 [ext_resource type="Script" path="res://src/ui/gencontrol_ui.gd" id="5_in2cl"]
 [ext_resource type="Script" path="res://src/simulation/SimSpeed.gd" id="5_qeoe0"]
+[ext_resource type="Texture2D" uid="uid://cnu3ysku0ctkx" path="res://assets/menu/FastForward.png" id="6_egp0b"]
 [ext_resource type="Script" path="res://src/ui/foodcontrol_ui.gd" id="6_uxs3m"]
 [ext_resource type="Script" path="res://src/ui/creaturepanel_ui.gd" id="7_e3w55"]
 [ext_resource type="StyleBox" uid="uid://m3372f0wk2mk" path="res://assets/ui/SepLineUIAsset.tres" id="8_3ihby"]
@@ -160,6 +161,62 @@ toggle_mode = true
 action_mode = 0
 text = "4x"
 
+[node name="SimSpeedLabel2" type="Label" parent="CanvasLayer/UIOverlay/TopUIPanel/SimSpeedLabel"]
+modulate = Color(0, 0, 0, 1)
+self_modulate = Color(0, 0, 0, 1)
+layout_mode = 0
+offset_left = 228.0
+offset_right = 271.0
+offset_bottom = 22.0
+theme_override_font_sizes/font_size = 12
+text = "Warp:"
+
+[node name="SimulationSkipTimer" type="Timer" parent="CanvasLayer/UIOverlay/TopUIPanel/SimSpeedLabel"]
+wait_time = 300.0
+one_shot = true
+
+[node name="HBoxContainer" type="HBoxContainer" parent="CanvasLayer/UIOverlay/TopUIPanel/SimSpeedLabel"]
+layout_mode = 0
+offset_left = 271.0
+offset_top = -7.0
+offset_right = 509.0
+offset_bottom = 23.0
+
+[node name="SkipFiveMinutesButton" type="Button" parent="CanvasLayer/UIOverlay/TopUIPanel/SimSpeedLabel/HBoxContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 12
+toggle_mode = true
+action_mode = 0
+text = "+5 Minutes"
+
+[node name="SkipThirtyMinutesButton" type="Button" parent="CanvasLayer/UIOverlay/TopUIPanel/SimSpeedLabel/HBoxContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 12
+toggle_mode = true
+action_mode = 0
+text = "+30 Minutes"
+
+[node name="SkipSixtyMinutesButton" type="Button" parent="CanvasLayer/UIOverlay/TopUIPanel/SimSpeedLabel/HBoxContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 12
+toggle_mode = true
+action_mode = 0
+text = "+60 Minutes"
+
+[node name="FFImage" type="TextureRect" parent="CanvasLayer/UIOverlay/TopUIPanel/SimSpeedLabel"]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = -3.115
+anchor_top = -0.42
+anchor_right = 3.662
+anchor_bottom = 15.804
+offset_left = 364.435
+offset_top = 256.8
+offset_right = -552.878
+offset_bottom = -244.16
+texture = ExtResource("6_egp0b")
+expand_mode = 1
+
 [node name="CurrentGenLabel" type="Label" parent="CanvasLayer/UIOverlay/TopUIPanel"]
 modulate = Color(0, 0, 0, 1)
 self_modulate = Color(0, 0, 0, 1)
@@ -190,6 +247,7 @@ anchor_left = 1.0
 anchor_right = 1.0
 anchor_bottom = 1.0
 offset_left = -189.0
+offset_top = 42.0
 grow_horizontal = 0
 grow_vertical = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_8urog")
@@ -312,8 +370,8 @@ anchors_preset = 1
 anchor_left = 1.0
 anchor_right = 1.0
 offset_left = -192.0
-offset_top = 38.0
-offset_bottom = 42.0
+offset_top = 1.0
+offset_bottom = 5.0
 grow_horizontal = 0
 theme_override_styles/separator = ExtResource("8_3ihby")
 
@@ -324,7 +382,7 @@ anchor_left = 1.0
 anchor_right = 1.0
 anchor_bottom = 1.0
 offset_left = -193.0
-offset_top = 42.0
+offset_top = 3.0
 offset_right = -189.0
 grow_horizontal = 0
 grow_vertical = 2
@@ -348,5 +406,9 @@ script = ExtResource("12_o42hk")
 [connection signal="pressed" from="CanvasLayer/UIOverlay/TopUIPanel/SimSpeedLabel/OneTimeButton" to="CanvasLayer/UIOverlay/TopUIPanel/SimSpeedLabel" method="_on_one_time_button_pressed"]
 [connection signal="pressed" from="CanvasLayer/UIOverlay/TopUIPanel/SimSpeedLabel/TwoTimeButton" to="CanvasLayer/UIOverlay/TopUIPanel/SimSpeedLabel" method="_on_two_time_button_pressed"]
 [connection signal="pressed" from="CanvasLayer/UIOverlay/TopUIPanel/SimSpeedLabel/FourTimeButton" to="CanvasLayer/UIOverlay/TopUIPanel/SimSpeedLabel" method="_on_four_time_button_pressed"]
+[connection signal="timeout" from="CanvasLayer/UIOverlay/TopUIPanel/SimSpeedLabel/SimulationSkipTimer" to="CanvasLayer/UIOverlay/TopUIPanel/SimSpeedLabel" method="_on_simulation_skip_timer_timeout"]
+[connection signal="pressed" from="CanvasLayer/UIOverlay/TopUIPanel/SimSpeedLabel/HBoxContainer/SkipFiveMinutesButton" to="CanvasLayer/UIOverlay/TopUIPanel/SimSpeedLabel" method="_on_skip_five_minutes_button_pressed"]
+[connection signal="pressed" from="CanvasLayer/UIOverlay/TopUIPanel/SimSpeedLabel/HBoxContainer/SkipThirtyMinutesButton" to="CanvasLayer/UIOverlay/TopUIPanel/SimSpeedLabel" method="_on_skip_thirty_minutes_button_pressed"]
+[connection signal="pressed" from="CanvasLayer/UIOverlay/TopUIPanel/SimSpeedLabel/HBoxContainer/SkipSixtyMinutesButton" to="CanvasLayer/UIOverlay/TopUIPanel/SimSpeedLabel" method="_on_skip_sixty_minutes_button_pressed"]
 [connection signal="value_changed" from="CanvasLayer/UIOverlay/SideUIPanel/FoodControl/FoodHSlider" to="CanvasLayer/UIOverlay/SideUIPanel/FoodControl" method="_on_food_h_slider_value_changed"]
 [connection signal="creature_info" from="Camera" to="CanvasLayer/UIOverlay/SideUIPanel/CreaturePanel" method="_on_camera_creature_info"]
