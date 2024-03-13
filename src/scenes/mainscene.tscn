@@ -139,6 +139,7 @@ action_mode = 0
 text = "1x"
 
 [node name="TwoTimeButton" type="Button" parent="CanvasLayer/UIOverlay/TopUIPanel/SimSpeedLabel"]
+layout_mode = 0
 offset_left = 158.0
 offset_top = -4.0
 offset_right = 180.0
@@ -149,6 +150,7 @@ action_mode = 0
 text = "2x"
 
 [node name="FourTimeButton" type="Button" parent="CanvasLayer/UIOverlay/TopUIPanel/SimSpeedLabel"]
+layout_mode = 0
 offset_left = 185.0
 offset_top = -4.0
 offset_right = 207.0

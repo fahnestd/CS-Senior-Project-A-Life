@@ -6,7 +6,7 @@ extends Node2D
 @onready var Status = get_node("Status")
 @onready var World = get_node("../../World")
 
-func _process(delta):
+func _physics_process(delta):
 	handle_interactions(delta)
 
 # On second thought, we should probably move this functionality into the tile, and have the tile apply any affects it needs or wants onto the creature

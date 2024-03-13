@@ -42,5 +42,5 @@ func process_motion(delta):
 	else:
 		Creature.position += move_vector / move_vector.length() * Status.max_speed
 
-func _process(delta):
+func _physics_process(delta):
 	process_motion(delta)

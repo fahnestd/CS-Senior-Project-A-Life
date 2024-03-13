@@ -100,5 +100,5 @@ func process_behavior(delta):
 			if behavior_step_id >= behavior_pattern.size():
 				behavior_step_id = 0
 
-func _process(delta):
+func _physics_process(delta):
 	process_behavior(delta)

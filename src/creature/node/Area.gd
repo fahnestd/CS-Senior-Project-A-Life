@@ -16,7 +16,7 @@ func _ready():
 	area_entered.connect(_on_area_entered)
 	area_exited.connect(_on_area_exited)
 
-func _process(_delta):
+func _physics_process(_delta):
 	for area in colliding_areas.keys():
 		var other_object = area.get_parent()
 		var other_status = other_object.get_node("Status")

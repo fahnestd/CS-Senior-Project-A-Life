@@ -78,7 +78,7 @@ func _ready():
 	initialize_connection()
 	initialize_scale()
 
-func _process(delta):
+func _physics_process(delta):
 	if not Status.origin:
 		drift_home(delta)
 

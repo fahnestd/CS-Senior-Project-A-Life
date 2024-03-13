@@ -23,5 +23,5 @@ var visible_nodes
 	#if node.parent_creature != parent_creature:
 		#visible_nodes.erase(node)
 
-func _process(_delta):
+func _physics_process(_delta):
 	pass

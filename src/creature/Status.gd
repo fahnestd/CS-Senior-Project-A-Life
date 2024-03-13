@@ -215,6 +215,6 @@ func cooldown(delta):
 	if reproduction_cooldown_progress > 0:
 		reproduction_cooldown_progress = max(0, reproduction_cooldown_progress - delta)
 
-func _process(delta):
+func _physics_process(delta):
 	is_dead()
 	cooldown(delta)
