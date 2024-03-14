@@ -6,7 +6,7 @@ extends Node2D
 @onready var Status = get_node("Status")
 @onready var World = get_node("../../World")
 
-func _process(delta):
+func _physics_process(delta):
 	handle_interactions(delta)
 
 # On second thought, we should probably move this functionality into the tile, and have the tile apply any affects it needs or wants onto the creature
@@ -21,7 +21,7 @@ func handle_interactions(delta):
 	handle_tiletype(delta, tile);
 	
 	update_label(delta, tile);
-	
+
 func update_label(_delta, tile):
 	var terrainLabel = get_node("TerrainLabel")
 	if tile != null:
@@ -42,8 +42,7 @@ func handle_lightlevel(_delta, _tile):
 var temp_timer = 0;
 func handle_temperature(delta, tile):
 	if tile:
-		if tile.Temperature >= 1:
-			temp_timer += delta
+		temp_timer += delta
 		if temp_timer > 2:
-			Status.health -= tile.Temperature
+			Status.health -= tile.Temperature * 4 + 4
 			temp_timer = 0

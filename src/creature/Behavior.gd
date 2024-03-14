@@ -1,11 +1,11 @@
 # Behavior evaluates which conditions in the behavioral genome are met and carries out a chosen behavior pattern
 extends Node
 
-@onready var Creature = get_node("../../Creature")
+@onready var Creature = get_parent()
 @onready var Body = get_node("../Body")
 @onready var Growth = get_node("../Growth")
-@onready var Motion = get_node("../Motion")
 @onready var Status = get_node("../Status")
+@onready var Utility = get_node("/root/MainScene/Utility")
 
 # Stores the pivot nodes in creation order, so behavioral patterns can specify things like "rotate first pivot node, rotate second pivot node" without referring to their specific ids
 var pivot_nodes = {}
@@ -17,10 +17,10 @@ var behavior_id = 0
 
 # Returns a value in degrees that, if added to creature.rotation, would face the creature towards target_coords
 func calculate_angle_diff(target_coords):
-	var pos = Creature.get_global_position()
-	var vec_diff = target_coords - pos 
+	var pos = Creature.global_position
+	var vec_diff = target_coords - pos
 	var dir_vec = Vector2(1, 0).rotated(Body.rotation)
-	var angle_diff = round(rad_to_deg(dir_vec.angle_to(vec_diff)))
+	var angle_diff = Utility.angle_clamp(rad_to_deg(dir_vec.angle_to(vec_diff)))
 	return angle_diff
 
 func evaluate_condition(condition, target_coords):
@@ -67,16 +67,17 @@ func decide_pattern(target_coords):
 func process_behavior(delta):
 	if behavior_step_progress == 0 and behavior_step_id == 0:
 		var detected_node = false
-		for node in visible_nodes:
-			if node.type == "reproduction":
-				decide_pattern(node.global_position)
-				detected_node = true
-				break
+		if Status.reproduction_cooldown_progress == 0:
+			for node in visible_nodes:
+				if node.has_node("Reproduction"):
+					decide_pattern(node.global_position)
+					detected_node = true
+					break
 		if not detected_node:
 			# Target the point 1 unit in front of the creature
-			decide_pattern(Creature.global_position + Vector2(1, 0).rotated(deg_to_rad(Body.rotation_degrees)))
+			decide_pattern(Creature.global_position + Vector2(1, 0).rotated(Body.rotation))
 
-	if behavior_id:
+	if behavior_id != null:
 		var behavior_pattern = Status.behavioral_genome[behavior_id]["pattern"]
 		var simultaneous_steps = behavior_pattern[behavior_step_id]
 		var behavior_step_seconds = simultaneous_steps["time"]
@@ -92,7 +93,7 @@ func process_behavior(delta):
 				var movement_percent = delta / behavior_step_seconds
 				var angle_shift = behavior_step_angle * movement_percent
 				if pivot_nodes.size() >= nth_pivot + 1:
-					Motion.pivot_node(pivot_nodes[nth_pivot], angle_shift, true)
+					pivot_nodes[nth_pivot].turn(angle_shift, true)
 
 		if behavior_step_progress == behavior_step_seconds:
 			behavior_step_progress = 0
@@ -100,5 +101,5 @@ func process_behavior(delta):
 			if behavior_step_id >= behavior_pattern.size():
 				behavior_step_id = 0
 
-func _process(delta):
+func _physics_process(delta):
 	process_behavior(delta)

@@ -1,7 +1,7 @@
 # Status stores information about the creature as a whole and responds accordingly
 extends Node
 
-@onready var Creature = get_node("../../Creature")
+@onready var Creature = get_parent()
 
 # How far away nodes are from each other
 var node_distance = 20
@@ -20,13 +20,13 @@ var behavioral_genome = {
 		},
 		"pattern" = {
 			0: {
-				0: 20.0,
-				1: 20.0,
+				0: -20.0,
+				1: -20.0,
 				"time": 0.25
 			},
 			1: {
-				0: -20.0,
-				1: -20.0,
+				0: 20.0,
+				1: 20.0,
 				"time": 1.0
 			}
 		}
@@ -40,13 +40,13 @@ var behavioral_genome = {
 		},
 		"pattern" = {
 			0: {
-				0: -20.0,
-				1: -20.0,
+				0: 20.0,
+				1: 20.0,
 				"time": 0.25
 			},
 			1: {
-				0: 20.0,
-				1: 20.0,
+				0: -20.0,
+				1: -20.0,
 				"time": 1.0
 			}
 		}
@@ -66,13 +66,13 @@ var behavioral_genome = {
 		},
 		"pattern" = {
 			0: {
-				0: 10.0,
-				1: 10.0,
+				0: -10.0,
+				1: -10.0,
 				"time": 0.25
 			},
 			1: {
-				0: -10.0,
-				1: -10.0,
+				0: 10.0,
+				1: 10.0,
 				"time": 1.0
 			}
 		}
@@ -92,13 +92,13 @@ var behavioral_genome = {
 		},
 		"pattern" = {
 			0: {
-				0: -10.0,
-				1: -10.0,
+				0: 10.0,
+				1: 10.0,
 				"time": 0.25
 			},
 			1: {
-				0: 10.0,
-				1: 10.0,
+				0: -10.0,
+				1: -10.0,
 				"time": 1.0
 			}
 		}
@@ -120,31 +120,32 @@ var behavioral_genome = {
 }
 
 # Default physical genome. Gets set to a crossover of the creature's parents after it is born.
+# Small Preset
 var physical_genome = {
-	1: {
+	0: {
 		"parent_id": 0,
 		"angle": 0,
 		"size": 10.0,
 		"joint": "fixed",
 		"type": "eye"
 	},
-	2: {
+	1: {
 		"parent_id": 0,
 		"angle": 0,
 		"size": 10.0,
 		"joint": "fixed",
 		"type": "reproduction"
 	},
-	3: {
+	2: {
 		"parent_id": 0,
 		"angle": 120,
 		"size": 10.0,
 		"joint": "pivot",
 		"type": "body"
 	},
-	4: {
+	3: {
 		"parent_id": 0,
-		"angle": 240,
+		"angle": -120,
 		"size": 10.0,
 		"joint": "pivot",
 		"type": "body"
@@ -164,11 +165,14 @@ func is_dead():
 	if health <= 0:
 		Creature.queue_free()
 
+func reset_reproduction_cooldown():
+	reproduction_cooldown_progress = reproduction_cooldown
+
 # Reduces cooldown variable to 0 over time
 func cooldown(delta):
 	if reproduction_cooldown_progress > 0:
 		reproduction_cooldown_progress = max(0, reproduction_cooldown_progress - delta)
 
-func _process(delta):
+func _physics_process(delta):
 	is_dead()
 	cooldown(delta)

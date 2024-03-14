@@ -6,7 +6,7 @@ var seconds: int = 0
 var msec: int = 0
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
-func _process(delta):
+func _physics_process(delta):
 	time += delta
 	msec = int(round(time * 1000)) % 1000
 	seconds = int(floor(time)) % 60

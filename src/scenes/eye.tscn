@@ -1,0 +1,19 @@
+[gd_scene load_steps=5 format=3 uid="uid://ce3qe0su5jy22"]
+
+[ext_resource type="PackedScene" uid="uid://d2i01vu72ff4u" path="res://src/scenes/node.tscn" id="1_m7qjd"]
+[ext_resource type="Texture2D" uid="uid://6us7wlyvdjbp" path="res://assets/creature/blue_circle.png" id="2_tc77r"]
+[ext_resource type="Script" path="res://src/creature/node/Eye.gd" id="3_immdw"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_xqtyw"]
+radius = 200.0
+
+[node name="Node" instance=ExtResource("1_m7qjd")]
+
+[node name="Sprite" parent="." index="0"]
+texture = ExtResource("2_tc77r")
+
+[node name="Eye" type="Area2D" parent="." index="3"]
+script = ExtResource("3_immdw")
+
+[node name="Collision" type="CollisionShape2D" parent="Eye" index="0"]
+shape = SubResource("CircleShape2D_xqtyw")

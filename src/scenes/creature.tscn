@@ -14,6 +14,7 @@ font_size = 8
 script = ExtResource("1_0d14m")
 
 [node name="TerrainLabel" type="Label" parent="."]
+visible = false
 offset_left = -9.0
 offset_top = 10.0
 offset_right = 9.0

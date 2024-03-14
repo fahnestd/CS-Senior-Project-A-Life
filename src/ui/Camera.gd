@@ -31,7 +31,7 @@ func _input(event):
 					target(child)
 					break
 
-func _process(delta):
+func _physics_process(delta):
 	var movement = Vector2.ZERO
 
 	if Input.is_action_pressed("ui_up"): # W
