@@ -42,8 +42,7 @@ func handle_lightlevel(_delta, _tile):
 var temp_timer = 0;
 func handle_temperature(delta, tile):
 	if tile:
-		if tile.Temperature >= 1:
-			temp_timer += delta
+		temp_timer += delta
 		if temp_timer > 2:
-			Status.health -= tile.Temperature
+			Status.health -= tile.Temperature * 4 + 4
 			temp_timer = 0

@@ -3,12 +3,10 @@ extends Node
 @onready var Utility = get_node("../Utility")
 @onready var Zookeeper = get_node("../Zookeeper")
 
-var generate_creatures = false
-var mutation_chance = 25
+var mutation_chance = 2
 var mutation_intensity_decrease = -50
 var mutation_intensity_increase = 50
 var print_new_genome = false
-var distance_check = 30.0
 
 signal next_generation
 signal creature_info(info)

@@ -20,13 +20,13 @@ var behavioral_genome = {
 		},
 		"pattern" = {
 			0: {
-				0: 20.0,
-				1: 20.0,
+				0: -20.0,
+				1: -20.0,
 				"time": 0.25
 			},
 			1: {
-				0: -20.0,
-				1: -20.0,
+				0: 20.0,
+				1: 20.0,
 				"time": 1.0
 			}
 		}
@@ -40,13 +40,13 @@ var behavioral_genome = {
 		},
 		"pattern" = {
 			0: {
-				0: -20.0,
-				1: -20.0,
+				0: 20.0,
+				1: 20.0,
 				"time": 0.25
 			},
 			1: {
-				0: 20.0,
-				1: 20.0,
+				0: -20.0,
+				1: -20.0,
 				"time": 1.0
 			}
 		}
@@ -66,13 +66,13 @@ var behavioral_genome = {
 		},
 		"pattern" = {
 			0: {
-				0: 10.0,
-				1: 10.0,
+				0: -10.0,
+				1: -10.0,
 				"time": 0.25
 			},
 			1: {
-				0: -10.0,
-				1: -10.0,
+				0: 10.0,
+				1: 10.0,
 				"time": 1.0
 			}
 		}
@@ -92,13 +92,13 @@ var behavioral_genome = {
 		},
 		"pattern" = {
 			0: {
-				0: -10.0,
-				1: -10.0,
+				0: 10.0,
+				1: 10.0,
 				"time": 0.25
 			},
 			1: {
-				0: 10.0,
-				1: 10.0,
+				0: -10.0,
+				1: -10.0,
 				"time": 1.0
 			}
 		}
@@ -151,51 +151,6 @@ var physical_genome = {
 		"type": "body"
 	}
 }
-# Larger preset
-#var physical_genome = {
-	#0: {
-		#"parent_id": 0,
-		#"angle": 0,
-		#"size": 10.0,
-		#"joint": "fixed",
-		#"type": "eye"
-	#},
-	#1: {
-		#"parent_id": 0,
-		#"angle": 0,
-		#"size": 10.0,
-		#"joint": "fixed",
-		#"type": "reproduction"
-	#},
-	#2: {
-		#"parent_id": 0,
-		#"angle": 120,
-		#"size": 10.0,
-		#"joint": "pivot",
-		#"type": "body"
-	#},
-	#3: {
-		#"parent_id": 0,
-		#"angle": -120,
-		#"size": 10.0,
-		#"joint": "pivot",
-		#"type": "body"
-	#},
-	#4: {
-		#"parent_id": 2,
-		#"angle": 0,
-		#"size": 10.0,
-		#"joint": "fixed",
-		#"type": "body"
-	#},
-	#5: {
-		#"parent_id": 3,
-		#"angle": 0,
-		#"size": 10.0,
-		#"joint": "fixed",
-		#"type": "body"
-	#}
-#}
 
 # TODO: Replace health with the energy system
 var health = 100

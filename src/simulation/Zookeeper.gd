@@ -1,7 +1,7 @@
 # The Zookeeper is responsible for introducing creatures to the environment.
 extends Node
 
-var creature_limit = 50
+var creature_limit = 30
 
 var CreatureScene = preload("res://src/scenes/creature.tscn")
 @onready var World = get_node("../World")
@@ -10,9 +10,8 @@ var CreatureScene = preload("res://src/scenes/creature.tscn")
 
 # Generate 3 starter creatures
 func _ready():
-	create_creature((World.GetSpawnCoordinates() - Vector2(1, 0)) * World.GetTileSize(), 0, null)
-	create_creature((World.GetSpawnCoordinates() + Vector2(1, 0)) * World.GetTileSize(), 180, null)
-	create_creature((World.GetSpawnCoordinates() - Vector2(10, 0)) * World.GetTileSize(), 1, null)
+	create_creature((World.GetSpawnCoordinates() - Vector2(5, 2)) * World.GetTileSize(), 0, null)
+	create_creature((World.GetSpawnCoordinates() + Vector2(5, 2)) * World.GetTileSize(), 180, null)
 
 # Generate a new creature
 func create_creature(pos, rot, physical_genome):
