@@ -59,6 +59,22 @@ grow_horizontal = 2
 grow_vertical = 2
 alignment = 1
 
+[node name="CreatureDensityUIBox" type="HBoxContainer" parent="VBoxContainer"]
+layout_mode = 2
+
+[node name="CreatureDensityLabel" type="Label" parent="VBoxContainer/CreatureDensityUIBox"]
+layout_mode = 2
+text = "Creature Density:"
+
+[node name="CreatureDensitySlider" type="HSlider" parent="VBoxContainer/CreatureDensityUIBox"]
+custom_minimum_size = Vector2(100, 0)
+layout_mode = 2
+min_value = 1.0
+max_value = 10.0
+value = 1.0
+scrollable = false
+tick_count = 5
+
 [node name="StartButton" type="Button" parent="VBoxContainer"]
 layout_mode = 2
 text = "Start"
