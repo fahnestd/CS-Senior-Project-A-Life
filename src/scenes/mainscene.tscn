@@ -1,4 +1,4 @@
-[gd_scene load_steps=18 format=3 uid="uid://dvweqacxjay7r"]
+[gd_scene load_steps=19 format=3 uid="uid://dvweqacxjay7r"]
 
 [ext_resource type="PackedScene" uid="uid://02k684x8aybd" path="res://src/scenes/map.tscn" id="1_w7ogu"]
 [ext_resource type="Script" path="res://src/simulation/Genetics.gd" id="2_s28hq"]
@@ -14,6 +14,7 @@
 [ext_resource type="Script" path="res://src/ui/Camera.gd" id="10_epbi7"]
 [ext_resource type="Script" path="res://src/simulation/Resources.gd" id="11_ptsgc"]
 [ext_resource type="Script" path="res://src/simulation/Utility.gd" id="12_o42hk"]
+[ext_resource type="Script" path="res://src/scenes/FoodGenerator.gd" id="15_q4qlv"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_8urog"]
 bg_color = Color(0.509804, 0.509804, 0.509804, 1)
@@ -402,6 +403,11 @@ script = ExtResource("11_ptsgc")
 
 [node name="Utility" type="Node" parent="."]
 script = ExtResource("12_o42hk")
+
+[node name="FoodGenerator" type="Node" parent="."]
+script = ExtResource("15_q4qlv")
+
+[node name="FoodNodes" type="Node" parent="."]
 
 [connection signal="next_generation" from="Genetics" to="CanvasLayer/UIOverlay/TopUIPanel/CurrentGenLabel" method="_on_genetics_next_generation"]
 [connection signal="pressed" from="CanvasLayer/UIOverlay/TopUIPanel/SimSpeedLabel/OneTimeButton" to="CanvasLayer/UIOverlay/TopUIPanel/SimSpeedLabel" method="_on_one_time_button_pressed"]
