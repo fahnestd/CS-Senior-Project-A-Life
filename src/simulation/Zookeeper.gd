@@ -10,11 +10,11 @@ var CreatureScene = preload("res://src/scenes/creature.tscn")
 
 # Generate starter creatures
 func _ready():
-	create_creature((World.GetSpawnCoordinates() - Vector2(5, 2)) * World.GetTileSize(), 0, null)
-	create_creature((World.GetSpawnCoordinates() + Vector2(5, 2)) * World.GetTileSize(), 180, null)
+	create_creature((World.GetSpawnCoordinates() - Vector2(5, 2)) * World.GetTileSize(), 0, null, null)
+	create_creature((World.GetSpawnCoordinates() + Vector2(5, 2)) * World.GetTileSize(), 180, null, null)
 
 # Generate a new creature
-func create_creature(pos, rot, physical_genome):
+func create_creature(pos, rot, physical_genome, behavioral_genome):
 	if Creatures.get_child_count() < creature_limit:
 		var creature = CreatureScene.instantiate()
 		var body = creature.get_node('Body')
@@ -24,6 +24,9 @@ func create_creature(pos, rot, physical_genome):
 		body.rotation_degrees = rot
 		if physical_genome:
 			creature.get_node("Status").physical_genome = physical_genome
+
+		if behavioral_genome:
+			creature.get_node("Status").behavioral_genome = behavioral_genome
 
 		if Creatures.get_child_count() < 3:
 			creature.get_node("Status").reproduction_cooldown_progress = 0

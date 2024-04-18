@@ -3,26 +3,41 @@ extends Node
 @onready var Utility = get_node("../Utility")
 @onready var Zookeeper = get_node("../Zookeeper")
 
+# % mutation chance
 var mutation_chance = 2
-var mutation_intensity_decrease = -50
-var mutation_intensity_increase = 50
-var print_new_genome = false
+# min_change is the min percentage that a value can mutate by (-50 means the value can be halved)
+# max_change is the max percentage that a value can mutate by (100 means the value can double)
+var min_change = -50
+var max_change = 50
+var print_new_physical_genome = false
+var print_new_behavioral_genome = false
 
 signal next_generation
 signal creature_info(info)
+
+func get_change():
+	return 1 + randi_range(min_change, max_change) / 100.0
 
 func create_offspring(creature_1, creature_2):
 	next_generation.emit()
 	
 	var physical_crossover = crossover({}, creature_1.Status.physical_genome, creature_2.Status.physical_genome)
-	var physical_mutation = mutation(physical_crossover, physical_crossover.size(), mutation_intensity_decrease, mutation_intensity_increase)
+	var physical_mutation = mutation(physical_crossover)
+
+	var behavioral_crossover = crossover({}, creature_1.Status.behavioral_genome, creature_2.Status.behavioral_genome)
+	var behavioral_mutation = mutation(behavioral_crossover)
 
 	var offspring_pos = (creature_1.global_position + creature_2.global_position) / 2.0
 	var offspring_rot = (creature_1.Body.rotation + creature_2.Body.rotation) / 2.0
-	Zookeeper.create_creature(offspring_pos, offspring_rot, physical_mutation)
-	if print_new_genome:
-		print("New Genome:")
-		print(physical_mutation)
+	Zookeeper.create_creature(offspring_pos, offspring_rot, physical_mutation, behavioral_mutation)
+	if print_new_physical_genome:
+		print("New Physical Genome:")
+		Utility.print_dictionary(physical_mutation)
+		print()
+
+	if print_new_behavioral_genome:
+		print("New Behavioral Genome:")
+		Utility.print_dictionary(behavioral_mutation)
 		print()
 
 # Checks each key value pair in both dict_1 and dict_2, constructing return_dict from the winning values
@@ -51,14 +66,13 @@ func crossover(return_dict, dict_1, dict_2):
 
 	return return_dict
 
-# Potentially mutates the number of nodes in the genome
-# chance is the percentage chance that the number of nodes can change
-# min_intensity is the min percentage that a value can mutate by (-50 means the value can be halved)
-# max_intensity is the max percentage that a value can mutate by (100 means the value can double)
-func mutation(dict, num_nodes, min_intensity, max_intensity):
+# Potentially mutates the number of entries in the genome
+# chance is the percentage chance that the number of entries can change
+func mutation(dict):
+	var num_nodes = dict.size()
 	if mutation_chance > randi_range(0, 99):
-		num_nodes *= 1 + randi_range(min_intensity, max_intensity) / 100.0
-		num_nodes = int(round(num_nodes))
+		num_nodes *= get_change()
+		num_nodes = round(num_nodes)
 		num_nodes = max(4, num_nodes)
 
 	while num_nodes < dict.size():
@@ -67,39 +81,49 @@ func mutation(dict, num_nodes, min_intensity, max_intensity):
 	while num_nodes > dict.size():
 		Utility.dictionary_next(dict, dict.values()[randi_range(0, dict.size() - 1)])
 
-	return mutation_traversal(dict, num_nodes, min_intensity, max_intensity)
+	return mutation_traversal(dict, num_nodes)
 
 # Iterates through each key in the genome
 # chance is the percentage chance that each value mutates
-# min_intensity is the min percentage that a value can mutate by (-50 means the value can be halved)
-# max_intensity is the max percentage that a value can mutate by (100 means the value can double)
-func mutation_traversal(dict, num_nodes, min_intensity, max_intensity):
+func mutation_traversal(dict, num_nodes):
 	for key in dict.keys():
 		if dict[key] is Dictionary:
-			dict[key] = mutation_traversal(dict[key], num_nodes, min_intensity, max_intensity)
+			dict[key] = mutation_traversal(dict[key], num_nodes)
 		else:
 			if mutation_chance > randi_range(0, 99):
+				key = str(key)
 				if key == "parent_id":
-					dict[key] = int(dict[key])
-					dict[key] += num_nodes * (1 + randi_range(min_intensity, max_intensity) / 100.0)
-					dict[key] = int(round(dict[key])) % num_nodes
-					if dict[key] < 0:
-						dict[key] = num_nodes + dict[key]
+					mutate_parent_id(dict, num_nodes)
 				elif key == "angle":
-					dict[key] += 360 * (1 + randi_range(min_intensity, max_intensity) / 100.0)
-					dict[key] = Utility.angle_clamp(dict[key])
+					mutate_angle(dict)
 				elif key == "size":
-					dict[key] *= 1 + randi_range(min_intensity, max_intensity) / 100.0
-					dict[key] = float(clamp(dict[key], 5, 15))
+					mutate_size(dict)
 				elif key == "joint":
-					if dict[key] == "fixed":
-						dict[key] = "pivot"
-					else:
-						dict[key] = "fixed"
+					mutate_joint(dict)
 				elif key == "type":
-					dict[key] = mutate_type()
+					mutate_type(dict)
 	return dict
 
+func mutate_parent_id(dict, num_nodes):
+	dict["parent_id"] += num_nodes * get_change()
+	dict["parent_id"] = int(round(dict["parent_id"])) % num_nodes
+	if dict["parent_id"] < 0:
+		dict["parent_id"] = num_nodes + dict["parent_id"]
+
+func mutate_angle(dict):
+	dict["angle"] += 360 * get_change()
+	dict["angle"] = Utility.angle_clamp(dict["angle"])
+
+func mutate_size(dict):
+	dict["size"] *= get_change()
+	dict["size"] = clamp(dict["size"], 5, 15)
+
+func mutate_joint(dict):
+	if dict["joint"] == "fixed":
+		dict["joint"] = "pivot"
+	else:
+		dict["joint"] = "fixed"
+
 var types = ["body", "reproduction", "eye"]
-func mutate_type():
-	return types[randi_range(0, types.size() - 1)]
+func mutate_type(dict):
+	dict["type"] = types[randi_range(0, types.size() - 1)]
