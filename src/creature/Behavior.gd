@@ -54,8 +54,10 @@ func evaluate_condition(behavior, target_node):
 		# TODO: Add a check based on target species (target_classifier)
 		evaluation = false
 	elif condition["condition_type"] == "angle_difference":
-		var angle_diff = calculate_angle_difference(target_node.global_position)
-		evaluation = compare(condition["condition_comparison"], angle_diff, condition["condition_value"])
+		if condition["condition_value"] != null:
+			var angle_diff = calculate_angle_difference(target_node.global_position)
+			evaluation = compare(condition["condition_comparison"], angle_diff, condition["condition_value"])
+	# Update mutate_condition_type in Genetics when you add a new condition_type
 
 	if not condition["and"] == null:
 		evaluation = evaluation and evaluate_condition(condition["and"], target_node)
@@ -69,7 +71,7 @@ func decide_pattern():
 		var target = behavior["target"]
 		var check_nodes = visible_nodes
 		if target["target_classifier"] == "self":
-			check_nodes = Growth.nodes
+			check_nodes = Growth.nodes.values()
 		for target_node in check_nodes:
 			if evaluate_condition(behavior, target_node):
 				behavior_id = key
@@ -83,8 +85,9 @@ func process_behavior(delta):
 
 	if behavior_id != null:
 		var behavior_pattern = Status.behavioral_genome[behavior_id]["pattern"]
-		var simultaneous_steps = behavior_pattern[behavior_step_id]
-		var behavior_step_seconds = simultaneous_steps["time"]
+		var behavior_step = behavior_pattern.values()[behavior_step_id]
+		var simultaneous_steps = behavior_step["steps"]
+		var behavior_step_seconds = behavior_step["time"]
 
 		behavior_step_progress += delta
 		if behavior_step_progress > behavior_step_seconds:
@@ -92,12 +95,11 @@ func process_behavior(delta):
 			behavior_step_progress = behavior_step_seconds
 
 		for nth_pivot in simultaneous_steps.keys():
-			if nth_pivot is int:
-				var behavior_step_angle = simultaneous_steps[nth_pivot]
-				var movement_percent = delta / behavior_step_seconds
-				var angle_shift = behavior_step_angle * movement_percent
-				if pivot_nodes.size() >= nth_pivot + 1:
-					pivot_nodes[nth_pivot].turn(angle_shift, true)
+			var behavior_step_angle = simultaneous_steps[nth_pivot]
+			var movement_percent = delta / behavior_step_seconds
+			var angle_shift = behavior_step_angle * movement_percent
+			if pivot_nodes.size() >= nth_pivot + 1:
+				pivot_nodes[nth_pivot].turn(angle_shift, true)
 
 		if behavior_step_progress == behavior_step_seconds:
 			behavior_step_progress = 0

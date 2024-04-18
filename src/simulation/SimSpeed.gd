@@ -38,5 +38,5 @@ func start_warp(duration_in_minutes):
 	get_node("SimulationSkipTimer").start()
 
 func update_physics_ticks():
-	Engine.max_physics_steps_per_frame = round(Engine.time_scale * 60)
+	Engine.max_physics_steps_per_frame = round(Engine.time_scale)
 	Engine.physics_ticks_per_second = round(Engine.time_scale * 60)
