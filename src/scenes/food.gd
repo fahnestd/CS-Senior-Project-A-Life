@@ -12,4 +12,4 @@ func _ready():
 	get_node("DecayTimer").start()
 
 func _on_decay_timer_timeout():
-	get_parent().queue_free()
+	queue_free()
