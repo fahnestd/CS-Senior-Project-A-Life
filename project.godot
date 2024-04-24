@@ -15,6 +15,10 @@ run/main_scene="res://src/scenes/MainMenu.tscn"
 config/features=PackedStringArray("4.2", "C#", "Forward Plus")
 config/icon="res://icon.svg"
 
+[autoload]
+
+SimulationParameters="*res://src/simulation/SimulationParameters.gd"
+
 [display]
 
 window/size/mode=2
@@ -71,3 +75,4 @@ toggle_tempmap={
 [rendering]
 
 textures/canvas_textures/default_texture_filter=0
+textures/vram_compression/import_etc2_astc=true
