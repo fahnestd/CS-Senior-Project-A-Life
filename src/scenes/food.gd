@@ -1,5 +1,8 @@
 extends Node2D
 
+# NOTE: Food collision is set to layer 2!
+# this means we can set mouths to interact with food nodes without having to filter out node types.
+
 var energy_value
 var rng = RandomNumberGenerator.new()
 
