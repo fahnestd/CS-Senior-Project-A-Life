@@ -9,110 +9,149 @@ var node_distance = 20
 # Max length of velocity vector per frame
 var max_speed = 1
 
-# Default behavioral genome. TODO: Gets set to a crossover of the creature's parents after it is born.
+# Default behavioral genome. Gets set to a crossover of the creature's parents after it is born.
 var behavioral_genome = {
 	0: {
-		"if" = {
-			"angle diff" = {
-				"conditional" = "lessEqual",
-				"value" = -10
-			}
+		"target" = {
+			"target_type" = "Reproduction",
+			"target_classifier" = "same_species"
+		},
+		"condition" = {
+			"condition_type" = "angle_difference",
+			"condition_comparison" = "lessEqual",
+			"condition_value" = -20,
+			"and" = null,
+			"or" = null
 		},
 		"pattern" = {
 			0: {
-				0: -20.0,
-				1: -20.0,
+				"steps": {
+					0: -20.0,
+					1: -20.0
+				},
 				"time": 0.25
 			},
 			1: {
-				0: 20.0,
-				1: 20.0,
+				"steps": {
+					0: 20.0,
+					1: 20.0
+				},
 				"time": 1.0
 			}
 		}
 	},
 	1: {
-		"if" = {
-			"angle diff" = {
-				"conditional" = "greaterEqual",
-				"value" = 10
-			}
+		"target" = {
+			"target_type" = "Reproduction",
+			"target_classifier" = "same_species"
+		},
+		"condition" = {
+			"condition_type" = "angle_difference",
+			"condition_comparison" = "greaterEqual",
+			"condition_value" = 20,
+			"and" = null,
+			"or" = null
 		},
 		"pattern" = {
 			0: {
-				0: 20.0,
-				1: 20.0,
+				"steps": {
+					0: 20.0,
+					1: 20.0
+				},
 				"time": 0.25
 			},
 			1: {
-				0: -20.0,
-				1: -20.0,
+				"steps": {
+					0: -20.0,
+					1: -20.0
+				},
 				"time": 1.0
 			}
 		}
 	},
 	2: {
-		"if" = {
-			"angle diff" = {
-				"conditional" = "lessEqual",
-				"value" = -5,
-				"and" = {
-					"angle diff" = {
-						"conditional" = "greater",
-						"value" = -10
-					}
-				}
-			}
+		"target" = {
+			"target_type" = "Reproduction",
+			"target_classifier" = "same_species"
+		},
+		"condition" = {
+			"condition_type" = "angle_difference",
+			"condition_comparison" = "lessEqual",
+			"condition_value" = -5,
+			"and" = null,
+			"or" = null
 		},
 		"pattern" = {
 			0: {
-				0: -10.0,
-				1: -10.0,
+				"steps": {
+					0: -10.0,
+					1: -10.0
+				},
 				"time": 0.25
 			},
 			1: {
-				0: 10.0,
-				1: 10.0,
+				"steps": {
+					0: 10.0,
+					1: 10.0
+				},
 				"time": 1.0
 			}
 		}
 	},
 	3: {
-		"if" = {
-			"angle diff" = {
-				"conditional" = "greaterEqual",
-				"value" = 5,
-				"and" = {
-					"angle diff" = {
-						"conditional" = "less",
-						"value" = 10
-					}
-				}
-			}
+		"target" = {
+			"target_type" = "Reproduction",
+			"target_classifier" = "same_species"
+		},
+		"condition" = {
+			"condition_type" = "angle_difference",
+			"condition_comparison" = "greaterEqual",
+			"condition_value" = 5,
+			"and" = null,
+			"or" = null
 		},
 		"pattern" = {
 			0: {
-				0: 10.0,
-				1: 10.0,
+				"steps": {
+					0: 10.0,
+					1: 10.0
+				},
 				"time": 0.25
 			},
 			1: {
-				0: -10.0,
-				1: -10.0,
+				"steps": {
+					0: -10.0,
+					1: -10.0
+				},
 				"time": 1.0
 			}
 		}
 	},
 	4: {
+		"target" = {
+			"target_type" = "none",
+			"target_classifier" = "self"
+		},
+		"condition" = {
+			"condition_type" = "none",
+			"condition_comparison" = null,
+			"condition_value" = null,
+			"and" = null,
+			"or" = null
+		},
 		"pattern" = {
 			0: {
-				0: 40.0,
-				1: -40.0,
-				"time": 0.5
+				"steps": {
+					0: 40.0,
+					1: -40.0
+				},
+				"time": 0.25
 			},
 			1: {
-				0: -40.0,
-				1: 40.0,
+				"steps": {
+					0: -40.0,
+					1: 40.0
+				},
 				"time": 1.0
 			}
 		}

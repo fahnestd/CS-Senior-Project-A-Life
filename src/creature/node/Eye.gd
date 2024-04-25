@@ -11,8 +11,7 @@ func _ready():
 func _on_area_entered(other_area):
 	if other_area.get_parent().Creature != Creature:
 		if other_area.name != "Eye":
-			if not CreatureBehavior.visible_nodes.has(other_area):
-				CreatureBehavior.visible_nodes[other_area.get_parent()] = null
+			CreatureBehavior.visible_nodes[other_area.get_parent()] = null
 
 func _on_area_exited(other_area):
 	if other_area.get_parent().Creature != Creature:

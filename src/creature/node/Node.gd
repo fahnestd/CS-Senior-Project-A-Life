@@ -10,6 +10,7 @@ var id
 @onready var CreatureStatus = Creature.get_node("Status")
 
 @onready var Area = get_node("Area")
+@onready var Collision = Area.get_node("Collision")
 @onready var Resources = get_node("/root/MainScene/Resources")
 @onready var Sprite = get_node("Sprite")
 @onready var Status = get_node("Status")
@@ -79,6 +80,7 @@ func initialize_scale():
 	Sprite.scale.y = Status.genes["size"] / node_width
 	Area.scale.x = Status.genes["size"] / node_width
 	Area.scale.y = Status.genes["size"] / node_width
+	Collision.shape.radius = Status.genes["size"] / 2.0
 
 func _ready():
 	if not Status.origin:

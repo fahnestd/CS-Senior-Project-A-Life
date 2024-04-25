@@ -23,3 +23,7 @@ func angle_clamp(angle):
 	while angle > 180:
 		angle -= 360
 	return angle
+
+func print_dictionary(dict):
+	for key in dict.keys():
+		print(key, ": ", dict[key])
