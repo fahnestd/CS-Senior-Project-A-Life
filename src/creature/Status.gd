@@ -5,6 +5,8 @@ extends Node
 
 signal creature_dead(creature)
 
+var energy = 100
+
 # How far away nodes are from each other
 var node_distance = 20
 

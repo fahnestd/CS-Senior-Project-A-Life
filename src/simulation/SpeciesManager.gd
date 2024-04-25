@@ -5,6 +5,8 @@ var time: float = 0.0
 var species_catalog = {}  # Stores each species with a unique genome as the key
 var species_count = {}    # Tracks the number of individuals per species
 
+var print_debug_messages = false
+
 func _process(delta: float) -> void:
 	time += delta
 	if time >= 1.0:
@@ -16,18 +18,22 @@ func track_species(genome):
 	if genome_key not in species_catalog:
 		species_catalog[genome_key] = genome
 		species_count[genome_key] = 1
-		print("species_identified", genome)
+		if print_debug_messages:
+			print("species_identified", genome)
 	else:
 		species_count[genome_key] += 1
-		print("Added existing species to species count")
+		if print_debug_messages:
+			print("Added existing species to species count")
 
 func check_for_extinct_species():
 	for species_key in species_count.keys():
 		if species_count[species_key] <= 0:
-			print("species_extinct", species_catalog[species_key])
+			if print_debug_messages:
+				print("species_extinct", species_catalog[species_key])
 			species_catalog.erase(species_key)
 			species_count.erase(species_key)
 
 func creature_dead(creature):
-	print("Creature Dead")
-	print(creature)
+	if print_debug_messages:
+		print("Creature Dead")
+		print(creature)
