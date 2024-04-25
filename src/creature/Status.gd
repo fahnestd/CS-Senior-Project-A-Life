@@ -3,6 +3,8 @@ extends Node
 
 @onready var Creature = get_parent()
 
+signal creature_dead(creature)
+
 # How far away nodes are from each other
 var node_distance = 20
 
@@ -163,6 +165,7 @@ var reproduction_cooldown_progress = reproduction_cooldown
 # TODO: Remove when node death is implemented and creatures eat dead nodes
 func is_dead():
 	if health <= 0:
+		emit_signal("creature_dead", Creature)
 		Creature.queue_free()
 
 func reset_reproduction_cooldown():
