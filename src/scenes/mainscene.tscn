@@ -1,4 +1,4 @@
-[gd_scene load_steps=19 format=3 uid="uid://dvweqacxjay7r"]
+[gd_scene load_steps=21 format=3 uid="uid://dvweqacxjay7r"]
 
 [ext_resource type="PackedScene" uid="uid://02k684x8aybd" path="res://src/scenes/map.tscn" id="1_w7ogu"]
 [ext_resource type="Script" path="res://src/simulation/Genetics.gd" id="2_s28hq"]
@@ -15,6 +15,8 @@
 [ext_resource type="Script" path="res://src/simulation/Resources.gd" id="11_ptsgc"]
 [ext_resource type="Script" path="res://src/simulation/Utility.gd" id="12_o42hk"]
 [ext_resource type="Script" path="res://src/scenes/FoodGenerator.gd" id="15_h11l0"]
+[ext_resource type="Script" path="res://src/simulation/SpeciesManager.gd" id="16_u87gk"]
+[ext_resource type="Script" path="res://src/creature/Status.gd" id="17_ts3ax"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_8urog"]
 bg_color = Color(0.509804, 0.509804, 0.509804, 1)
@@ -409,6 +411,12 @@ script = ExtResource("15_h11l0")
 
 [node name="FoodNodes" type="Node" parent="."]
 
+[node name="SpeciesManager" type="Node" parent="."]
+script = ExtResource("16_u87gk")
+
+[node name="Status" type="Node" parent="."]
+script = ExtResource("17_ts3ax")
+
 [connection signal="next_generation" from="Genetics" to="CanvasLayer/UIOverlay/TopUIPanel/CurrentGenLabel" method="_on_genetics_next_generation"]
 [connection signal="pressed" from="CanvasLayer/UIOverlay/TopUIPanel/SimSpeedLabel/OneTimeButton" to="CanvasLayer/UIOverlay/TopUIPanel/SimSpeedLabel" method="_on_one_time_button_pressed"]
 [connection signal="pressed" from="CanvasLayer/UIOverlay/TopUIPanel/SimSpeedLabel/TwoTimeButton" to="CanvasLayer/UIOverlay/TopUIPanel/SimSpeedLabel" method="_on_two_time_button_pressed"]
@@ -419,3 +427,4 @@ script = ExtResource("15_h11l0")
 [connection signal="pressed" from="CanvasLayer/UIOverlay/TopUIPanel/SimSpeedLabel/HBoxContainer/SkipSixtyMinutesButton" to="CanvasLayer/UIOverlay/TopUIPanel/SimSpeedLabel" method="_on_skip_sixty_minutes_button_pressed"]
 [connection signal="value_changed" from="CanvasLayer/UIOverlay/SideUIPanel/FoodControl/FoodHSlider" to="CanvasLayer/UIOverlay/SideUIPanel/FoodControl" method="_on_food_h_slider_value_changed"]
 [connection signal="creature_info" from="Camera" to="CanvasLayer/UIOverlay/SideUIPanel/CreaturePanel" method="_on_camera_creature_info"]
+[connection signal="creature_dead" from="Status" to="Genetics" method="_on_status_creature_dead"]

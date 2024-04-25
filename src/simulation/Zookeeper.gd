@@ -12,7 +12,7 @@ var CreatureScene = preload("res://src/scenes/creature.tscn")
 func _ready():
 	var creatures_to_spawn = SimulationParameters.CreatureDensity * 5
 	for i in range(creatures_to_spawn):
-		create_creature(World.GetRandomSpawnCoordinates() * World.GetTileSize(), World.GetRandomStartingAngle(), null)
+		create_creature(World.GetRandomSpawnCoordinates() * World.GetTileSize(), World.GetRandomStartingAngle(), null, null)
 
 # Generate a new creature
 func create_creature(pos, rot, physical_genome, behavioral_genome):
