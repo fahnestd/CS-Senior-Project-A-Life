@@ -2,6 +2,7 @@ extends Node
 
 @onready var Utility = get_node("../Utility")
 @onready var Zookeeper = get_node("../Zookeeper")
+@onready var SpeciesManager = get_node("../SpeciesManager")
 
 var mutation_chance = 2
 var mutation_intensity_decrease = -50
@@ -20,6 +21,8 @@ func create_offspring(creature_1, creature_2):
 	var offspring_pos = (creature_1.global_position + creature_2.global_position) / 2.0
 	var offspring_rot = (creature_1.Body.rotation + creature_2.Body.rotation) / 2.0
 	Zookeeper.create_creature(offspring_pos, offspring_rot, physical_mutation)
+	
+	SpeciesManager.track_species(physical_mutation)
 	if print_new_genome:
 		print("New Genome:")
 		print(physical_mutation)
@@ -103,3 +106,7 @@ func mutation_traversal(dict, num_nodes, min_intensity, max_intensity):
 var types = ["body", "reproduction", "eye"]
 func mutate_type():
 	return types[randi_range(0, types.size() - 1)]
+
+
+func _on_status_creature_dead(creature):
+	print("TEST")
