@@ -185,14 +185,14 @@ var physical_genome = {
 		"angle": 120,
 		"size": 10.0,
 		"joint": "pivot",
-		"type": "body"
+		"type": "mouth"
 	},
 	3: {
 		"parent_id": 0,
 		"angle": -120,
 		"size": 10.0,
 		"joint": "pivot",
-		"type": "body"
+		"type": "mouth"
 	}
 }
 

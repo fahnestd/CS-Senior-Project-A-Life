@@ -164,12 +164,11 @@ func mutate_joint(dict):
 	else:
 		dict["joint"] = "fixed"
 
-var types = ["body", "reproduction", "eye"]
-
+var types = ["body", "reproduction", "eye", "mouth"]
 func mutate_type(dict):
 	dict["type"] = types[randi_range(0, types.size() - 1)]
 
-var target_types = ["none", "Body", "Reproduction", "Eye"]
+var target_types = ["none", "Body", "Reproduction", "Eye", "Mouth"]
 func mutate_target_type(dict):
 	dict["target_type"] = target_types[randi_range(0, target_types.size() - 1)]
 
