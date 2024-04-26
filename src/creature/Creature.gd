@@ -2,6 +2,7 @@ extends Node2D
 
 @onready var Behavior = get_node("Behavior")
 @onready var Body = get_node("Body")
+@onready var Growth = get_node("Growth")
 @onready var Resources = get_node("../../Resources")
 @onready var Status = get_node("Status")
 @onready var World = get_node("../../World")
@@ -26,7 +27,6 @@ func update_label(_delta, tile):
 	var terrainLabel = get_node("TerrainLabel")
 	if tile != null:
 		terrainLabel.text = str(tile.Coordinates);
-		terrainLabel.text += "\nHealth: " + str(Status.health);
 		terrainLabel.text += "\nTerrain: " + str(tile.TerrainType);
 		terrainLabel.text += "\nTemperature: " + str(tile.Temperature);
 
@@ -44,5 +44,5 @@ func handle_temperature(delta, tile):
 	if tile:
 		temp_timer += delta
 		if temp_timer > 2:
-			Status.health -= tile.Temperature * 4 + 4
+			Status.consume_integrity(tile.Temperature * 4)
 			temp_timer = 0

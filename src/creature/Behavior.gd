@@ -99,7 +99,9 @@ func process_behavior(delta):
 			var movement_percent = delta / behavior_step_seconds
 			var angle_shift = behavior_step_angle * movement_percent
 			if pivot_nodes.size() >= nth_pivot + 1:
-				pivot_nodes[nth_pivot].turn(angle_shift, true)
+				var pivot_node = pivot_nodes[nth_pivot]
+				if pivot_node.Status.integrity != 0:
+					pivot_node.turn(angle_shift, true)
 
 		if behavior_step_progress == behavior_step_seconds:
 			behavior_step_progress = 0

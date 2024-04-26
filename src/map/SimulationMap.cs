@@ -28,13 +28,13 @@ namespace SeniorProject.src.map
 		{
 			random = new Random();
 
-            InitializeMap();
+			InitializeMap();
 		}
 
 		public void InitializeMap()
 		{
 
-            int seed = random.Next();
+			int seed = random.Next();
 			TerrainGenerator TerrainGenerator = new CellularGradientTerrainGenerator(seed);
 			int[,] TerrainMap = TerrainGenerator.GenerateMap(mapWidth, mapHeight);
 			
@@ -102,16 +102,16 @@ namespace SeniorProject.src.map
 			return new Vector2(mapWidth / 2, mapHeight / 2);
 		}
 
-        public Vector2 GetRandomSpawnCoordinates()
-        {
+		public Vector2 GetRandomSpawnCoordinates()
+		{
 			float spawnX = random.Next(mapWidth - 2) + 1;
 			float spawnY = random.Next(mapHeight - 2) + 1;
-            return new Vector2(spawnX, spawnY);
-        }
+			return new Vector2(spawnX, spawnY);
+		}
 
 		public float GetRandomStartingAngle()
 		{
 			return (float)random.Next(360);
 		}
-    }
+	}
 }

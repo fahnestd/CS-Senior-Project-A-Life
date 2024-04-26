@@ -2,6 +2,7 @@
 extends Node
 
 @onready var Creature = get_parent()
+@onready var Growth = get_node("../Growth")
 
 signal creature_dead(creature)
 
@@ -195,18 +196,20 @@ var physical_genome = {
 	}
 }
 
-# TODO: Replace health with the energy system
-var health = 100
-
 # How many seconds delay between reproducing
 var reproduction_cooldown = 5
 # Counts down to 0 over time, gets set to reproduction_cooldown after reproducing
 var reproduction_cooldown_progress = reproduction_cooldown
 
-# TODO: Remove when node death is implemented and creatures eat dead nodes
 func is_dead():
-	if health <= 0:
+	var has_living_node = false
+	for node in Growth.nodes.values():
+		if node.Status.integrity > 0:
+			has_living_node = true
+			break
+	if not has_living_node:
 		emit_signal("creature_dead", Creature)
+		# TODO: Don't discard dead creatures when they can be eaten
 		Creature.queue_free()
 
 func reset_reproduction_cooldown():
@@ -216,6 +219,12 @@ func reset_reproduction_cooldown():
 func cooldown(delta):
 	if reproduction_cooldown_progress > 0:
 		reproduction_cooldown_progress = max(0, reproduction_cooldown_progress - delta)
+
+# Called when creature is out of energy
+# Drains an equivalent amount from node integrity instead
+func consume_integrity(amount):
+	for node in Growth.nodes.values():
+		node.Status.get_hurt(amount)
 
 func _physics_process(delta):
 	is_dead()

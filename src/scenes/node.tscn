@@ -9,9 +9,12 @@
 radius = 5.0
 
 [node name="Node" type="Node2D"]
+z_index = 1
+z_as_relative = false
 script = ExtResource("1_f2d8l")
 
 [node name="Sprite" type="Sprite2D" parent="."]
+z_as_relative = false
 texture = ExtResource("2_hfo1j")
 
 [node name="Area" type="Area2D" parent="."]
