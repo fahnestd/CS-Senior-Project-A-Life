@@ -2,7 +2,7 @@
 extends Node
 
 var creature_limit = 100
-var spawn_debug_creatures = true
+var spawn_debug_creatures = false
 
 var CreatureScene = preload("res://src/scenes/creature.tscn")
 @onready var World = get_node("../World")

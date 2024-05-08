@@ -18,8 +18,10 @@ visible = false
 texture = ExtResource("3_elewg")
 
 [node name="DecayTimer" type="Timer" parent="."]
+one_shot = true
 
 [node name="RegrowTimer" type="Timer" parent="."]
+one_shot = true
 
 [node name="Area2D" type="Area2D" parent="."]
 collision_layer = 2
