@@ -5,6 +5,8 @@ extends Node
 @onready var SpeciesManager = get_node("../SpeciesManager")
 
 # % mutation chance
+# Note that this chance applies to each parameter (not the genome as a whole)
+# So a 50% chance means half of the entire genome will be mutated
 var mutation_chance = 2
 # min_change is the min percentage that a value can mutate by (-50 means the value can be halved)
 # max_change is the max percentage that a value can mutate by (100 means the value can double)
@@ -168,7 +170,7 @@ var types = ["body", "reproduction", "eye", "mouth"]
 func mutate_type(dict):
 	dict["type"] = types[randi_range(0, types.size() - 1)]
 
-var target_types = ["none", "Body", "Reproduction", "Eye", "Mouth"]
+var target_types = ["none", "Food", "Body", "Reproduction", "Eye", "Mouth"]
 func mutate_target_type(dict):
 	dict["target_type"] = target_types[randi_range(0, target_types.size() - 1)]
 

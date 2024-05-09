@@ -14,7 +14,7 @@ var joint_color = Color(0, 0, 0, 1)
 var home_position = Vector2(0, 0)
 var home_rotation = 0
 
-var consumption_rate = 1
+var consumption_rate = 0.25
 func consume_energy(delta):
 	if CreatureStatus.energy > 0:
 		CreatureStatus.energy -= consumption_rate * delta

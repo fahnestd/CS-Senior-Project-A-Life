@@ -83,7 +83,6 @@ func initialize_scale():
 	Sprite.scale.y = size_scale
 	Area.scale.x = size_scale
 	Area.scale.y = size_scale
-	Collision.shape.radius = Status.genes["size"] / 2.0
 
 func _ready():
 	if not Status.origin:

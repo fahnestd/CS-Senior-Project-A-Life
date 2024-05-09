@@ -23,11 +23,9 @@ one_shot = true
 [node name="RegrowTimer" type="Timer" parent="."]
 one_shot = true
 
-[node name="Area2D" type="Area2D" parent="."]
-collision_layer = 2
-collision_mask = 0
+[node name="Food" type="Area2D" parent="."]
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Area2D"]
+[node name="Collision" type="CollisionShape2D" parent="Food"]
 shape = SubResource("CircleShape2D_3q74v")
 
 [connection signal="timeout" from="DecayTimer" to="." method="_on_decay_timer_timeout"]

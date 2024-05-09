@@ -18,7 +18,7 @@ var max_speed = 1
 var behavioral_genome = {
 	0: {
 		"target" = {
-			"target_type" = "Reproduction",
+			"target_type" = "Food",
 			"target_classifier" = "same_species"
 		},
 		"condition" = {
@@ -47,7 +47,7 @@ var behavioral_genome = {
 	},
 	1: {
 		"target" = {
-			"target_type" = "Reproduction",
+			"target_type" = "Food",
 			"target_classifier" = "same_species"
 		},
 		"condition" = {
@@ -76,7 +76,7 @@ var behavioral_genome = {
 	},
 	2: {
 		"target" = {
-			"target_type" = "Reproduction",
+			"target_type" = "Food",
 			"target_classifier" = "same_species"
 		},
 		"condition" = {
@@ -105,7 +105,7 @@ var behavioral_genome = {
 	},
 	3: {
 		"target" = {
-			"target_type" = "Reproduction",
+			"target_type" = "Food",
 			"target_classifier" = "same_species"
 		},
 		"condition" = {
@@ -133,6 +133,151 @@ var behavioral_genome = {
 		}
 	},
 	4: {
+		"target" = {
+			"target_type" = "Food",
+			"target_classifier" = "different_species"
+		},
+		"condition" = {
+			"condition_type" = "none",
+			"condition_comparison" = null,
+			"condition_value" = null,
+			"and" = null,
+			"or" = null
+		},
+		"pattern" = {
+			0: {
+				"steps": {
+					0: 40.0,
+					1: -40.0
+				},
+				"time": 0.25
+			},
+			1: {
+				"steps": {
+					0: -40.0,
+					1: 40.0
+				},
+				"time": 1.0
+			}
+		}
+	},
+	5: {
+		"target" = {
+			"target_type" = "Reproduction",
+			"target_classifier" = "same_species"
+		},
+		"condition" = {
+			"condition_type" = "angle_difference",
+			"condition_comparison" = "lessEqual",
+			"condition_value" = -20,
+			"and" = null,
+			"or" = null
+		},
+		"pattern" = {
+			0: {
+				"steps": {
+					0: -20.0,
+					1: -20.0
+				},
+				"time": 0.25
+			},
+			1: {
+				"steps": {
+					0: 20.0,
+					1: 20.0
+				},
+				"time": 1.0
+			}
+		}
+	},
+	6: {
+		"target" = {
+			"target_type" = "Reproduction",
+			"target_classifier" = "same_species"
+		},
+		"condition" = {
+			"condition_type" = "angle_difference",
+			"condition_comparison" = "greaterEqual",
+			"condition_value" = 20,
+			"and" = null,
+			"or" = null
+		},
+		"pattern" = {
+			0: {
+				"steps": {
+					0: 20.0,
+					1: 20.0
+				},
+				"time": 0.25
+			},
+			1: {
+				"steps": {
+					0: -20.0,
+					1: -20.0
+				},
+				"time": 1.0
+			}
+		}
+	},
+	7: {
+		"target" = {
+			"target_type" = "Reproduction",
+			"target_classifier" = "same_species"
+		},
+		"condition" = {
+			"condition_type" = "angle_difference",
+			"condition_comparison" = "lessEqual",
+			"condition_value" = -5,
+			"and" = null,
+			"or" = null
+		},
+		"pattern" = {
+			0: {
+				"steps": {
+					0: -10.0,
+					1: -10.0
+				},
+				"time": 0.25
+			},
+			1: {
+				"steps": {
+					0: 10.0,
+					1: 10.0
+				},
+				"time": 1.0
+			}
+		}
+	},
+	8: {
+		"target" = {
+			"target_type" = "Reproduction",
+			"target_classifier" = "same_species"
+		},
+		"condition" = {
+			"condition_type" = "angle_difference",
+			"condition_comparison" = "greaterEqual",
+			"condition_value" = 5,
+			"and" = null,
+			"or" = null
+		},
+		"pattern" = {
+			0: {
+				"steps": {
+					0: 10.0,
+					1: 10.0
+				},
+				"time": 0.25
+			},
+			1: {
+				"steps": {
+					0: -10.0,
+					1: -10.0
+				},
+				"time": 1.0
+			}
+		}
+	},
+	9: {
 		"target" = {
 			"target_type" = "none",
 			"target_classifier" = "self"
@@ -171,33 +316,40 @@ var physical_genome = {
 		"angle": 0,
 		"size": 10.0,
 		"joint": "fixed",
-		"type": "eye"
+		"type": "reproduction"
 	},
 	1: {
 		"parent_id": 0,
 		"angle": 0,
 		"size": 10.0,
 		"joint": "fixed",
-		"type": "reproduction"
+		"type": "mouth"
 	},
 	2: {
 		"parent_id": 0,
 		"angle": 120,
 		"size": 10.0,
 		"joint": "pivot",
-		"type": "mouth"
+		"type": "body"
 	},
 	3: {
 		"parent_id": 0,
 		"angle": -120,
 		"size": 10.0,
 		"joint": "pivot",
-		"type": "mouth"
+		"type": "body"
+	},
+	4: {
+		"parent_id": 0,
+		"angle": 180,
+		"size": 10.0,
+		"joint": "fixed",
+		"type": "eye"
 	}
 }
 
 # How many seconds delay between reproducing
-var reproduction_cooldown = 5
+var reproduction_cooldown = 30
 # Counts down to 0 over time, gets set to reproduction_cooldown after reproducing
 var reproduction_cooldown_progress = reproduction_cooldown
 
