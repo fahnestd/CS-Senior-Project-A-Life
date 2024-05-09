@@ -2,8 +2,11 @@ extends Node
 
 @onready var Utility = get_node("../Utility")
 @onready var Zookeeper = get_node("../Zookeeper")
+@onready var SpeciesManager = get_node("../SpeciesManager")
 
 # % mutation chance
+# Note that this chance applies to each parameter (not the genome as a whole)
+# So a 50% chance means half of the entire genome will be mutated
 var mutation_chance = 2
 # min_change is the min percentage that a value can mutate by (-50 means the value can be halved)
 # max_change is the max percentage that a value can mutate by (100 means the value can double)
@@ -11,7 +14,7 @@ var min_change = -50
 var max_change = 50
 var enable_physical_mutations = true
 var print_new_physical_genome = false
-var print_new_behavioral_genome = true
+var print_new_behavioral_genome = false
 
 signal next_generation
 signal creature_info(info)
@@ -34,7 +37,11 @@ func create_offspring(creature_1, creature_2):
 
 	var offspring_pos = (creature_1.global_position + creature_2.global_position) / 2.0
 	var offspring_rot = (creature_1.Body.rotation + creature_2.Body.rotation) / 2.0
+
 	Zookeeper.create_creature(offspring_pos, offspring_rot, physical_mutation, behavioral_mutation)
+
+	SpeciesManager.track_species(physical_mutation)
+
 	if print_new_physical_genome:
 		print("New Physical Genome:")
 		Utility.print_dictionary(physical_mutation)
@@ -159,11 +166,11 @@ func mutate_joint(dict):
 	else:
 		dict["joint"] = "fixed"
 
-var types = ["body", "reproduction", "eye"]
+var types = ["body", "reproduction", "eye", "mouth"]
 func mutate_type(dict):
 	dict["type"] = types[randi_range(0, types.size() - 1)]
 
-var target_types = ["none", "Body", "Reproduction", "Eye"]
+var target_types = ["none", "Food", "Body", "Reproduction", "Eye", "Mouth"]
 func mutate_target_type(dict):
 	dict["target_type"] = target_types[randi_range(0, target_types.size() - 1)]
 
@@ -208,3 +215,6 @@ func mutate_pattern(dict):
 				steps[substep] = Utility.angle_clamp(steps[substep])
 		if mutation_chance > randi_range(0, 99):
 			step["time"] *= get_change()
+
+func _on_status_creature_dead(_creature):
+	print("TEST")

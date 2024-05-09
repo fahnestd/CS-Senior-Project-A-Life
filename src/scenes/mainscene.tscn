@@ -1,4 +1,4 @@
-[gd_scene load_steps=19 format=3 uid="uid://dvweqacxjay7r"]
+[gd_scene load_steps=22 format=3 uid="uid://dvweqacxjay7r"]
 
 [ext_resource type="PackedScene" uid="uid://02k684x8aybd" path="res://src/scenes/map.tscn" id="1_w7ogu"]
 [ext_resource type="Script" path="res://src/simulation/Genetics.gd" id="2_s28hq"]
@@ -10,11 +10,13 @@
 [ext_resource type="Script" path="res://src/ui/foodcontrol_ui.gd" id="6_uxs3m"]
 [ext_resource type="Script" path="res://src/ui/creaturepanel_ui.gd" id="7_e3w55"]
 [ext_resource type="StyleBox" uid="uid://m3372f0wk2mk" path="res://assets/ui/SepLineUIAsset.tres" id="8_3ihby"]
+[ext_resource type="Script" path="res://src/scenes/EnergyAvailable.gd" id="8_amobd"]
 [ext_resource type="StyleBox" uid="uid://brqbxhceg7eji" path="res://assets/ui/VSepLineUIAsset.tres" id="9_5tlr3"]
 [ext_resource type="Script" path="res://src/ui/Camera.gd" id="10_epbi7"]
 [ext_resource type="Script" path="res://src/simulation/Resources.gd" id="11_ptsgc"]
 [ext_resource type="Script" path="res://src/simulation/Utility.gd" id="12_o42hk"]
 [ext_resource type="Script" path="res://src/scenes/FoodGenerator.gd" id="15_h11l0"]
+[ext_resource type="Script" path="res://src/simulation/SpeciesManager.gd" id="16_u87gk"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_8urog"]
 bg_color = Color(0.509804, 0.509804, 0.509804, 1)
@@ -25,6 +27,9 @@ corner_radius_top_left = 20
 corner_radius_top_right = 20
 corner_radius_bottom_right = 20
 corner_radius_bottom_left = 20
+
+[sub_resource type="LabelSettings" id="LabelSettings_3wvgh"]
+font_size = 12
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_ulauv"]
 bg_color = Color(0.286275, 0.286275, 0.286275, 1)
@@ -278,6 +283,17 @@ offset_right = 76.012
 offset_bottom = 116.0
 theme_override_styles/panel = SubResource("StyleBoxFlat_2prp0")
 
+[node name="EnergyAvailable" type="Label" parent="CanvasLayer/UIOverlay/SideUIPanel"]
+layout_mode = 0
+offset_left = 10.0
+offset_top = 125.0
+offset_right = 155.0
+offset_bottom = 148.0
+scale = Vector2(1, 0.988292)
+text = "Energy Available: 0"
+label_settings = SubResource("LabelSettings_3wvgh")
+script = ExtResource("8_amobd")
+
 [node name="FoodControl" type="Control" parent="CanvasLayer/UIOverlay/SideUIPanel"]
 anchors_preset = 0
 offset_left = 9.0
@@ -390,6 +406,16 @@ grow_horizontal = 0
 grow_vertical = 2
 theme_override_styles/separator = ExtResource("9_5tlr3")
 
+[node name="VBoxContainer" type="VBoxContainer" parent="CanvasLayer/UIOverlay/SideUIPanel"]
+layout_mode = 0
+offset_top = 140.0
+offset_right = 40.0
+offset_bottom = 180.0
+
+[node name="UIUpdateTimer" type="Timer" parent="CanvasLayer"]
+wait_time = 2.0
+autostart = true
+
 [node name="Camera" type="Camera2D" parent="."]
 position = Vector2(4000, 4000)
 zoom = Vector2(4, 4)
@@ -409,6 +435,9 @@ script = ExtResource("15_h11l0")
 
 [node name="FoodNodes" type="Node" parent="."]
 
+[node name="SpeciesManager" type="Node" parent="."]
+script = ExtResource("16_u87gk")
+
 [connection signal="next_generation" from="Genetics" to="CanvasLayer/UIOverlay/TopUIPanel/CurrentGenLabel" method="_on_genetics_next_generation"]
 [connection signal="pressed" from="CanvasLayer/UIOverlay/TopUIPanel/SimSpeedLabel/OneTimeButton" to="CanvasLayer/UIOverlay/TopUIPanel/SimSpeedLabel" method="_on_one_time_button_pressed"]
 [connection signal="pressed" from="CanvasLayer/UIOverlay/TopUIPanel/SimSpeedLabel/TwoTimeButton" to="CanvasLayer/UIOverlay/TopUIPanel/SimSpeedLabel" method="_on_two_time_button_pressed"]
@@ -418,4 +447,5 @@ script = ExtResource("15_h11l0")
 [connection signal="pressed" from="CanvasLayer/UIOverlay/TopUIPanel/SimSpeedLabel/HBoxContainer/SkipThirtyMinutesButton" to="CanvasLayer/UIOverlay/TopUIPanel/SimSpeedLabel" method="_on_skip_thirty_minutes_button_pressed"]
 [connection signal="pressed" from="CanvasLayer/UIOverlay/TopUIPanel/SimSpeedLabel/HBoxContainer/SkipSixtyMinutesButton" to="CanvasLayer/UIOverlay/TopUIPanel/SimSpeedLabel" method="_on_skip_sixty_minutes_button_pressed"]
 [connection signal="value_changed" from="CanvasLayer/UIOverlay/SideUIPanel/FoodControl/FoodHSlider" to="CanvasLayer/UIOverlay/SideUIPanel/FoodControl" method="_on_food_h_slider_value_changed"]
+[connection signal="timeout" from="CanvasLayer/UIUpdateTimer" to="CanvasLayer/UIOverlay/SideUIPanel/EnergyAvailable" method="_on_ui_update_timer_timeout"]
 [connection signal="creature_info" from="Camera" to="CanvasLayer/UIOverlay/SideUIPanel/CreaturePanel" method="_on_camera_creature_info"]

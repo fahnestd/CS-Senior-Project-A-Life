@@ -48,11 +48,15 @@ func evaluate_condition(behavior, target_node):
 	var target = behavior["target"]
 	var condition = behavior["condition"]
 	var evaluation = false
-	if condition["condition_type"] == "none":
-		evaluation = true
-	elif target["target_type"] != "none" and not target_node.has_node(target["target_type"]):
+	if target["target_type"] != "none" and not target_node.has_node(target["target_type"]):
 		# TODO: Add a check based on target species (target_classifier)
 		evaluation = false
+	elif target["target_type"] == "Food" and target_node.energy_value == 0:
+		evaluation = false
+	elif target["target_type"] == "Reproduction" and target_node.Creature.Status.reproduction_cooldown_progress != 0:
+		evaluation = false
+	elif condition["condition_type"] == "none":
+		evaluation = true
 	elif condition["condition_type"] == "angle_difference":
 		if condition["condition_value"] != null:
 			var angle_diff = calculate_angle_difference(target_node.global_position)
@@ -65,6 +69,7 @@ func evaluate_condition(behavior, target_node):
 		evaluation = evaluation or evaluate_condition(condition["or"], target_node)
 	return evaluation
 
+var last_target = null
 func decide_pattern():
 	for key in Status.behavioral_genome.keys():
 		var behavior = Status.behavioral_genome[key]
@@ -73,11 +78,15 @@ func decide_pattern():
 		if target["target_classifier"] == "self":
 			check_nodes = Growth.nodes.values()
 		for target_node in check_nodes:
-			if evaluate_condition(behavior, target_node):
-				behavior_id = key
-				return
+			if last_target == null or target_node == last_target:
+				if evaluate_condition(behavior, target_node):
+					if target["target_classifier"] != "self":
+						last_target = target_node
+					behavior_id = key
+					return
 
 	behavior_id = null
+	last_target = null
 
 func process_behavior(delta):
 	if behavior_step_progress == 0 and behavior_step_id == 0:
@@ -99,7 +108,9 @@ func process_behavior(delta):
 			var movement_percent = delta / behavior_step_seconds
 			var angle_shift = behavior_step_angle * movement_percent
 			if pivot_nodes.size() >= nth_pivot + 1:
-				pivot_nodes[nth_pivot].turn(angle_shift, true)
+				var pivot_node = pivot_nodes[nth_pivot]
+				if pivot_node.Status.integrity != 0:
+					pivot_node.turn(angle_shift, true)
 
 		if behavior_step_progress == behavior_step_seconds:
 			behavior_step_progress = 0

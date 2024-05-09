@@ -10,7 +10,8 @@ extends Node
 var node_scenes = {
 	"body" = preload("res://src/scenes/node.tscn"),
 	"reproduction" = preload("res://src/scenes/reproduction.tscn"),
-	"eye" = preload("res://src/scenes/eye.tscn")
+	"eye" = preload("res://src/scenes/eye.tscn"),
+	"mouth" = preload("res://src/scenes/mouth.tscn")
 }
 
 # Contains nodes that have been grown

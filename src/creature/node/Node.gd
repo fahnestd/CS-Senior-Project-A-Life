@@ -74,13 +74,15 @@ func initialize_connection():
 	else:
 		Status.joint_color = Color(0, 0, 0, 0)
 
+var fourth_size
 func initialize_scale():
 	var node_width = Sprite.texture.get_width()
-	Sprite.scale.x = Status.genes["size"] / node_width
-	Sprite.scale.y = Status.genes["size"] / node_width
-	Area.scale.x = Status.genes["size"] / node_width
-	Area.scale.y = Status.genes["size"] / node_width
-	Collision.shape.radius = Status.genes["size"] / 2.0
+	var size_scale = Status.genes["size"] / node_width
+	fourth_size = Status.genes["size"] / 4.
+	Sprite.scale.x = size_scale
+	Sprite.scale.y = size_scale
+	Area.scale.x = size_scale
+	Area.scale.y = size_scale
 
 func _ready():
 	if not Status.origin:
@@ -103,3 +105,4 @@ func drift_home(delta):
 func _draw():
 	if not Status.origin:
 		draw_line(Vector2(0, 0), to_local(ParentNode.global_position), Status.joint_color, 1, false)
+	draw_circle(Vector2(0, 0), fourth_size, Color(0, 1, 0) * Status.integrity / 100. + Color(1, 0, 0) * (1 - Status.integrity / 100.))

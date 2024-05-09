@@ -1,0 +1,13 @@
+[gd_scene load_steps=4 format=3 uid="uid://bbhgemel3ojhn"]
+
+[ext_resource type="PackedScene" uid="uid://d2i01vu72ff4u" path="res://src/scenes/node.tscn" id="1_p628j"]
+[ext_resource type="Texture2D" uid="uid://ceaaiq74y3f0s" path="res://assets/creature/orange_circle.png" id="2_8yp1x"]
+[ext_resource type="Script" path="res://src/creature/node/Mouth.gd" id="3_nnci7"]
+
+[node name="Node" instance=ExtResource("1_p628j")]
+
+[node name="Sprite" parent="." index="0"]
+texture = ExtResource("2_8yp1x")
+
+[node name="Mouth" type="Node" parent="." index="3"]
+script = ExtResource("3_nnci7")
