@@ -18,6 +18,7 @@ var print_new_behavioral_genome = false
 
 signal next_generation
 signal creature_info(info)
+signal track_species(genome)
 
 func get_change():
 	return 1 + randi_range(min_change, max_change) / 100.0
@@ -40,7 +41,8 @@ func create_offspring(creature_1, creature_2):
 
 	Zookeeper.create_creature(offspring_pos, offspring_rot, physical_mutation, behavioral_mutation)
 
-	SpeciesManager.track_species(physical_mutation)
+	# SpeciesManager.track_species(physical_mutation)
+	track_species.emit(physical_mutation)
 
 	if print_new_physical_genome:
 		print("New Physical Genome:")

@@ -3,6 +3,7 @@ extends Node
 
 @onready var Creature = get_parent()
 @onready var Growth = get_node("../Growth")
+#@onready var SpeciesManager = get_node("SpeciesManager")
 
 signal creature_dead(creature)
 
@@ -361,6 +362,7 @@ func is_dead():
 			break
 	if not has_living_node:
 		emit_signal("creature_dead", Creature)
+		#SpeciesManager.creature_dead(Creature)
 		# TODO: Don't discard dead creatures when they can be eaten
 		Creature.queue_free()
 

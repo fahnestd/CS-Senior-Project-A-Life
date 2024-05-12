@@ -439,6 +439,7 @@ script = ExtResource("15_h11l0")
 script = ExtResource("16_u87gk")
 
 [connection signal="next_generation" from="Genetics" to="CanvasLayer/UIOverlay/TopUIPanel/CurrentGenLabel" method="_on_genetics_next_generation"]
+[connection signal="track_species" from="Genetics" to="SpeciesManager" method="_on_genetics_track_species"]
 [connection signal="pressed" from="CanvasLayer/UIOverlay/TopUIPanel/SimSpeedLabel/OneTimeButton" to="CanvasLayer/UIOverlay/TopUIPanel/SimSpeedLabel" method="_on_one_time_button_pressed"]
 [connection signal="pressed" from="CanvasLayer/UIOverlay/TopUIPanel/SimSpeedLabel/TwoTimeButton" to="CanvasLayer/UIOverlay/TopUIPanel/SimSpeedLabel" method="_on_two_time_button_pressed"]
 [connection signal="pressed" from="CanvasLayer/UIOverlay/TopUIPanel/SimSpeedLabel/FourTimeButton" to="CanvasLayer/UIOverlay/TopUIPanel/SimSpeedLabel" method="_on_four_time_button_pressed"]
