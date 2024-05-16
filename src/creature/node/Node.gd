@@ -106,3 +106,9 @@ func _draw():
 	if not Status.origin:
 		draw_line(Vector2(0, 0), to_local(ParentNode.global_position), Status.joint_color, 1, false)
 	draw_circle(Vector2(0, 0), fourth_size, Color(0, 1, 0) * Status.integrity / 100. + Color(1, 0, 0) * (1 - Status.integrity / 100.))
+
+func get_consumed():
+	Status.consumed = true
+	Sprite.visible = false
+	Collision.set_deferred("disabled", true)
+	CreatureStatus.clear_skeleton()

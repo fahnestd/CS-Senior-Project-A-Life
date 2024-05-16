@@ -71,7 +71,7 @@ custom_minimum_size = Vector2(100, 0)
 layout_mode = 2
 min_value = 1.0
 max_value = 10.0
-value = 1.0
+value = 10.0
 scrollable = false
 tick_count = 5
 

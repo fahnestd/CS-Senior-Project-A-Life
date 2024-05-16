@@ -22,12 +22,15 @@ func consume_energy(delta):
 	else:
 		CreatureStatus.consume_integrity(consumption_rate * delta)
 
+var consumed = false
 var integrity = 100
 func get_hurt(amount):
 	if integrity > 0:
 		integrity -= amount
 		integrity = max(0, integrity)
 		NodeObject.queue_redraw()
+		if integrity == 0:
+			CreatureStatus.is_dead()
 
 func _physics_process(delta):
 	consume_energy(delta)

@@ -11,6 +11,11 @@ func _ready():
 func _bite(other_area):
 	if other_area.name == "Food":
 		CreatureStatus.energy += other_area.get_parent().consume(25)
+	elif other_area.name == "Area":
+		if other_area.NodeObject.Creature != Creature:
+			if other_area.NodeStatus.integrity == 0 and other_area.NodeStatus.consumed == false:
+				CreatureStatus.energy += 25
+				other_area.NodeObject.get_consumed()
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(_delta):

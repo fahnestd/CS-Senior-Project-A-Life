@@ -48,10 +48,12 @@ func evaluate_condition(behavior, target_node):
 	var target = behavior["target"]
 	var condition = behavior["condition"]
 	var evaluation = false
-	if target["target_type"] != "none" and not target_node.has_node(target["target_type"]):
+	if target["target_type"] != "none" and target["target_type"] != "Food" and not target_node.has_node(target["target_type"]):
 		# TODO: Add a check based on target species (target_classifier)
 		evaluation = false
-	elif target["target_type"] == "Food" and target_node.energy_value == 0:
+	elif target["target_type"] == "Food" and target_node.has_node("Food") and target_node.energy_value == 0:
+		evaluation = false
+	elif target["target_type"] == "Food" and not target_node.has_node("Food") and (target_node.get_node("Status").integrity != 0 or target_node.get_node("Status").consumed == true):
 		evaluation = false
 	elif target["target_type"] == "Reproduction" and target_node.Creature.Status.reproduction_cooldown_progress != 0:
 		evaluation = false
@@ -78,10 +80,12 @@ func decide_pattern():
 		if target["target_classifier"] == "self":
 			check_nodes = Growth.nodes.values()
 		for target_node in check_nodes:
-			if last_target == null or target_node == last_target:
+			if last_target == null or target_node == last_target or target["target_classifier"] == "self":
 				if evaluate_condition(behavior, target_node):
 					if target["target_classifier"] != "self":
 						last_target = target_node
+					else:
+						last_target = null
 					behavior_id = key
 					return
 

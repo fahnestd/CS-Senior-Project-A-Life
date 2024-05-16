@@ -354,16 +354,21 @@ var reproduction_cooldown = 30
 # Counts down to 0 over time, gets set to reproduction_cooldown after reproducing
 var reproduction_cooldown_progress = reproduction_cooldown
 
+var dead = false
 func is_dead():
-	var has_living_node = false
-	for node in Growth.nodes.values():
-		if node.Status.integrity > 0:
-			has_living_node = true
-			break
-	if not has_living_node:
+	if not dead:
+		for node in Growth.nodes.values():
+			if node.Status.integrity > 0:
+				return
 		emit_signal("creature_dead", Creature)
+		dead = true
 		#SpeciesManager.creature_dead(Creature)
-		# TODO: Don't discard dead creatures when they can be eaten
+
+func clear_skeleton():
+	if dead:
+		for node in Growth.nodes.values():
+			if node.Status.consumed == false:
+				return
 		Creature.queue_free()
 
 func reset_reproduction_cooldown():
@@ -381,5 +386,4 @@ func consume_integrity(amount):
 		node.Status.get_hurt(amount)
 
 func _physics_process(delta):
-	is_dead()
 	cooldown(delta)

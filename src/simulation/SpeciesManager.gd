@@ -5,7 +5,7 @@ var time: float = 0.0
 var species_catalog = {}  # Stores each species with a unique genome as the key
 var species_count = {}    # Tracks the number of individuals per species
 
-var print_debug_messages = true
+var print_debug_messages = false
 
 func _process(delta: float) -> void:
 	time += delta
