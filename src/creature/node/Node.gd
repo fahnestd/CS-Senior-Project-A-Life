@@ -16,14 +16,13 @@ var id
 @onready var Status = get_node("Status")
 @onready var Utility = get_node("/root/MainScene/Utility")
 
-func global_move(position_shift, propulsion):
+func global_move(position_shift, propulsion, colliding_with_other_creature):
 	if not Status.origin:
 		global_position += position_shift
-	else:
+	elif colliding_with_other_creature:
 		Creature.global_position += position_shift
 	if propulsion:
 		CreatureMotion.add_propulsion_position(position_shift)
-	update_angle(propulsion)
 	queue_redraw()
 
 func move(position_shift, propulsion):
