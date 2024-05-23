@@ -7,7 +7,8 @@ extends Area2D
 @onready var Collision = get_node("Collision")
 
 func _ready():
-	Collision.shape.radius *= Status.genes["effectiveness"]
+	Collision.scale.x = Status.genes["effectiveness"]
+	Collision.scale.y = Status.genes["effectiveness"]
 	area_entered.connect(_on_area_entered)
 	area_exited.connect(_on_area_exited)
 
