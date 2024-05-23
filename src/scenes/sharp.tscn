@@ -1,0 +1,31 @@
+[gd_scene load_steps=7 format=3 uid="uid://cuu6n7tkrc04f"]
+
+[ext_resource type="Script" path="res://src/creature/node/Node.gd" id="1_rkjef"]
+[ext_resource type="Texture2D" uid="uid://h26sai27q7xg" path="res://assets/creature/gray_circle.png" id="2_0b6dv"]
+[ext_resource type="Script" path="res://src/creature/node/Area.gd" id="3_ep7iw"]
+[ext_resource type="Script" path="res://src/creature/node/Status.gd" id="4_mga7i"]
+[ext_resource type="Script" path="res://src/creature/node/Sharp.gd" id="5_dg3wd"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_o72xe"]
+radius = 5.0
+
+[node name="Node" type="Node2D"]
+z_index = 1
+z_as_relative = false
+script = ExtResource("1_rkjef")
+
+[node name="Sprite" type="Sprite2D" parent="."]
+z_as_relative = false
+texture = ExtResource("2_0b6dv")
+
+[node name="Area" type="Area2D" parent="."]
+script = ExtResource("3_ep7iw")
+
+[node name="Collision" type="CollisionShape2D" parent="Area"]
+shape = SubResource("CircleShape2D_o72xe")
+
+[node name="Status" type="Node" parent="."]
+script = ExtResource("4_mga7i")
+
+[node name="Sharp" type="Node" parent="."]
+script = ExtResource("5_dg3wd")

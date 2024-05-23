@@ -94,12 +94,12 @@ func _physics_process(delta):
 		drift_home(delta)
 
 func drift_home(delta):
-	if rotation_degrees != Status.home_rotation:
-		var difference = Utility.angle_clamp(Status.home_rotation - rotation_degrees)
-		turn(difference * delta * 0.5, false)
-	elif position != Status.home_position:
+	if position != Status.home_position:
 		var difference = Status.home_position - position
 		move(difference * delta * 0.5, false)
+	elif rotation_degrees != Status.home_rotation:
+		var difference = Utility.angle_clamp(Status.home_rotation - rotation_degrees)
+		turn(difference * delta * 0.5, false)
 
 func _draw():
 	if not Status.origin:

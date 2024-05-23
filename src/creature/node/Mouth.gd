@@ -10,13 +10,14 @@ func _ready():
 	Area.area_entered.connect(_bite)
 
 func _bite(other_area):
-	if other_area.name == "Food":
-		CreatureStatus.energy += other_area.get_parent().consume(25 * Status.genes["effectiveness"])
-	elif other_area.name == "Area":
-		if other_area.NodeObject.Creature != Creature:
-			if other_area.NodeStatus.integrity == 0 and other_area.NodeStatus.consumed == false:
-				CreatureStatus.energy += 25 * Status.genes["effectiveness"]
-				other_area.NodeObject.get_consumed()
+	if Status.integrity != 0:
+		if other_area.name == "Food":
+			CreatureStatus.energy += other_area.get_parent().consume(25 * Status.genes["effectiveness"])
+		elif other_area.name == "Area":
+			if other_area.NodeObject.Creature != Creature:
+				if other_area.NodeStatus.integrity == 0 and other_area.NodeStatus.consumed == false:
+					CreatureStatus.energy += 25 * Status.genes["effectiveness"]
+					other_area.NodeObject.get_consumed()
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(_delta):

@@ -172,7 +172,7 @@ func mutate_joint(dict):
 	else:
 		dict["joint"] = "fixed"
 
-var types = ["body", "reproduction", "eye", "mouth"]
+var types = ["body", "reproduction", "eye", "mouth", "sharp"]
 func mutate_type(dict):
 	dict["type"] = types[randi_range(0, types.size() - 1)]
 
@@ -184,7 +184,7 @@ func mutate_effectiveness(dict):
 	dict["effectiveness"] *= get_change()
 	dict["effectiveness"] = max(dict["effectiveness"], 0)
 
-var target_types = ["none", "Food", "Body", "Reproduction", "Eye", "Mouth"]
+var target_types = ["none", "Food", "Body", "Reproduction", "Eye", "Mouth", "Sharp"]
 func mutate_target_type(dict):
 	dict["target_type"] = target_types[randi_range(0, target_types.size() - 1)]
 

@@ -356,6 +356,15 @@ var physical_genome = {
 		"type": "eye",
 		"max_integrity": 1.0,
 		"effectiveness": 1.0
+	},
+	5: {
+		"parent_id": 1,
+		"angle": 0,
+		"size": 7.5,
+		"joint": "fixed",
+		"type": "sharp",
+		"max_integrity": 1.0,
+		"effectiveness": 1.0
 	}
 }
 
