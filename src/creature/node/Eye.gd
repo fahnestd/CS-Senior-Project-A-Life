@@ -4,8 +4,10 @@ extends Area2D
 @onready var Status = NodeObject.get_node("Status")
 @onready var Creature = NodeObject.get_parent().Creature
 @onready var CreatureBehavior = Creature.get_node("Behavior")
+@onready var Collision = get_node("Collision")
 
 func _ready():
+	Collision.shape.radius *= Status.genes["effectiveness"]
 	area_entered.connect(_on_area_entered)
 	area_exited.connect(_on_area_exited)
 

@@ -355,7 +355,7 @@ var physical_genome = {
 		"joint": "fixed",
 		"type": "eye",
 		"max_integrity": 1.0,
-		"effectiveness": 1.0
+		"effectiveness": 0.5
 	}
 }
 
