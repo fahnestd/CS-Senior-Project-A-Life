@@ -381,8 +381,8 @@ func clear_skeleton():
 				return
 		Creature.queue_free()
 
-func reset_reproduction_cooldown():
-	reproduction_cooldown_progress = reproduction_cooldown
+func reset_reproduction_cooldown(effectiveness):
+	reproduction_cooldown_progress = reproduction_cooldown / effectiveness
 
 # Reduces cooldown variable to 0 over time
 func cooldown(delta):
