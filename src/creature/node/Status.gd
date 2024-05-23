@@ -17,13 +17,17 @@ var home_rotation = 0
 var consumption_rate = 0.25
 func consume_energy(delta):
 	if CreatureStatus.energy > 0:
-		CreatureStatus.energy -= consumption_rate * delta
+		if genes["type"] == "body":
+			CreatureStatus.energy -= consumption_rate * genes["max_integrity"] * delta
+		else:
+			CreatureStatus.energy -= consumption_rate * genes["effectiveness"] * delta * 0.5
+			CreatureStatus.energy -= consumption_rate * genes["max_integrity"] * delta * 0.5
 		CreatureStatus.energy = max(0, CreatureStatus.energy)
 	else:
 		CreatureStatus.consume_integrity(consumption_rate * delta)
 
 var consumed = false
-var integrity = 100
+@onready var integrity = 100 * genes["max_integrity"]
 func get_hurt(amount):
 	if integrity > 0:
 		integrity -= amount

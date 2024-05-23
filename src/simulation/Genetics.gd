@@ -132,6 +132,10 @@ func mutation_traversal(dict, full_genome):
 					mutate_joint(dict)
 				elif key == "type":
 					mutate_type(dict)
+				elif key == "max_integrity":
+					mutate_max_integrity(dict)
+				elif key == "effectiveness":
+					mutate_effectiveness(dict)
 				elif key == "target_type":
 					mutate_target_type(dict)
 				elif key == "target_classifier":
@@ -171,6 +175,14 @@ func mutate_joint(dict):
 var types = ["body", "reproduction", "eye", "mouth"]
 func mutate_type(dict):
 	dict["type"] = types[randi_range(0, types.size() - 1)]
+
+func mutate_max_integrity(dict):
+	dict["max_integrity"] *= get_change()
+	dict["max_integrity"] = max(dict["max_integrity"], 0)
+
+func mutate_effectiveness(dict):
+	dict["effectiveness"] *= get_change()
+	dict["effectiveness"] = max(dict["effectiveness"], 0)
 
 var target_types = ["none", "Food", "Body", "Reproduction", "Eye", "Mouth"]
 func mutate_target_type(dict):

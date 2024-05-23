@@ -317,35 +317,45 @@ var physical_genome = {
 		"angle": 0,
 		"size": 10.0,
 		"joint": "fixed",
-		"type": "reproduction"
+		"type": "reproduction",
+		"max_integrity": 1.0,
+		"effectiveness": 1.0
 	},
 	1: {
 		"parent_id": 0,
 		"angle": 0,
 		"size": 10.0,
 		"joint": "fixed",
-		"type": "mouth"
+		"type": "mouth",
+		"max_integrity": 1.0,
+		"effectiveness": 1.0
 	},
 	2: {
 		"parent_id": 0,
 		"angle": 120,
 		"size": 10.0,
 		"joint": "pivot",
-		"type": "body"
+		"type": "body",
+		"max_integrity": 1.0,
+		"effectiveness": 1.0
 	},
 	3: {
 		"parent_id": 0,
 		"angle": -120,
 		"size": 10.0,
 		"joint": "pivot",
-		"type": "body"
+		"type": "body",
+		"max_integrity": 1.0,
+		"effectiveness": 1.0
 	},
 	4: {
 		"parent_id": 0,
 		"angle": 180,
 		"size": 10.0,
 		"joint": "fixed",
-		"type": "eye"
+		"type": "eye",
+		"max_integrity": 1.0,
+		"effectiveness": 1.0
 	}
 }
 
