@@ -17,6 +17,8 @@ var id
 @onready var Utility = get_node("/root/MainScene/Utility")
 
 func global_move(position_shift, propulsion):
+	position_shift *= Creature.slowdown_factor
+	
 	if not Status.origin:
 		global_position += position_shift
 	else:
@@ -27,6 +29,8 @@ func global_move(position_shift, propulsion):
 	queue_redraw()
 
 func move(position_shift, propulsion):
+	position_shift *= Creature.slowdown_factor
+	
 	if not Status.origin:
 		position += position_shift
 	else:
@@ -37,6 +41,8 @@ func move(position_shift, propulsion):
 	queue_redraw()
 
 func turn(angle_shift, propulsion):
+	angle_shift *= Creature.slowdown_factor
+	
 	rotation_degrees += angle_shift
 	rotation_degrees = Utility.angle_clamp(rotation_degrees)
 	if propulsion:

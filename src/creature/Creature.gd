@@ -7,6 +7,9 @@ extends Node2D
 @onready var Status = get_node("Status")
 @onready var World = get_node("../../World")
 
+var slowdown_factor = 1;
+var visibility_factor = 1;
+
 func _physics_process(delta):
 	handle_interactions(delta)
 
@@ -30,14 +33,16 @@ func update_label(_delta, tile):
 		terrainLabel.text += "\nTerrain: " + str(tile.TerrainType);
 		terrainLabel.text += "\nTemperature: " + str(tile.Temperature);
 
-func handle_tiletype(_delta, _tile):
+func handle_tiletype(_delta, tile):
 	pass
 	
-func handle_pressure(_delta, _tile):
-	pass
+func handle_pressure(_delta, tile):
+	if tile:
+		slowdown_factor = 1 - (.2 * tile.WaterPressure);
 
-func handle_lightlevel(_delta, _tile):
-	pass
+func handle_lightlevel(_delta, tile):
+	if tile:
+		visibility_factor = tile.LightLevel
 
 var temp_timer = 0;
 func handle_temperature(delta, tile):
