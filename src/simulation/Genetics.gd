@@ -10,8 +10,8 @@ extends Node
 var mutation_chance = 2
 # min_change is the min percentage that a value can mutate by (-50 means the value can be halved)
 # max_change is the max percentage that a value can mutate by (100 means the value can double)
-var min_change = -50
-var max_change = 50
+var min_change = -100
+var max_change = 100
 var enable_physical_mutations = true
 var print_new_physical_genome = false
 var print_new_behavioral_genome = false
@@ -94,7 +94,7 @@ func mutation(dict):
 # mutation_chance is the percentage chance that the number of entries can change
 func mutate_num_entries(dict, min_entries):
 	var num_entries = dict.size()
-	if mutation_chance > randi_range(0, 99):
+	if mutation_chance * 5 > randi_range(0, 99):
 		num_entries *= get_change()
 		num_entries = round(num_entries)
 	num_entries = max(min_entries, num_entries)
@@ -172,7 +172,7 @@ func mutate_joint(dict):
 	else:
 		dict["joint"] = "fixed"
 
-var types = ["body", "reproduction", "eye", "mouth", "sharp", "brain"]
+var types = ["body", "reproduction", "eye", "mouth", "sharp", "brain", "ear"]
 func mutate_type(dict):
 	dict["type"] = types[randi_range(0, types.size() - 1)]
 
@@ -184,7 +184,7 @@ func mutate_effectiveness(dict):
 	dict["effectiveness"] *= get_change()
 	dict["effectiveness"] = max(dict["effectiveness"], 0)
 
-var target_types = ["none", "Food", "Body", "Reproduction", "Eye", "Mouth", "Sharp", "Brain"]
+var target_types = ["none", "Food", "Body", "Reproduction", "Eye", "Mouth", "Sharp", "Brain", "Ear"]
 func mutate_target_type(dict):
 	dict["target_type"] = target_types[randi_range(0, target_types.size() - 1)]
 

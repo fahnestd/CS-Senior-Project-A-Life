@@ -8,7 +8,7 @@ var position_shift_2 = Vector2(0, 0)
 var colliding_areas = {}
 
 func _on_area_entered(other_area):
-	if other_area.name != "Eye" and other_area.name != "Food":
+	if other_area.name != "Eye" and other_area.name != "Ear" and other_area.name != "Food":
 		colliding_areas[other_area] = null
 
 func _on_area_exited(other_area):

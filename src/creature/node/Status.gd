@@ -41,7 +41,7 @@ func get_hurt(amount):
 func _physics_process(delta):
 	var tile = World.GetTile(Creature.global_position)
 	if tile:
-		for i in range(tile.Temperature + 1):
+		for i in range(tile.Temperature * 0.5 + 1):
 			consume_energy(delta)
 	else:
 		consume_energy(delta)

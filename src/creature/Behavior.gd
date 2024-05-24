@@ -10,6 +10,7 @@ extends Node
 # Stores the pivot nodes in creation order, so behavioral patterns can specify things like "rotate first pivot node, rotate second pivot node" without referring to their specific ids
 var pivot_nodes = {}
 var visible_nodes = {}
+var audible_nodes = {}
 
 var behavior_step_progress = 0
 var behavior_step_id = 0
@@ -73,29 +74,45 @@ func evaluate_condition(behavior, target_node, perceived_target_position):
 
 var last_target = null
 func decide_pattern():
+	var condition_met = false
 	for key in Status.behavioral_genome.keys():
 		var behavior = Status.behavioral_genome[key]
 		var target = behavior["target"]
-		var check_nodes = visible_nodes
 		if target["target_classifier"] == "self":
-			check_nodes = Growth.nodes.values()
-		for target_node in check_nodes:
-			if last_target == null or target_node == last_target or target["target_classifier"] == "self":
-				var perceived_target_position
-				if target["target_classifier"] == "self":
-					perceived_target_position = target_node.global_position
-				else:
-					perceived_target_position = visible_nodes[target_node]
-				if evaluate_condition(behavior, target_node, perceived_target_position):
-					if target["target_classifier"] != "self":
-						last_target = target_node
-					else:
-						last_target = null
-					behavior_id = key
-					return
+			condition_met = scan_perceived_nodes(key, Growth.nodes.values(), "self")
+		else:
+			if visible_nodes.size() > 0:
+				condition_met = scan_perceived_nodes(key, visible_nodes, "visible")
+			else:
+				condition_met = scan_perceived_nodes(key, audible_nodes, "audible")
+		if condition_met:
+			return
 
 	behavior_id = null
 	last_target = null
+
+func scan_perceived_nodes(behavior_key, check_nodes, check_type):
+	var behavior = Status.behavioral_genome[behavior_key]
+	for target_node in check_nodes:
+		if last_target == null or target_node == last_target or check_type == "self":
+			var perceived_target_position
+			if check_type == "self":
+				perceived_target_position = target_node.global_position
+			elif check_type == "visible":
+				perceived_target_position = visible_nodes[target_node]		
+			elif check_type == "audible":
+				perceived_target_position = audible_nodes[target_node][0]
+				var ear = audible_nodes[target_node][1]
+				perceived_target_position = ear.add_random_position_variance(perceived_target_position)
+			if perceived_target_position:
+				if evaluate_condition(behavior, target_node, perceived_target_position):
+					if check_type == "visible":
+						last_target = target_node
+					else:
+						last_target = null
+					behavior_id = behavior_key
+					return true
+	return false
 
 func process_behavior(delta):
 	if behavior_step_progress == 0 and behavior_step_id == 0:

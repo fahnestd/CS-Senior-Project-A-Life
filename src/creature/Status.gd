@@ -353,7 +353,7 @@ var physical_genome = {
 		"angle": 180,
 		"size": 10.0,
 		"joint": "fixed",
-		"type": "eye",
+		"type": "brain",
 		"max_integrity": 1.0,
 		"effectiveness": 1.0
 	},
@@ -367,11 +367,20 @@ var physical_genome = {
 		"effectiveness": 1.0
 	},
 	6: {
-		"parent_id": 4,
-		"angle": 0,
+		"parent_id": 1,
+		"angle": 110,
 		"size": 10.0,
 		"joint": "fixed",
-		"type": "brain",
+		"type": "ear",
+		"max_integrity": 1.0,
+		"effectiveness": 1.0
+	},
+	7: {
+		"parent_id": 1,
+		"angle": -110,
+		"size": 10.0,
+		"joint": "fixed",
+		"type": "eye",
 		"max_integrity": 1.0,
 		"effectiveness": 1.0
 	}

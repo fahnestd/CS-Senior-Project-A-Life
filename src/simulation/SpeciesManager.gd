@@ -7,7 +7,7 @@ var species_count = {}    # Tracks the number of individuals per species
 
 var print_debug_messages = false
 
-func _process(delta: float) -> void:
+func _physics_process(delta: float) -> void:
 	time += delta
 	if time >= 1.0:
 		time -= 1.0

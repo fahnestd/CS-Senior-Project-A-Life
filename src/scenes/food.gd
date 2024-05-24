@@ -1,8 +1,5 @@
 extends Node2D
 
-# NOTE: Food collision is set to layer 2!
-# this means we can set mouths to interact with food nodes without having to filter out node types.
-
 var energy_value
 var rng = RandomNumberGenerator.new()
 
@@ -39,11 +36,19 @@ func depleted():
 	get_node("FoodAlive").visible = false
 	get_node("RegrowTimer").set_wait_time(REGROW_TIME)
 	get_node("RegrowTimer").start()
+	var areas = get_node("Food").get_overlapping_areas()
+	for area in areas:
+		if area.name == "Eye" or area.name == "Ear":
+			area._on_area_exited(get_node("Food"))
 
 func regenerated():
 	get_node("FoodAlive").visible = true
 	get_node("FoodDead").visible = false
 	set_energy_and_start_timer()
+	var areas = get_node("Food").get_overlapping_areas()
+	for area in areas:
+		if area.name == "Eye" or area.name == "Ear":
+			area._on_area_entered(get_node("Food"))
 
 func _on_regrow_timer_timeout():
 	regenerated()

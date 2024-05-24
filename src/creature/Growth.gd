@@ -13,7 +13,8 @@ var node_scenes = {
 	"eye" = preload("res://src/scenes/eye.tscn"),
 	"mouth" = preload("res://src/scenes/mouth.tscn"),
 	"sharp" = preload("res://src/scenes/sharp.tscn"),
-	"brain" = preload("res://src/scenes/brain.tscn")
+	"brain" = preload("res://src/scenes/brain.tscn"),
+	"ear" = preload("res://src/scenes/ear.tscn")
 }
 
 # Contains nodes that have been grown
