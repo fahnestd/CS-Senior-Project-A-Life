@@ -12,7 +12,8 @@ var node_scenes = {
 	"reproduction" = preload("res://src/scenes/reproduction.tscn"),
 	"eye" = preload("res://src/scenes/eye.tscn"),
 	"mouth" = preload("res://src/scenes/mouth.tscn"),
-	"sharp" = preload("res://src/scenes/sharp.tscn")
+	"sharp" = preload("res://src/scenes/sharp.tscn"),
+	"brain" = preload("res://src/scenes/brain.tscn")
 }
 
 # Contains nodes that have been grown
@@ -46,6 +47,7 @@ func initialize_growth_order():
 func fully_grow():
 	while nodes.size() < growth_order.size():
 		add_node(growth_order[nodes.size()])
+	Status.is_dead.call_deferred()
 
 # Creates a node instance as a child of body or its parent
 func add_node(id):

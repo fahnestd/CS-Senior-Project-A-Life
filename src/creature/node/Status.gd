@@ -18,7 +18,7 @@ var consumption_rate = 0.25
 func consume_energy(delta):
 	if consumed == false:
 		if CreatureStatus.energy > 0:
-			if genes["type"] == "body":
+			if genes["type"] == "body" or genes["type"] == "brain":
 				CreatureStatus.energy -= consumption_rate * genes["max_integrity"] * delta
 			else:
 				CreatureStatus.energy -= consumption_rate * genes["effectiveness"] * delta * 0.5

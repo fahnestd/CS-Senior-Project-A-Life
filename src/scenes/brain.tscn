@@ -1,0 +1,11 @@
+[gd_scene load_steps=3 format=3 uid="uid://dsmniky25a7b6"]
+
+[ext_resource type="PackedScene" uid="uid://d2i01vu72ff4u" path="res://src/scenes/node.tscn" id="1_1p13x"]
+[ext_resource type="Texture2D" uid="uid://dyrmdlu42qlmx" path="res://assets/creature/purple_circle.png" id="2_muquy"]
+
+[node name="Node" instance=ExtResource("1_1p13x")]
+
+[node name="Sprite" parent="." index="0"]
+texture = ExtResource("2_muquy")
+
+[node name="Brain" type="Node" parent="." index="3"]

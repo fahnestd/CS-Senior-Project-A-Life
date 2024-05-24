@@ -365,6 +365,15 @@ var physical_genome = {
 		"type": "sharp",
 		"max_integrity": 1.0,
 		"effectiveness": 1.0
+	},
+	6: {
+		"parent_id": 4,
+		"angle": 0,
+		"size": 10.0,
+		"joint": "fixed",
+		"type": "brain",
+		"max_integrity": 1.0,
+		"effectiveness": 1.0
 	}
 }
 
@@ -377,11 +386,13 @@ var dead = false
 func is_dead():
 	if not dead:
 		for node in Growth.nodes.values():
-			if node.Status.integrity > 0:
+			if node.has_node("Brain") and node.Status.integrity > 0:
 				return
 		emit_signal("creature_dead", Creature)
 		dead = true
-		#SpeciesManager.creature_dead(Creature)
+		for node in Growth.nodes.values():
+			node.Status.integrity = 0
+			node.queue_redraw()
 
 func clear_skeleton():
 	if dead:
