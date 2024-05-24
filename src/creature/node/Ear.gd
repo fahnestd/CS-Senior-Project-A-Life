@@ -17,7 +17,7 @@ func _ready():
 func add_random_position_variance(pos):
 	var pos_diff = pos - NodeObject.global_position
 	var perceived_position = pos
-	perceived_position += Vector2(randf_range(-pos_diff.x, pos_diff.x), randf_range(-pos_diff.y, pos_diff.y)) * 0.75 / Status.genes["effectiveness"]
+	perceived_position += Vector2(randf_range(-pos_diff.x, pos_diff.x), randf_range(-pos_diff.y, pos_diff.y)) * 0.5 / Status.genes["effectiveness"]
 	return perceived_position
 
 func _on_area_entered(other_area):
