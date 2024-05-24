@@ -16,7 +16,8 @@ func _on_area_entered(other_area):
 	if Status.integrity != 0:
 		if other_area.name == "Food" or other_area.get_parent().Creature != Creature:
 			if other_area.name != "Eye":
-				CreatureBehavior.visible_nodes[other_area.get_parent()] = null
+				var other_node = other_area.get_parent()
+				CreatureBehavior.visible_nodes[other_node] = other_node.global_position
 
 func _on_area_exited(other_area):
 	if other_area.name == "Food" or other_area.get_parent().Creature != Creature:

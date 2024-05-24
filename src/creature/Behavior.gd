@@ -44,7 +44,7 @@ func compare(conditional_type, value_1, value_2):
 			return true
 	return false
 
-func evaluate_condition(behavior, target_node):
+func evaluate_condition(behavior, target_node, perceived_target_position):
 	var target = behavior["target"]
 	var condition = behavior["condition"]
 	var evaluation = false
@@ -61,14 +61,14 @@ func evaluate_condition(behavior, target_node):
 		evaluation = true
 	elif condition["condition_type"] == "angle_difference":
 		if condition["condition_value"] != null:
-			var angle_diff = calculate_angle_difference(target_node.global_position)
+			var angle_diff = calculate_angle_difference(perceived_target_position)
 			evaluation = compare(condition["condition_comparison"], angle_diff, condition["condition_value"])
 	# Update mutate_condition_type in Genetics when you add a new condition_type
 
 	if not condition["and"] == null:
-		evaluation = evaluation and evaluate_condition(condition["and"], target_node)
+		evaluation = evaluation and evaluate_condition(condition["and"], target_node, perceived_target_position)
 	if not condition["or"] == null:
-		evaluation = evaluation or evaluate_condition(condition["or"], target_node)
+		evaluation = evaluation or evaluate_condition(condition["or"], target_node, perceived_target_position)
 	return evaluation
 
 var last_target = null
@@ -81,7 +81,12 @@ func decide_pattern():
 			check_nodes = Growth.nodes.values()
 		for target_node in check_nodes:
 			if last_target == null or target_node == last_target or target["target_classifier"] == "self":
-				if evaluate_condition(behavior, target_node):
+				var perceived_target_position
+				if target["target_classifier"] == "self":
+					perceived_target_position = target_node.global_position
+				else:
+					perceived_target_position = visible_nodes[target_node]
+				if evaluate_condition(behavior, target_node, perceived_target_position):
 					if target["target_classifier"] != "self":
 						last_target = target_node
 					else:

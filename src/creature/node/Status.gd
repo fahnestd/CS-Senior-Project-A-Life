@@ -4,6 +4,7 @@ extends Node
 @onready var NodeObject = get_parent()
 @onready var Creature = NodeObject.get_parent().Creature
 @onready var CreatureStatus = Creature.get_node("Status")
+@onready var World = get_node("/root/MainScene/World")
 @onready var genes = CreatureStatus.physical_genome.values()[NodeObject.id]
 @onready var origin = (NodeObject.get_parent().name == "Body")
 
@@ -38,4 +39,9 @@ func get_hurt(amount):
 			CreatureStatus.is_dead()
 
 func _physics_process(delta):
-	consume_energy(delta)
+	var tile = World.GetTile(Creature.global_position)
+	if tile:
+		for i in range(tile.Temperature + 1):
+			consume_energy(delta)
+	else:
+		consume_energy(delta)
