@@ -1,4 +1,4 @@
-[gd_scene load_steps=25 format=3 uid="uid://02k684x8aybd"]
+[gd_scene load_steps=27 format=3 uid="uid://02k684x8aybd"]
 
 [ext_resource type="Script" path="res://src/map/SimulationMap.cs" id="1_xrqtm"]
 [ext_resource type="Shader" path="res://Shaders/TempMap.gdshader" id="2_n51vl"]
@@ -6,6 +6,7 @@
 [ext_resource type="Script" path="res://src/map/TerrainMap.cs" id="3_27xko"]
 [ext_resource type="Texture2D" uid="uid://bjnp4wei1qr7m" path="res://assets/tilemap/temps.png" id="3_vxegi"]
 [ext_resource type="Script" path="res://src/map/TemperatureMap.cs" id="4_2ek4a"]
+[ext_resource type="Shader" path="res://Shaders/WaterPressure.gdshader" id="7_iglmk"]
 [ext_resource type="Texture2D" uid="uid://1qlblj71n6cj" path="res://assets/tilemap/WaterPressure.png" id="7_mq02p"]
 [ext_resource type="Script" path="res://src/map/LightLevelMap.cs" id="7_n4p3k"]
 [ext_resource type="Script" path="res://src/map/WaterPressureMap.cs" id="8_537jw"]
@@ -59,6 +60,9 @@ texture_region_size = Vector2i(32, 32)
 tile_size = Vector2i(32, 32)
 sources/1 = SubResource("TileSetAtlasSource_n4771")
 
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_xgy0h"]
+shader = ExtResource("7_iglmk")
+
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_2433g"]
 texture = ExtResource("7_mq02p")
 texture_region_size = Vector2i(32, 32)
@@ -105,6 +109,7 @@ script = ExtResource("4_2ek4a")
 
 [node name="WaterPressure" type="TileMap" parent="."]
 visible = false
+material = SubResource("ShaderMaterial_xgy0h")
 tile_set = SubResource("TileSet_6wrku")
 format = 2
 script = ExtResource("8_537jw")
