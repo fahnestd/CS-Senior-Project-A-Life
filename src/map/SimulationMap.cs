@@ -9,7 +9,7 @@ using SeniorProject.src.map.Tiles;
 
 namespace SeniorProject.src.map
 {
-	
+
 	public partial class SimulationMap : Node2D
 	{
 		[Export]
@@ -18,8 +18,6 @@ namespace SeniorProject.src.map
 		private static int mapHeight = 250;
 
 		public static int tileSize = 32;
-
-		//public static SimulationMap instance = new();
 
 		public Tile[,] map = new Tile[mapWidth, mapHeight];
 		private Random random;
@@ -31,13 +29,13 @@ namespace SeniorProject.src.map
 			InitializeMap();
 		}
 
-		public void InitializeMap()
+        public void InitializeMap()
 		{
 
 			int seed = random.Next();
 			TerrainGenerator TerrainGenerator = new CellularGradientTerrainGenerator(seed);
 			int[,] TerrainMap = TerrainGenerator.GenerateMap(mapWidth, mapHeight);
-			
+
 			seed++;
 			TerrainGenerator TemperatureGenerator = new InverseCellularGradientTerrainGenerator(seed);
 			int[,] TemperatureMap = TemperatureGenerator.GenerateMap(mapWidth, mapHeight);
@@ -113,5 +111,18 @@ namespace SeniorProject.src.map
 		{
 			return (float)random.Next(360);
 		}
-	}
+
+		public void _on_temp_button_click(bool toggled_on)
+		{
+            GetNode<TileMap>("Temperature").Visible = toggled_on;
+        }
+        public void _on_light_button_click(bool toggled_on)
+        {
+            GetNode<TileMap>("LightLevelMap").Visible = toggled_on;
+        }
+        public void _on_pressure_button_click(bool toggled_on)
+        {
+            GetNode<TileMap>("WaterPressure").Visible = toggled_on;
+        }
+    }
 }

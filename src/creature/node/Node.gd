@@ -16,7 +16,13 @@ var id
 @onready var Status = get_node("Status")
 @onready var Utility = get_node("/root/MainScene/Utility")
 
+<<<<<<< HEAD
 func global_move(position_shift, propulsion, colliding_with_other_creature):
+=======
+func global_move(position_shift, propulsion):
+	position_shift *= Creature.slowdown_factor
+	
+>>>>>>> origin/fahnestd-StatusEffects
 	if not Status.origin:
 		global_position += position_shift
 	elif colliding_with_other_creature:
@@ -26,6 +32,8 @@ func global_move(position_shift, propulsion, colliding_with_other_creature):
 	queue_redraw()
 
 func move(position_shift, propulsion):
+	position_shift *= Creature.slowdown_factor
+	
 	if not Status.origin:
 		position += position_shift
 	else:
@@ -36,6 +44,8 @@ func move(position_shift, propulsion):
 	queue_redraw()
 
 func turn(angle_shift, propulsion):
+	angle_shift *= Creature.slowdown_factor
+	
 	rotation_degrees += angle_shift
 	rotation_degrees = Utility.angle_clamp(rotation_degrees)
 	if propulsion:

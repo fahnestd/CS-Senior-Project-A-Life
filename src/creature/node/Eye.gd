@@ -11,6 +11,10 @@ func _ready():
 	Collision.scale.y = Status.genes["effectiveness"]
 	area_entered.connect(_on_area_entered)
 	area_exited.connect(_on_area_exited)
+	
+func _physics_process(delta):
+	var shape = get_node("Collision").shape 
+	shape.set_radius( 200 - (40 * Creature.visibility_factor))
 
 func _on_area_entered(other_area):
 	if Status.integrity != 0:
