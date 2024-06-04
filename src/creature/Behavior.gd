@@ -10,6 +10,7 @@ extends Node
 # Stores the pivot nodes in creation order, so behavioral patterns can specify things like "rotate first pivot node, rotate second pivot node" without referring to their specific ids
 var pivot_nodes = {}
 var visible_nodes = {}
+var audible_nodes = {}
 
 var behavior_step_progress = 0
 var behavior_step_id = 0
@@ -44,14 +45,16 @@ func compare(conditional_type, value_1, value_2):
 			return true
 	return false
 
-func evaluate_condition(behavior, target_node):
+func evaluate_condition(behavior, target_node, perceived_target_position):
 	var target = behavior["target"]
 	var condition = behavior["condition"]
 	var evaluation = false
-	if target["target_type"] != "none" and not target_node.has_node(target["target_type"]):
+	if target["target_type"] != "none" and target["target_type"] != "Food" and not target_node.has_node(target["target_type"]):
 		# TODO: Add a check based on target species (target_classifier)
 		evaluation = false
-	elif target["target_type"] == "Food" and target_node.energy_value == 0:
+	elif target["target_type"] == "Food" and target_node.has_node("Food") and target_node.energy_value == 0:
+		evaluation = false
+	elif target["target_type"] == "Food" and not target_node.has_node("Food") and (target_node.get_node("Status").integrity != 0 or target_node.get_node("Status").consumed == true):
 		evaluation = false
 	elif target["target_type"] == "Reproduction" and target_node.Creature.Status.reproduction_cooldown_progress != 0:
 		evaluation = false
@@ -59,34 +62,57 @@ func evaluate_condition(behavior, target_node):
 		evaluation = true
 	elif condition["condition_type"] == "angle_difference":
 		if condition["condition_value"] != null:
-			var angle_diff = calculate_angle_difference(target_node.global_position)
+			var angle_diff = calculate_angle_difference(perceived_target_position)
 			evaluation = compare(condition["condition_comparison"], angle_diff, condition["condition_value"])
 	# Update mutate_condition_type in Genetics when you add a new condition_type
 
 	if not condition["and"] == null:
-		evaluation = evaluation and evaluate_condition(condition["and"], target_node)
+		evaluation = evaluation and evaluate_condition(condition["and"], target_node, perceived_target_position)
 	if not condition["or"] == null:
-		evaluation = evaluation or evaluate_condition(condition["or"], target_node)
+		evaluation = evaluation or evaluate_condition(condition["or"], target_node, perceived_target_position)
 	return evaluation
 
 var last_target = null
 func decide_pattern():
+	var condition_met = false
 	for key in Status.behavioral_genome.keys():
 		var behavior = Status.behavioral_genome[key]
 		var target = behavior["target"]
-		var check_nodes = visible_nodes
 		if target["target_classifier"] == "self":
-			check_nodes = Growth.nodes.values()
-		for target_node in check_nodes:
-			if last_target == null or target_node == last_target:
-				if evaluate_condition(behavior, target_node):
-					if target["target_classifier"] != "self":
-						last_target = target_node
-					behavior_id = key
-					return
+			condition_met = scan_perceived_nodes(key, Growth.nodes.values(), "self")
+		else:
+			if visible_nodes.size() > 0:
+				condition_met = scan_perceived_nodes(key, visible_nodes, "visible")
+			else:
+				condition_met = scan_perceived_nodes(key, audible_nodes, "audible")
+		if condition_met:
+			return
 
 	behavior_id = null
 	last_target = null
+
+func scan_perceived_nodes(behavior_key, check_nodes, check_type):
+	var behavior = Status.behavioral_genome[behavior_key]
+	for target_node in check_nodes:
+		if last_target == null or target_node == last_target or check_type == "self":
+			var perceived_target_position
+			if check_type == "self":
+				perceived_target_position = target_node.global_position
+			elif check_type == "visible":
+				perceived_target_position = visible_nodes[target_node]		
+			elif check_type == "audible":
+				perceived_target_position = audible_nodes[target_node][0]
+				var ear = audible_nodes[target_node][1]
+				perceived_target_position = ear.add_random_position_variance(perceived_target_position)
+			if perceived_target_position:
+				if evaluate_condition(behavior, target_node, perceived_target_position):
+					if check_type == "visible":
+						last_target = target_node
+					else:
+						last_target = null
+					behavior_id = behavior_key
+					return true
+	return false
 
 func process_behavior(delta):
 	if behavior_step_progress == 0 and behavior_step_id == 0:

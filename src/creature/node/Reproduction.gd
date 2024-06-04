@@ -22,8 +22,8 @@ func _reproduce(other_area):
 					# Ensures only one signal is received
 					if last_area_1 != Area or last_area_2 != other_area:
 						Genetics.create_offspring(Creature, other_reproduction.Creature)
-						CreatureStatus.reset_reproduction_cooldown()
-						other_reproduction.Creature.Status.reset_reproduction_cooldown()
+						CreatureStatus.reset_reproduction_cooldown(Status.genes["effectiveness"])
+						other_reproduction.Creature.Status.reset_reproduction_cooldown(Status.genes["effectiveness"])
 						last_area_1 = null
 						last_area_2 = null
 						other_reproduction.last_area_1 = other_area

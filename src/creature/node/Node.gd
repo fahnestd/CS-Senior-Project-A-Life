@@ -16,17 +16,18 @@ var id
 @onready var Status = get_node("Status")
 @onready var Utility = get_node("/root/MainScene/Utility")
 
-func global_move(position_shift, propulsion):
+func global_move(position_shift, propulsion, colliding_with_other_creature):
 	if not Status.origin:
 		global_position += position_shift
-	else:
+	elif colliding_with_other_creature:
 		Creature.global_position += position_shift
 	if propulsion:
 		CreatureMotion.add_propulsion_position(position_shift)
-	update_angle(propulsion)
 	queue_redraw()
 
 func move(position_shift, propulsion):
+	position_shift *= Creature.slowdown_factor
+	
 	if not Status.origin:
 		position += position_shift
 	else:
@@ -37,6 +38,8 @@ func move(position_shift, propulsion):
 	queue_redraw()
 
 func turn(angle_shift, propulsion):
+	angle_shift *= Creature.slowdown_factor
+	
 	rotation_degrees += angle_shift
 	rotation_degrees = Utility.angle_clamp(rotation_degrees)
 	if propulsion:
@@ -95,14 +98,20 @@ func _physics_process(delta):
 		drift_home(delta)
 
 func drift_home(delta):
-	if rotation_degrees != Status.home_rotation:
-		var difference = Utility.angle_clamp(Status.home_rotation - rotation_degrees)
-		turn(difference * delta * 0.5, false)
-	elif position != Status.home_position:
+	if position != Status.home_position:
 		var difference = Status.home_position - position
 		move(difference * delta * 0.5, false)
+	elif rotation_degrees != Status.home_rotation:
+		var difference = Utility.angle_clamp(Status.home_rotation - rotation_degrees)
+		turn(difference * delta * 0.5, false)
 
 func _draw():
 	if not Status.origin:
 		draw_line(Vector2(0, 0), to_local(ParentNode.global_position), Status.joint_color, 1, false)
 	draw_circle(Vector2(0, 0), fourth_size, Color(0, 1, 0) * Status.integrity / 100. + Color(1, 0, 0) * (1 - Status.integrity / 100.))
+
+func get_consumed():
+	Status.consumed = true
+	Sprite.visible = false
+	Collision.set_deferred("disabled", true)
+	CreatureStatus.clear_skeleton()

@@ -12,6 +12,7 @@ func _on_camera_creature_info(info):
 	if tile:
 		get_node("CreatureInfoLabel").text += "\nTerrain: " + str(tile.TerrainType);
 		get_node("CreatureInfoLabel").text += "\nTemperature: " + str(tile.Temperature);
+		get_node("CreatureInfoLabel").text += "\nDarkness Level: " + str(tile.LightLevel);
 		get_node("CreatureInfoLabel").text += "\nLocation: " + str(tile.Coordinates);
 	
 func _physics_process(_delta):
@@ -23,4 +24,5 @@ func _physics_process(_delta):
 			get_node("CreatureInfoLabel").text = "Energy: " + str(round(creature.get_node('Status').energy));
 			get_node("CreatureInfoLabel").text += "\nTerrain: " + str(tile.TerrainType);
 			get_node("CreatureInfoLabel").text += "\nTemperature: " + str(tile.Temperature);
+			get_node("CreatureInfoLabel").text += "\nDarkness Level: " + str(tile.LightLevel);
 			get_node("CreatureInfoLabel").text += "\nLocation: " + str(tile.Coordinates);

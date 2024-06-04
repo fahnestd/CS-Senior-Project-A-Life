@@ -3,6 +3,7 @@ extends Node
 
 @onready var Creature = get_parent()
 @onready var Growth = get_node("../Growth")
+#@onready var SpeciesManager = get_node("SpeciesManager")
 
 signal creature_dead(creature)
 
@@ -316,35 +317,72 @@ var physical_genome = {
 		"angle": 0,
 		"size": 10.0,
 		"joint": "fixed",
-		"type": "reproduction"
+		"type": "reproduction",
+		"max_integrity": 1.0,
+		"effectiveness": 1.0
 	},
 	1: {
 		"parent_id": 0,
 		"angle": 0,
 		"size": 10.0,
 		"joint": "fixed",
-		"type": "mouth"
+		"type": "mouth",
+		"max_integrity": 1.0,
+		"effectiveness": 1.0
 	},
 	2: {
 		"parent_id": 0,
 		"angle": 120,
 		"size": 10.0,
 		"joint": "pivot",
-		"type": "body"
+		"type": "body",
+		"max_integrity": 1.0,
+		"effectiveness": 1.0
 	},
 	3: {
 		"parent_id": 0,
 		"angle": -120,
 		"size": 10.0,
 		"joint": "pivot",
-		"type": "body"
+		"type": "body",
+		"max_integrity": 1.0,
+		"effectiveness": 1.0
 	},
 	4: {
 		"parent_id": 0,
 		"angle": 180,
 		"size": 10.0,
 		"joint": "fixed",
-		"type": "eye"
+		"type": "brain",
+		"max_integrity": 1.0,
+		"effectiveness": 1.0
+	},
+	5: {
+		"parent_id": 1,
+		"angle": 0,
+		"size": 7.5,
+		"joint": "fixed",
+		"type": "sharp",
+		"max_integrity": 1.0,
+		"effectiveness": 1.0
+	},
+	6: {
+		"parent_id": 1,
+		"angle": 110,
+		"size": 10.0,
+		"joint": "fixed",
+		"type": "ear",
+		"max_integrity": 1.0,
+		"effectiveness": 1.0
+	},
+	7: {
+		"parent_id": 1,
+		"angle": -110,
+		"size": 10.0,
+		"joint": "fixed",
+		"type": "eye",
+		"max_integrity": 1.0,
+		"effectiveness": 1.0
 	}
 }
 
@@ -353,19 +391,27 @@ var reproduction_cooldown = 30
 # Counts down to 0 over time, gets set to reproduction_cooldown after reproducing
 var reproduction_cooldown_progress = reproduction_cooldown
 
+var dead = false
 func is_dead():
-	var has_living_node = false
-	for node in Growth.nodes.values():
-		if node.Status.integrity > 0:
-			has_living_node = true
-			break
-	if not has_living_node:
+	if not dead:
+		for node in Growth.nodes.values():
+			if node.has_node("Brain") and node.Status.integrity > 0:
+				return
 		emit_signal("creature_dead", Creature)
-		# TODO: Don't discard dead creatures when they can be eaten
+		dead = true
+		for node in Growth.nodes.values():
+			node.Status.integrity = 0
+			node.queue_redraw()
+
+func clear_skeleton():
+	if dead:
+		for node in Growth.nodes.values():
+			if node.Status.consumed == false:
+				return
 		Creature.queue_free()
 
-func reset_reproduction_cooldown():
-	reproduction_cooldown_progress = reproduction_cooldown
+func reset_reproduction_cooldown(effectiveness):
+	reproduction_cooldown_progress = reproduction_cooldown / effectiveness
 
 # Reduces cooldown variable to 0 over time
 func cooldown(delta):
@@ -379,5 +425,4 @@ func consume_integrity(amount):
 		node.Status.get_hurt(amount)
 
 func _physics_process(delta):
-	is_dead()
 	cooldown(delta)

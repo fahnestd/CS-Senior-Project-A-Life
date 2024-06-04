@@ -11,7 +11,10 @@ var node_scenes = {
 	"body" = preload("res://src/scenes/node.tscn"),
 	"reproduction" = preload("res://src/scenes/reproduction.tscn"),
 	"eye" = preload("res://src/scenes/eye.tscn"),
-	"mouth" = preload("res://src/scenes/mouth.tscn")
+	"mouth" = preload("res://src/scenes/mouth.tscn"),
+	"sharp" = preload("res://src/scenes/sharp.tscn"),
+	"brain" = preload("res://src/scenes/brain.tscn"),
+	"ear" = preload("res://src/scenes/ear.tscn")
 }
 
 # Contains nodes that have been grown
@@ -21,7 +24,6 @@ var nodes = {}
 # {order: node id}
 var growth_order = {}
 
-# TODO: Update this system so that parent_id refers to the nth node instead of the node with id n
 # Determines the order that nodes should grow in
 # Ensures that all nodes in the genome will connect to existing nodes
 func initialize_growth_order():
@@ -43,10 +45,10 @@ func initialize_growth_order():
 		if not added_node:
 			tolerance += 1
 
-# TODO: Replace with gradual growth over time
 func fully_grow():
 	while nodes.size() < growth_order.size():
 		add_node(growth_order[nodes.size()])
+	Status.is_dead.call_deferred()
 
 # Creates a node instance as a child of body or its parent
 func add_node(id):

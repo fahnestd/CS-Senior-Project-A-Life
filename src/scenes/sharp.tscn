@@ -1,0 +1,13 @@
+[gd_scene load_steps=4 format=3 uid="uid://cuu6n7tkrc04f"]
+
+[ext_resource type="PackedScene" uid="uid://d2i01vu72ff4u" path="res://src/scenes/node.tscn" id="1_tykuy"]
+[ext_resource type="Texture2D" uid="uid://h26sai27q7xg" path="res://assets/creature/gray_circle.png" id="2_0b6dv"]
+[ext_resource type="Script" path="res://src/creature/node/Sharp.gd" id="5_dg3wd"]
+
+[node name="Node" instance=ExtResource("1_tykuy")]
+
+[node name="Sprite" parent="." index="0"]
+texture = ExtResource("2_0b6dv")
+
+[node name="Sharp" type="Node" parent="." index="3"]
+script = ExtResource("5_dg3wd")

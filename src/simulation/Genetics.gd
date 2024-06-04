@@ -10,14 +10,15 @@ extends Node
 var mutation_chance = 2
 # min_change is the min percentage that a value can mutate by (-50 means the value can be halved)
 # max_change is the max percentage that a value can mutate by (100 means the value can double)
-var min_change = -50
-var max_change = 50
+var min_change = -100
+var max_change = 100
 var enable_physical_mutations = true
 var print_new_physical_genome = false
 var print_new_behavioral_genome = false
 
 signal next_generation
 signal creature_info(info)
+signal track_species(genome)
 
 func get_change():
 	return 1 + randi_range(min_change, max_change) / 100.0
@@ -40,7 +41,8 @@ func create_offspring(creature_1, creature_2):
 
 	Zookeeper.create_creature(offspring_pos, offspring_rot, physical_mutation, behavioral_mutation)
 
-	SpeciesManager.track_species(physical_mutation)
+	# SpeciesManager.track_species(physical_mutation)
+	track_species.emit(physical_mutation)
 
 	if print_new_physical_genome:
 		print("New Physical Genome:")
@@ -92,7 +94,7 @@ func mutation(dict):
 # mutation_chance is the percentage chance that the number of entries can change
 func mutate_num_entries(dict, min_entries):
 	var num_entries = dict.size()
-	if mutation_chance > randi_range(0, 99):
+	if mutation_chance * 5 > randi_range(0, 99):
 		num_entries *= get_change()
 		num_entries = round(num_entries)
 	num_entries = max(min_entries, num_entries)
@@ -130,6 +132,10 @@ func mutation_traversal(dict, full_genome):
 					mutate_joint(dict)
 				elif key == "type":
 					mutate_type(dict)
+				elif key == "max_integrity":
+					mutate_max_integrity(dict)
+				elif key == "effectiveness":
+					mutate_effectiveness(dict)
 				elif key == "target_type":
 					mutate_target_type(dict)
 				elif key == "target_classifier":
@@ -166,11 +172,19 @@ func mutate_joint(dict):
 	else:
 		dict["joint"] = "fixed"
 
-var types = ["body", "reproduction", "eye", "mouth"]
+var types = ["body", "reproduction", "eye", "mouth", "sharp", "brain", "ear"]
 func mutate_type(dict):
 	dict["type"] = types[randi_range(0, types.size() - 1)]
 
-var target_types = ["none", "Food", "Body", "Reproduction", "Eye", "Mouth"]
+func mutate_max_integrity(dict):
+	dict["max_integrity"] *= get_change()
+	dict["max_integrity"] = max(dict["max_integrity"], 0)
+
+func mutate_effectiveness(dict):
+	dict["effectiveness"] *= get_change()
+	dict["effectiveness"] = max(dict["effectiveness"], 0)
+
+var target_types = ["none", "Food", "Body", "Reproduction", "Eye", "Mouth", "Sharp", "Brain", "Ear"]
 func mutate_target_type(dict):
 	dict["target_type"] = target_types[randi_range(0, target_types.size() - 1)]
 

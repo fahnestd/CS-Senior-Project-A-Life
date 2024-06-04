@@ -1,0 +1,19 @@
+[gd_scene load_steps=5 format=3 uid="uid://dxjbn81atkqw2"]
+
+[ext_resource type="PackedScene" uid="uid://d2i01vu72ff4u" path="res://src/scenes/node.tscn" id="1_fedmq"]
+[ext_resource type="Texture2D" uid="uid://deq5h0iqkncd6" path="res://assets/creature/yellow_circle.png" id="2_mgle3"]
+[ext_resource type="Script" path="res://src/creature/node/Ear.gd" id="2_nqosc"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_as72h"]
+radius = 400.0
+
+[node name="Node" instance=ExtResource("1_fedmq")]
+
+[node name="Sprite" parent="." index="0"]
+texture = ExtResource("2_mgle3")
+
+[node name="Ear" type="Area2D" parent="." index="3"]
+script = ExtResource("2_nqosc")
+
+[node name="Collision" type="CollisionShape2D" parent="Ear" index="0"]
+shape = SubResource("CircleShape2D_as72h")

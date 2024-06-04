@@ -1,4 +1,4 @@
-[gd_scene load_steps=22 format=3 uid="uid://dvweqacxjay7r"]
+[gd_scene load_steps=28 format=3 uid="uid://dvweqacxjay7r"]
 
 [ext_resource type="PackedScene" uid="uid://02k684x8aybd" path="res://src/scenes/map.tscn" id="1_w7ogu"]
 [ext_resource type="Script" path="res://src/simulation/Genetics.gd" id="2_s28hq"]
@@ -11,10 +11,16 @@
 [ext_resource type="Script" path="res://src/ui/creaturepanel_ui.gd" id="7_e3w55"]
 [ext_resource type="StyleBox" uid="uid://m3372f0wk2mk" path="res://assets/ui/SepLineUIAsset.tres" id="8_3ihby"]
 [ext_resource type="Script" path="res://src/scenes/EnergyAvailable.gd" id="8_amobd"]
+[ext_resource type="Texture2D" uid="uid://cymok4sli4sft" path="res://assets/ui/light.png" id="8_svx3r"]
 [ext_resource type="StyleBox" uid="uid://brqbxhceg7eji" path="res://assets/ui/VSepLineUIAsset.tres" id="9_5tlr3"]
+[ext_resource type="Texture2D" uid="uid://c8w1rocwtpmtg" path="res://assets/ui/light-press.png" id="9_pwg3o"]
 [ext_resource type="Script" path="res://src/ui/Camera.gd" id="10_epbi7"]
+[ext_resource type="Texture2D" uid="uid://cnfcr1yfyhmvn" path="res://assets/ui/pressure.png" id="10_madig"]
+[ext_resource type="Texture2D" uid="uid://cvfimd0y4622s" path="res://assets/ui/pressure-press.png" id="11_3oyfm"]
 [ext_resource type="Script" path="res://src/simulation/Resources.gd" id="11_ptsgc"]
 [ext_resource type="Script" path="res://src/simulation/Utility.gd" id="12_o42hk"]
+[ext_resource type="Texture2D" uid="uid://fnxeu5p41m2y" path="res://assets/ui/temp.png" id="12_oqmgp"]
+[ext_resource type="Texture2D" uid="uid://b33onnmnhlsyq" path="res://assets/ui/temp-press.png" id="13_yueri"]
 [ext_resource type="Script" path="res://src/scenes/FoodGenerator.gd" id="15_h11l0"]
 [ext_resource type="Script" path="res://src/simulation/SpeciesManager.gd" id="16_u87gk"]
 
@@ -259,6 +265,55 @@ grow_horizontal = 0
 grow_vertical = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_8urog")
 
+[node name="Panel" type="Panel" parent="CanvasLayer/UIOverlay/SideUIPanel"]
+layout_mode = 1
+anchors_preset = -1
+anchor_top = 0.012
+anchor_bottom = 0.012
+offset_left = 6.0
+offset_top = 68.418
+offset_right = 183.0
+offset_bottom = 117.478
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="HBoxContainer" type="HBoxContainer" parent="CanvasLayer/UIOverlay/SideUIPanel/Panel"]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = -0.044
+anchor_top = -1.499
+anchor_right = -0.044
+anchor_bottom = -1.499
+offset_left = 7.788
+offset_top = 73.5409
+offset_right = 184.788
+offset_bottom = 122.601
+grow_horizontal = 2
+grow_vertical = 2
+alignment = 1
+
+[node name="LightButton" type="TextureButton" parent="CanvasLayer/UIOverlay/SideUIPanel/Panel/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 0
+toggle_mode = true
+texture_normal = ExtResource("8_svx3r")
+texture_pressed = ExtResource("9_pwg3o")
+stretch_mode = 3
+
+[node name="PressureButton" type="TextureButton" parent="CanvasLayer/UIOverlay/SideUIPanel/Panel/HBoxContainer"]
+layout_mode = 2
+toggle_mode = true
+texture_normal = ExtResource("10_madig")
+texture_pressed = ExtResource("11_3oyfm")
+stretch_mode = 3
+
+[node name="TempButton" type="TextureButton" parent="CanvasLayer/UIOverlay/SideUIPanel/Panel/HBoxContainer"]
+layout_mode = 2
+toggle_mode = true
+texture_normal = ExtResource("12_oqmgp")
+texture_pressed = ExtResource("13_yueri")
+stretch_mode = 3
+
 [node name="EControlLabel" type="Label" parent="CanvasLayer/UIOverlay/SideUIPanel"]
 modulate = Color(0, 0, 0, 1)
 self_modulate = Color(0, 0, 0, 1)
@@ -273,6 +328,7 @@ horizontal_alignment = 1
 vertical_alignment = 1
 
 [node name="FoodPanel" type="Panel" parent="CanvasLayer/UIOverlay/SideUIPanel"]
+visible = false
 layout_mode = 1
 anchors_preset = -1
 anchor_left = 0.492
@@ -283,26 +339,12 @@ offset_right = 76.012
 offset_bottom = 116.0
 theme_override_styles/panel = SubResource("StyleBoxFlat_2prp0")
 
-[node name="EnergyAvailable" type="Label" parent="CanvasLayer/UIOverlay/SideUIPanel"]
-layout_mode = 0
-offset_left = 10.0
-offset_top = 125.0
-offset_right = 155.0
-offset_bottom = 148.0
-scale = Vector2(1, 0.988292)
-text = "Energy Available: 0"
-label_settings = SubResource("LabelSettings_3wvgh")
-script = ExtResource("8_amobd")
-
-[node name="FoodControl" type="Control" parent="CanvasLayer/UIOverlay/SideUIPanel"]
+[node name="FoodControl" type="Control" parent="CanvasLayer/UIOverlay/SideUIPanel/FoodPanel"]
 anchors_preset = 0
-offset_left = 9.0
-offset_top = 76.0
-offset_right = 160.0
-offset_bottom = 40.0
+offset_right = 151.0
 script = ExtResource("6_uxs3m")
 
-[node name="FoodPercentLabel" type="Label" parent="CanvasLayer/UIOverlay/SideUIPanel/FoodControl"]
+[node name="FoodPercentLabel" type="Label" parent="CanvasLayer/UIOverlay/SideUIPanel/FoodPanel/FoodControl"]
 modulate = Color(0, 0, 0, 1)
 self_modulate = Color(0, 0, 0, 1)
 layout_mode = 0
@@ -314,7 +356,7 @@ theme_override_font_sizes/font_size = 8
 text = "50%"
 horizontal_alignment = 1
 
-[node name="FoodHSlider" type="HSlider" parent="CanvasLayer/UIOverlay/SideUIPanel/FoodControl"]
+[node name="FoodHSlider" type="HSlider" parent="CanvasLayer/UIOverlay/SideUIPanel/FoodPanel/FoodControl"]
 layout_mode = 0
 offset_left = 16.0
 offset_top = 20.0
@@ -324,7 +366,7 @@ max_value = 1.0
 step = 0.05
 value = 0.5
 
-[node name="FoodLabel" type="Label" parent="CanvasLayer/UIOverlay/SideUIPanel/FoodControl"]
+[node name="FoodLabel" type="Label" parent="CanvasLayer/UIOverlay/SideUIPanel/FoodPanel/FoodControl"]
 modulate = Color(0, 0, 0, 1)
 self_modulate = Color(0, 0, 0, 1)
 layout_mode = 0
@@ -334,6 +376,17 @@ offset_right = 88.0
 offset_bottom = 20.0
 theme_override_font_sizes/font_size = 8
 text = "Food Availability:"
+
+[node name="EnergyAvailable" type="Label" parent="CanvasLayer/UIOverlay/SideUIPanel"]
+layout_mode = 0
+offset_left = 10.0
+offset_top = 125.0
+offset_right = 155.0
+offset_bottom = 148.0
+scale = Vector2(1, 0.988292)
+text = "Energy Available: 0"
+label_settings = SubResource("LabelSettings_3wvgh")
+script = ExtResource("8_amobd")
 
 [node name="CreaturePanel" type="Panel" parent="CanvasLayer/UIOverlay/SideUIPanel"]
 layout_mode = 1
@@ -439,6 +492,7 @@ script = ExtResource("15_h11l0")
 script = ExtResource("16_u87gk")
 
 [connection signal="next_generation" from="Genetics" to="CanvasLayer/UIOverlay/TopUIPanel/CurrentGenLabel" method="_on_genetics_next_generation"]
+[connection signal="track_species" from="Genetics" to="SpeciesManager" method="_on_genetics_track_species"]
 [connection signal="pressed" from="CanvasLayer/UIOverlay/TopUIPanel/SimSpeedLabel/OneTimeButton" to="CanvasLayer/UIOverlay/TopUIPanel/SimSpeedLabel" method="_on_one_time_button_pressed"]
 [connection signal="pressed" from="CanvasLayer/UIOverlay/TopUIPanel/SimSpeedLabel/TwoTimeButton" to="CanvasLayer/UIOverlay/TopUIPanel/SimSpeedLabel" method="_on_two_time_button_pressed"]
 [connection signal="pressed" from="CanvasLayer/UIOverlay/TopUIPanel/SimSpeedLabel/FourTimeButton" to="CanvasLayer/UIOverlay/TopUIPanel/SimSpeedLabel" method="_on_four_time_button_pressed"]
@@ -446,6 +500,9 @@ script = ExtResource("16_u87gk")
 [connection signal="pressed" from="CanvasLayer/UIOverlay/TopUIPanel/SimSpeedLabel/HBoxContainer/SkipFiveMinutesButton" to="CanvasLayer/UIOverlay/TopUIPanel/SimSpeedLabel" method="_on_skip_five_minutes_button_pressed"]
 [connection signal="pressed" from="CanvasLayer/UIOverlay/TopUIPanel/SimSpeedLabel/HBoxContainer/SkipThirtyMinutesButton" to="CanvasLayer/UIOverlay/TopUIPanel/SimSpeedLabel" method="_on_skip_thirty_minutes_button_pressed"]
 [connection signal="pressed" from="CanvasLayer/UIOverlay/TopUIPanel/SimSpeedLabel/HBoxContainer/SkipSixtyMinutesButton" to="CanvasLayer/UIOverlay/TopUIPanel/SimSpeedLabel" method="_on_skip_sixty_minutes_button_pressed"]
-[connection signal="value_changed" from="CanvasLayer/UIOverlay/SideUIPanel/FoodControl/FoodHSlider" to="CanvasLayer/UIOverlay/SideUIPanel/FoodControl" method="_on_food_h_slider_value_changed"]
+[connection signal="toggled" from="CanvasLayer/UIOverlay/SideUIPanel/Panel/HBoxContainer/LightButton" to="World" method="_on_light_button_click"]
+[connection signal="toggled" from="CanvasLayer/UIOverlay/SideUIPanel/Panel/HBoxContainer/PressureButton" to="World" method="_on_pressure_button_click"]
+[connection signal="toggled" from="CanvasLayer/UIOverlay/SideUIPanel/Panel/HBoxContainer/TempButton" to="World" method="_on_temp_button_click"]
+[connection signal="value_changed" from="CanvasLayer/UIOverlay/SideUIPanel/FoodPanel/FoodControl/FoodHSlider" to="CanvasLayer/UIOverlay/SideUIPanel/FoodPanel/FoodControl" method="_on_food_h_slider_value_changed"]
 [connection signal="timeout" from="CanvasLayer/UIUpdateTimer" to="CanvasLayer/UIOverlay/SideUIPanel/EnergyAvailable" method="_on_ui_update_timer_timeout"]
 [connection signal="creature_info" from="Camera" to="CanvasLayer/UIOverlay/SideUIPanel/CreaturePanel" method="_on_camera_creature_info"]

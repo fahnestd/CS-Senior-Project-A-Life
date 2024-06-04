@@ -4,10 +4,11 @@ extends Area2D
 @onready var NodeStatus = NodeObject.get_node("Status")
 
 var position_shift = Vector2(0, 0)
+var position_shift_2 = Vector2(0, 0)
 var colliding_areas = {}
 
 func _on_area_entered(other_area):
-	if other_area.name != "Eye" and other_area.name != "Food":
+	if other_area.name != "Eye" and other_area.name != "Ear" and other_area.name != "Food":
 		colliding_areas[other_area] = null
 
 func _on_area_exited(other_area):
@@ -31,7 +32,13 @@ func collision():
 		if distance_to < size_allowance:
 			var direction = (global_position - other_object.global_position).normalized()
 			var overlap = (size_allowance - distance_to) * (NodeStatus.genes["size"] / (NodeStatus.genes["size"] + other_size))
-			position_shift += direction * overlap
+			if other_object.Creature != NodeObject.Creature:
+				position_shift += direction * overlap
+			else:
+				position_shift_2 += direction * overlap
 	if position_shift != Vector2(0, 0):
-		NodeObject.global_move(position_shift, false)
+		NodeObject.global_move(position_shift, false, true)
 		position_shift = Vector2(0, 0)
+	if position_shift_2 != Vector2(0, 0):
+		NodeObject.global_move(position_shift_2, false, false)
+		position_shift_2 = Vector2(0, 0)
